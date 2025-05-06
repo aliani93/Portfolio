@@ -1,1 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Top Half with Image Transitions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
 
+        body {
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+            color: white;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            padding-top: 60px; /* Account for navbar height */
+        }
+
+        .top-half {
+            position: fixed;
+            top: 60px; /* Account for navbar height */
+            height: 50vh;
+            width: 100%;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .bottom-half {
+            margin-top: 50vh; /* Push content below the fixed top half */
+            width: 100%;
+            z-index: 20;
+            background-color: white;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .image.active {
+            opacity: 1;
+        }
+
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .section-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        /* Media query for landscape orientation */
+        @media (orientation: landscape) and (max-width: 1024px) {
+            .container {
+                flex-direction: row;
+            }
+
+            .top-half {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 50%;
+                height: calc(100vh - 60px);
+            }
+
+            .bottom-half {
+                margin-top: 0;
+                margin-left: 50%;
+                width: 50%;
+            }
+
+            .section {
+                min-height: calc(100vh - 60px);
+            }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 10px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">LOGO</div>
+        <div class="nav-links">
+            <a href="#section1">Home</a>
+            <a href="#section2">About</a>
+            <a href="#section3">Services</a>
+            <a href="#section4">Contact</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="top-half">
+            <div class="image-container">
+                <img src="/api/placeholder/1200/800" alt="Image 1" class="image active" data-section="section1">
+                <img src="/api/placeholder/1200/800" alt="Image 2" class="image" data-section="section2">
+                <img src="/api/placeholder/1200/800" alt="Image 3" class="image" data-section="section3">
+                <img src="/api/placeholder/1200/800" alt="Image 4" class="image" data-section="section4">
+            </div>
+        </div>
+
+        <div class="bottom-half">
+            <div id="section1" class="section">
+                <div class="section-content">
+                    <h2>Welcome to Our Website</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor.</p>
+                    <p>Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat nisl ut dapibus. Mauris iaculis porttitor posuere.</p>
+                    <button>Learn More</button>
+                </div>
+            </div>
+
+            <div id="section2" class="section">
+                <div class="section-content">
+                    <h2>About Us</h2>
+                    <p>Founded in 2010, our company has been dedicated to providing exceptional services to our clients. With a team of experts, we've built a reputation for excellence and innovation.</p>
+                    <p>Our mission is to create meaningful experiences and valuable solutions that help our clients achieve their goals. We believe in collaboration, creativity, and commitment to quality.</p>
+                    <button>Our Story</button>
+                </div>
+            </div>
+
+            <div id="section3" class="section">
+                <div class="section-content">
+                    <h2>Our Services</h2>
+                    <p>We offer a comprehensive range of services designed to meet your specific needs. From consulting to implementation, our team is equipped to handle projects of any scale.</p>
+                    <p>Our specialized approach ensures that each solution is tailored to address your unique challenges and opportunities. We work closely with you to deliver results that exceed expectations.</p>
+                    <button>View Services</button>
+                </div>
+            </div>
+
+            <div id="section4" class="section">
+                <div class="section-content">
+                    <h2>Contact Us</h2>
+                    <p>Ready to start your project? Get in touch with our team today. We're available to answer your questions and discuss how we can help you achieve your goals.</p>
+                    <p>Whether you prefer email, phone, or in-person meetings, we're committed to responsive and helpful communication at every step of the way.</p>
+                    <button>Get in Touch</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const images = document.querySelectorAll('.image');
+            
+            // Function to check which section is in view
+            function checkSections() {
+                const scrollPosition = window.scrollY;
+                
+                sections.forEach((section) => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    const sectionId = section.id;
+                    
+                    // Calculate when section is in view
+                    // Adjust this threshold as needed for when image should change
+                    if (scrollPosition >= sectionTop - window.innerHeight / 2 && 
+                        scrollPosition < sectionTop + sectionHeight - window.innerHeight / 2) {
+                        
+                        // Update active image
+                        images.forEach((image) => {
+                            if (image.dataset.section === sectionId) {
+                                image.classList.add('active');
+                            } else {
+                                image.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Initial check
+            checkSections();
+            
+            // Check sections on scroll
+            window.addEventListener('scroll', checkSections);
+            
+            // Handle orientation changes
+            window.addEventListener('resize', function() {
+                checkSections();
+            });
+            
+            // Smooth scroll for navigation links
+            document.querySelectorAll('.nav-links a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
