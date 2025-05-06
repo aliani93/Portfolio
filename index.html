@@ -148,6 +148,10 @@
             margin-bottom: 1.5rem;
         }
 
+        .mobile-indicator {
+            display: none;
+        }
+
         /* Mobile responsive styles */
         @media (max-width: 768px) {
             .split-container {
@@ -156,8 +160,18 @@
 
             .split-left {
                 width: 100%;
-                height: 50vh;
+                height: 100vh;
+                position: fixed;
+                z-index: 1;
+            }
+
+            .split-right {
+                width: 100%;
+                margin-left: 0;
                 position: relative;
+                z-index: 2;
+                margin-top: 50vh;
+                background-color: transparent;
             }
 
             .nav-container {
@@ -166,11 +180,22 @@
 
             .content-overlay {
                 padding: 2rem;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
             }
 
-            .split-right {
-                width: 100%;
-                margin-left: 0;
+            .content-section {
+                background-color: white;
+                border-radius: 20px 20px 0 0;
+                margin-bottom: -10px;
+                padding: 3rem 2rem;
+                position: relative;
+            }
+
+            .content-section:first-child {
+                margin-top: 30vh;
             }
 
             .nav {
@@ -179,17 +204,37 @@
             }
 
             .nav-links {
-                flex-direction: column;
-                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
             }
 
             .hero h1 {
                 font-size: 2rem;
             }
 
-            .content-section {
-                padding: 3rem 2rem;
-                min-height: auto;
+            .mobile-indicator {
+                display: block;
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 20;
+                color: white;
+                text-align: center;
+                font-size: 0.8rem;
+                animation: bounce 2s infinite;
+            }
+
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% {
+                    transform: translateY(0) translateX(-50%);
+                }
+                40% {
+                    transform: translateY(-15px) translateX(-50%);
+                }
+                60% {
+                    transform: translateY(-7px) translateX(-50%);
+                }
             }
         }
     </style>
@@ -229,6 +274,14 @@
                     </p>
                     <a href="#" class="cta-button">Get Started</a>
                 </div>
+            </div>
+
+            <!-- Mobile scroll indicator -->
+            <div class="mobile-indicator">
+                Scroll down<br>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </div>
         </div>
 
@@ -326,19 +379,30 @@
             const sections = document.querySelectorAll('.content-section');
             const navLinks = document.querySelectorAll('.nav-link');
             const backgroundImages = document.querySelectorAll('.background-image');
+            const isMobile = window.innerWidth <= 768;
             
             // Function to check which section is in view
             function checkSections() {
                 let current = '';
+                const scrollPosition = window.scrollY;
                 
                 sections.forEach(section => {
-                    const sectionTop = section.getBoundingClientRect().top;
-                    const sectionHeight = section.clientHeight;
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
                     
-                    // If the section is in the viewport
-                    if (sectionTop <= window.innerHeight / 2 && 
-                        sectionTop + sectionHeight > window.innerHeight / 2) {
-                        current = section.getAttribute('id');
+                    // Adjust calculation based on device
+                    if (isMobile) {
+                        // For mobile: when the section is at the top third of the screen
+                        if (scrollPosition >= sectionTop - window.innerHeight / 2 && 
+                            scrollPosition < sectionTop + sectionHeight - window.innerHeight / 2) {
+                            current = section.getAttribute('id');
+                        }
+                    } else {
+                        // For desktop: when section is in center of viewport
+                        if (scrollPosition >= sectionTop - window.innerHeight / 2 && 
+                            scrollPosition < sectionTop + sectionHeight - window.innerHeight / 2) {
+                            current = section.getAttribute('id');
+                        }
                     }
                 });
                 
@@ -364,6 +428,14 @@
             
             // Check sections on scroll
             window.addEventListener('scroll', checkSections);
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                const newIsMobile = window.innerWidth <= 768;
+                if (newIsMobile !== isMobile) {
+                    location.reload(); // Reload to apply correct layout
+                }
+            });
             
             // Smooth scroll for navigation links
             navLinks.forEach(link => {
