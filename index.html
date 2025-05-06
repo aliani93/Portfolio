@@ -16,26 +16,70 @@
             overflow-x: hidden;
         }
 
+        /* Fixed navigation for all views */
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 1rem 3rem;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #0066cc;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+        }
+
+        /* Desktop split layout */
         .split-container {
             display: flex;
             height: 100vh;
             width: 100%;
+            padding-top: 4rem; /* Space for fixed nav */
         }
 
         .split-left {
             width: 50%;
-            height: 100vh;
+            height: calc(100vh - 4rem);
             position: fixed;
             left: 0;
+            top: 4rem;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-container {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 2rem 3rem;
-            z-index: 10;
         }
 
         .background-image {
@@ -56,46 +100,14 @@
         }
 
         .content-overlay {
-            position: relative;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             z-index: 5;
             padding: 3rem;
-            margin-top: auto;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
             color: white;
-        }
-
-        .split-right {
-            width: 50%;
-            margin-left: 50%;
-            background-color: #ffffff;
-            min-height: 100vh;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            color: #0066cc;
         }
 
         .hero h1 {
@@ -126,6 +138,12 @@
             background-color: #0055aa;
         }
 
+        .split-right {
+            width: 50%;
+            margin-left: 50%;
+            background-color: #ffffff;
+        }
+
         .content-section {
             padding: 5rem 3rem;
             border-bottom: 1px solid #eaeaea;
@@ -150,127 +168,142 @@
 
         /* Mobile responsive styles */
         @media (max-width: 768px) {
-            .split-container {
-                flex-direction: row;
-                overflow: hidden;
-                position: fixed;
-                width: 100%;
-                height: 100%;
-            }
-
-            .split-left {
-                width: 40%;
-                height: 100%;
-                position: fixed;
-                left: 0;
-                top: 0;
-            }
-
-            .split-right {
-                width: 60%;
-                margin-left: 40%;
-                height: 100%;
-                overflow-y: auto;
-                position: fixed;
-                right: 0;
-                top: 0;
-            }
-
             .nav-container {
-                padding: 1rem;
+                padding: 0.75rem 1.5rem;
             }
-
+            
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: white;
+                flex-direction: column;
+                padding: 1rem 0;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .nav-links.show {
+                display: flex;
+            }
+            
+            .nav-links a {
+                padding: 0.5rem 1.5rem;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
             .logo {
                 font-size: 1.2rem;
-                margin-bottom: 1rem;
             }
 
-            .nav {
-                flex-direction: column;
-            }
-
-            .nav-links {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .nav-link {
-                font-size: 0.9rem;
-            }
-
-            .content-overlay {
-                padding: 1rem;
-            }
-
-            .hero h1 {
-                font-size: 1.5rem;
-            }
-
-            .hero p {
-                font-size: 0.9rem;
-                margin-bottom: 1rem;
-            }
-
-            .cta-button {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .content-section {
-                padding: 2rem 1.5rem;
-                min-height: 100vh;
-            }
-
-            .content-section h2 {
-                font-size: 1.8rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .content-section p {
-                font-size: 0.95rem;
-                margin-bottom: 1rem;
-            }
-            
-            /* Orientation warning for mobile */
-            .orientation-warning {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.9);
-                color: white;
-                z-index: 1000;
-                justify-content: center;
-                align-items: center;
-                text-align: center;
-                padding: 2rem;
-            }
-            
+            /* Portrait Mode - Horizontal Split */
             @media (orientation: portrait) {
-                .orientation-warning {
-                    display: flex;
+                .split-container {
+                    flex-direction: column;
+                }
+                
+                .split-left {
+                    width: 100%;
+                    height: 40vh;
+                    position: fixed;
+                    left: 0;
+                    top: 3.5rem; /* Adjusted for smaller nav */
+                }
+                
+                .split-right {
+                    width: 100%;
+                    margin-left: 0;
+                    margin-top: calc(40vh + 3.5rem); /* Image height + nav */
+                    position: relative;
+                    z-index: 5;
+                    background-color: #fff;
+                    min-height: 60vh;
+                }
+                
+                .content-overlay {
+                    padding: 1.5rem;
+                }
+                
+                .hero h1 {
+                    font-size: 1.8rem;
+                }
+                
+                .hero p {
+                    font-size: 1rem;
+                    margin-bottom: 1rem;
+                }
+                
+                .content-section {
+                    padding: 2.5rem 1.5rem;
+                    min-height: auto;
+                }
+                
+                .content-section h2 {
+                    font-size: 1.8rem;
+                    margin-bottom: 1.5rem;
+                }
+            }
+            
+            /* Landscape Mode - Vertical Split */
+            @media (orientation: landscape) {
+                .split-container {
+                    flex-direction: row;
+                }
+                
+                .split-left {
+                    width: 40%;
+                    height: calc(100vh - 3.5rem);
+                    position: fixed;
+                    top: 3.5rem;
+                }
+                
+                .split-right {
+                    width: 60%;
+                    margin-left: 40%;
+                    margin-top: 0;
+                }
+                
+                .content-section {
+                    padding: 2rem 1.5rem;
+                }
+                
+                .content-overlay {
+                    padding: 1.5rem;
+                }
+                
+                .hero h1 {
+                    font-size: 1.5rem;
+                }
+                
+                .hero p {
+                    font-size: 0.9rem;
                 }
             }
         }
     </style>
 </head>
 <body>
-    <!-- Orientation warning for mobile in portrait -->
-    <div class="orientation-warning">
-        <div>
-            <h2>For best experience</h2>
-            <p>Please rotate your device to landscape orientation</p>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 1rem auto; display: block;">
-                <path d="M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 14v4M16 14v4M8 14v4M4 10h16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+    <!-- Fixed Navigation -->
+    <div class="nav-container">
+        <div class="nav">
+            <div class="logo">LOGO</div>
+            <button class="hamburger" id="menu-toggle">☰</button>
+            <div class="nav-links" id="nav-links">
+                <a href="#section1" class="nav-link active">Home</a>
+                <a href="#section2" class="nav-link">Services</a>
+                <a href="#section3" class="nav-link">Approach</a>
+                <a href="#section4" class="nav-link">Team</a>
+                <a href="#section5" class="nav-link">Contact</a>
+            </div>
         </div>
     </div>
 
     <div class="split-container">
-        <!-- Left fixed panel with changing backgrounds -->
+        <!-- Left/Top panel with changing backgrounds -->
         <div class="split-left">
             <!-- Background images -->
             <div class="background-image active" style="background-image: url('/api/placeholder/1200/800');" data-section="section1"></div>
@@ -278,20 +311,6 @@
             <div class="background-image" style="background-image: url('/api/placeholder/1200/800');" data-section="section3"></div>
             <div class="background-image" style="background-image: url('/api/placeholder/1200/800');" data-section="section4"></div>
             <div class="background-image" style="background-image: url('/api/placeholder/1200/800');" data-section="section5"></div>
-            
-            <!-- Navigation -->
-            <div class="nav-container">
-                <div class="nav">
-                    <div class="logo">LOGO</div>
-                    <div class="nav-links">
-                        <a href="#section1" class="nav-link active">Home</a>
-                        <a href="#section2" class="nav-link">Services</a>
-                        <a href="#section3" class="nav-link">Approach</a>
-                        <a href="#section4" class="nav-link">Team</a>
-                        <a href="#section5" class="nav-link">Contact</a>
-                    </div>
-                </div>
-            </div>
             
             <!-- Content overlay -->
             <div class="content-overlay">
@@ -306,7 +325,7 @@
             </div>
         </div>
 
-        <!-- Right scrollable content -->
+        <!-- Right/Bottom scrollable content -->
         <div class="split-right">
             <div id="section1" class="content-section">
                 <h2>Welcome to Our World</h2>
@@ -400,21 +419,34 @@
             const sections = document.querySelectorAll('.content-section');
             const navLinks = document.querySelectorAll('.nav-link');
             const backgroundImages = document.querySelectorAll('.background-image');
-            const splitRight = document.querySelector('.split-right');
+            const hamburger = document.getElementById('menu-toggle');
+            const navLinksContainer = document.getElementById('nav-links');
+            
+            // Toggle mobile menu
+            hamburger.addEventListener('click', function() {
+                navLinksContainer.classList.toggle('show');
+            });
+            
+            // Close menu when a link is clicked
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navLinksContainer.classList.remove('show');
+                });
+            });
             
             // Function to check which section is in view
             function checkSections() {
                 let current = '';
-                const scrollTop = splitRight.scrollTop;
+                const scrollPosition = window.scrollY;
                 const windowHeight = window.innerHeight;
                 
                 sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
+                    const sectionTop = section.getBoundingClientRect().top + scrollPosition;
                     const sectionHeight = section.offsetHeight;
                     
                     // If section is in view
-                    if (scrollTop >= sectionTop - windowHeight/2 && 
-                        scrollTop < sectionTop + sectionHeight - windowHeight/2) {
+                    if (scrollPosition >= sectionTop - windowHeight/2 && 
+                        scrollPosition < sectionTop + sectionHeight - windowHeight/2) {
                         current = section.getAttribute('id');
                     }
                 });
@@ -440,7 +472,7 @@
             checkSections();
             
             // Check sections on scroll
-            splitRight.addEventListener('scroll', checkSections);
+            window.addEventListener('scroll', checkSections);
             
             // Smooth scroll for navigation links
             navLinks.forEach(link => {
@@ -449,14 +481,14 @@
                     const targetId = this.getAttribute('href');
                     const targetSection = document.querySelector(targetId);
                     
-                    splitRight.scrollTo({
+                    window.scrollTo({
                         top: targetSection.offsetTop,
                         behavior: 'smooth'
                     });
                 });
             });
             
-            // Monitor orientation changes for mobile
+            // Handle resize
             window.addEventListener('resize', function() {
                 checkSections();
             });
