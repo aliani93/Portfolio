@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fixed Split Layout with Image Transitions</title>
+    <title>Portfolio with Fixed Images</title>
     <style>
         * {
             margin: 0;
@@ -46,33 +46,40 @@
         .nav-links a {
             color: white;
             text-decoration: none;
+            transition: color 0.3s ease;
         }
 
-        /* Portrait Mode (default) */
+        .nav-links a:hover {
+            color: #ccc;
+        }
+
+        /* Main Content Structure */
         .main-container {
             width: 100%;
             padding-top: 60px; /* For navbar */
-            display: flex;
-            flex-direction: column;
         }
 
-        .top-half {
+        /* Fixed image section */
+        .image-section {
             position: fixed;
             top: 60px; /* Below navbar */
             left: 0;
             width: 100%;
-            height: 50vh; /* 50% of viewport height */
+            height: 50vh;
             z-index: 10;
             overflow: hidden;
         }
 
-        .bottom-half {
-            margin-top: calc(50vh + 60px); /* Top half height + navbar */
-            width: 100%;
-            z-index: 20;
+        /* Content section */
+        .content-section {
+            position: relative;
+            margin-top: 50vh; /* Equal to image section height */
             background-color: white;
+            z-index: 20;
+            width: 100%;
         }
 
+        /* Images */
         .image-container {
             position: relative;
             width: 100%;
@@ -94,7 +101,16 @@
             opacity: 1;
         }
 
+        /* Content styling */
         .section {
+            min-height: 100vh;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .subsection {
             min-height: 100vh;
             padding: 40px;
             display: flex;
@@ -112,6 +128,11 @@
             margin-bottom: 20px;
         }
 
+        h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
         p {
             font-size: 18px;
             line-height: 1.6;
@@ -127,27 +148,28 @@
             cursor: pointer;
             font-size: 16px;
             margin-top: 20px;
+            transition: background-color 0.3s ease;
         }
 
-        /* Landscape Mode */
+        button:hover {
+            background-color: #555;
+        }
+
+        /* Landscape mode (desktop) */
         @media (orientation: landscape) {
-            .main-container {
-                flex-direction: row;
+            .image-section {
+                width: 50%;
+                height: calc(100vh - 60px);
             }
 
-            .top-half {
-                width: 50%; /* 50% of viewport width */
-                height: calc(100vh - 60px); /* Full height minus navbar */
-            }
-
-            .bottom-half {
-                margin-top: 60px; /* Just navbar height */
-                margin-left: 50%; /* Width of top half */
+            .content-section {
+                margin-top: 0;
+                margin-left: 50%;
                 width: 50%;
             }
 
-            .section {
-                min-height: calc(100vh - 60px); /* Full height minus navbar */
+            .section, .subsection {
+                min-height: calc(100vh - 60px);
             }
         }
 
@@ -161,12 +183,16 @@
                 font-size: 20px;
             }
 
-            .section {
-                padding: 20px;
+            .section, .subsection {
+                padding: 30px 20px;
             }
 
             h2 {
                 font-size: 28px;
+            }
+
+            h3 {
+                font-size: 22px;
             }
 
             p {
@@ -177,59 +203,104 @@
 </head>
 <body>
     <div class="navbar">
-        <div class="logo">LOGO</div>
+        <div class="logo">PORTFOLIO</div>
         <div class="nav-links">
-            <a href="#section1">Home</a>
-            <a href="#section2">About</a>
-            <a href="#section3">Services</a>
-            <a href="#section4">Contact</a>
+            <a href="#home">Home</a>
+            <a href="#work">Work</a>
+            <a href="#contact">Contact</a>
         </div>
     </div>
 
     <div class="main-container">
-        <div class="top-half">
+        <div class="image-section">
             <div class="image-container">
-                <img src="/api/placeholder/1200/800" alt="Image 1" class="image active" data-section="section1">
-                <img src="/api/placeholder/1200/800" alt="Image 2" class="image" data-section="section2">
-                <img src="/api/placeholder/1200/800" alt="Image 3" class="image" data-section="section3">
-                <img src="/api/placeholder/1200/800" alt="Image 4" class="image" data-section="section4">
+                <!-- Main sections -->
+                <img src="/api/placeholder/1200/800" alt="Home" class="image active" data-section="home">
+                <img src="/api/placeholder/1200/800" alt="Work" class="image" data-section="work">
+                <img src="/api/placeholder/1200/800" alt="Contact" class="image" data-section="contact">
+                
+                <!-- Work subsections -->
+                <img src="/api/placeholder/1200/800" alt="Renders" class="image" data-section="renders">
+                <img src="/api/placeholder/1200/800" alt="3D" class="image" data-section="3d">
+                <img src="/api/placeholder/1200/800" alt="Drafting" class="image" data-section="drafting">
+                <img src="/api/placeholder/1200/800" alt="Video Editing" class="image" data-section="video">
+                <img src="/api/placeholder/1200/800" alt="GIS" class="image" data-section="gis">
             </div>
         </div>
 
-        <div class="bottom-half">
-            <div id="section1" class="section">
+        <div class="content-section">
+            <!-- Home Section -->
+            <div id="home" class="section" data-section="home">
                 <div class="section-content">
-                    <h2>Welcome to Our Website</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor.</p>
-                    <p>Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat nisl ut dapibus. Mauris iaculis porttitor posuere.</p>
-                    <button>Learn More</button>
+                    <h2>Welcome</h2>
+                    <p>Hello, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting and GIS mapping.</p>
+                    <p>With over 10 years of experience, I've worked with clients across multiple industries to bring their visions to life through compelling visual storytelling and technical precision.</p>
+                    <button>About Me</button>
                 </div>
             </div>
 
-            <div id="section2" class="section">
+            <!-- Work Section -->
+            <div id="work" class="section" data-section="work">
                 <div class="section-content">
-                    <h2>About Us</h2>
-                    <p>Founded in 2010, our company has been dedicated to providing exceptional services to our clients. With a team of experts, we've built a reputation for excellence and innovation.</p>
-                    <p>Our mission is to create meaningful experiences and valuable solutions that help our clients achieve their goals. We believe in collaboration, creativity, and commitment to quality.</p>
-                    <button>Our Story</button>
+                    <h2>My Work</h2>
+                    <p>Below you'll find samples of my professional work across different disciplines. Each category demonstrates my expertise in specific areas of visual and technical design.</p>
+                    <p>Scroll down to explore each category and see examples of my projects.</p>
                 </div>
             </div>
 
-            <div id="section3" class="section">
+            <!-- Work Subsections -->
+            <div id="renders" class="subsection" data-section="renders">
                 <div class="section-content">
-                    <h2>Our Services</h2>
-                    <p>We offer a comprehensive range of services designed to meet your specific needs. From consulting to implementation, our team is equipped to handle projects of any scale.</p>
-                    <p>Our specialized approach ensures that each solution is tailored to address your unique challenges and opportunities. We work closely with you to deliver results that exceed expectations.</p>
-                    <button>View Services</button>
+                    <h3>Architectural Renders</h3>
+                    <p>Photorealistic architectural visualizations created using industry-leading rendering software. These projects showcase interior and exterior spaces with attention to lighting, materials, and environmental details.</p>
+                    <p>Each render is meticulously crafted to convey the design intent while creating an emotional connection with the viewer.</p>
+                    <button>View Projects</button>
                 </div>
             </div>
 
-            <div id="section4" class="section">
+            <div id="3d" class="subsection" data-section="3d">
                 <div class="section-content">
-                    <h2>Contact Us</h2>
-                    <p>Ready to start your project? Get in touch with our team today. We're available to answer your questions and discuss how we can help you achieve your goals.</p>
-                    <p>Whether you prefer email, phone, or in-person meetings, we're committed to responsive and helpful communication at every step of the way.</p>
-                    <button>Get in Touch</button>
+                    <h3>3D Modeling</h3>
+                    <p>Detailed 3D models created for various applications including product design, architectural visualization, and digital assets. My modeling work emphasizes accuracy, optimized geometry, and attention to detail.</p>
+                    <p>I work with multiple modeling platforms to create assets that meet both technical and aesthetic requirements.</p>
+                    <button>View Projects</button>
+                </div>
+            </div>
+
+            <div id="drafting" class="subsection" data-section="drafting">
+                <div class="section-content">
+                    <h3>Technical Drafting</h3>
+                    <p>Precise technical drawings and documentation for architectural and engineering applications. My drafting work follows industry standards and best practices to ensure accuracy and clarity.</p>
+                    <p>From construction documents to detailed drawings, I provide comprehensive technical documentation for projects of all scales.</p>
+                    <button>View Projects</button>
+                </div>
+            </div>
+
+            <div id="video" class="subsection" data-section="video">
+                <div class="section-content">
+                    <h3>Video Editing</h3>
+                    <p>Professional video editing services for architectural walkthroughs, product presentations, and promotional content. My video work combines technical precision with narrative storytelling.</p>
+                    <p>I specialize in creating compelling visual narratives that effectively communicate design concepts and project features.</p>
+                    <button>View Projects</button>
+                </div>
+            </div>
+
+            <div id="gis" class="subsection" data-section="gis">
+                <div class="section-content">
+                    <h3>GIS Mapping</h3>
+                    <p>Geographic Information System (GIS) mapping and analysis for urban planning, environmental studies, and spatial data visualization. My GIS work provides clear insights into complex spatial relationships.</p>
+                    <p>I create custom maps and spatial analyses that support informed decision-making and effective communication of geographic data.</p>
+                    <button>View Projects</button>
+                </div>
+            </div>
+
+            <!-- Contact Section -->
+            <div id="contact" class="section" data-section="contact">
+                <div class="section-content">
+                    <h2>Contact Me</h2>
+                    <p>Interested in working together? I'm currently available for freelance projects and consulting opportunities. Get in touch to discuss how I can help bring your vision to life.</p>
+                    <p>Email: contact@example.com<br>Phone: (123) 456-7890</p>
+                    <button>Send Message</button>
                 </div>
             </div>
         </div>
@@ -237,7 +308,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const sections = document.querySelectorAll('.section');
+            const mainSections = document.querySelectorAll('.section');
+            const subSections = document.querySelectorAll('.subsection');
             const images = document.querySelectorAll('.image');
             
             // Function to check which section is in view
@@ -245,14 +317,17 @@
                 const scrollPosition = window.scrollY;
                 const windowHeight = window.innerHeight;
                 
-                sections.forEach((section) => {
+                // Check main sections and subsections
+                const allSections = [...mainSections, ...subSections];
+                
+                allSections.forEach((section) => {
                     const sectionTop = section.getBoundingClientRect().top + scrollPosition;
                     const sectionHeight = section.offsetHeight;
-                    const sectionId = section.id;
+                    const sectionId = section.getAttribute('data-section');
                     
-                    // Calculate when section is in view
+                    // Calculate when section is in view (when it's about 40% into the viewport)
                     if (
-                        (scrollPosition + windowHeight * 0.6) >= sectionTop && 
+                        (scrollPosition + windowHeight * 0.4) >= sectionTop && 
                         scrollPosition < (sectionTop + sectionHeight)
                     ) {
                         // Update active image
