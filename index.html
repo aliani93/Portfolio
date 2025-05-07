@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio with Fixed Images</title>
     <style>
         * {
@@ -12,18 +12,13 @@
             font-family: 'Arial', sans-serif;
         }
 
-        html, body {
-            height: 100%;
-            width: 100%;
-            overflow-x: hidden;
-            position: relative;
-        }
-
         body {
-            padding-top: 60px; /* For fixed navbar */
+            overflow-x: hidden;
             margin: 0;
+            padding: 0;
         }
 
+        /* Navigation styles */
         .navbar {
             position: fixed;
             top: 0;
@@ -52,38 +47,57 @@
         .nav-links a {
             color: white;
             text-decoration: none;
-            transition: color 0.3s ease;
         }
 
-        .nav-links a:hover {
-            color: #ccc;
-        }
-
-        /* Mobile-first approach */
-        .image-section {
+        /* Main container structure - this is the key change */
+        #app-container {
+            width: 100%;
+            height: 100vh;
             position: fixed;
-            top: 60px; /* Below navbar */
+            top: 60px; /* Account for navbar */
             left: 0;
-            width: 100%;
-            height: 50vh; /* Half viewport height */
-            z-index: 5;
-            background-color: #000; /* Fallback color */
+            display: flex;
+            flex-direction: column;
         }
 
-        .content-section {
-            position: absolute;
-            top: calc(50vh + 60px); /* Below image section + navbar */
-            left: 0;
+        /* Portrait layout (default for mobile) */
+        .image-half {
             width: 100%;
+            height: 50%;
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .scrollable-half {
+            width: 100%;
+            height: 50%;
+            overflow-y: auto;
             background-color: white;
-            z-index: 10;
         }
 
+        /* Landscape layout */
+        @media (orientation: landscape) {
+            #app-container {
+                flex-direction: row;
+            }
+
+            .image-half {
+                width: 50%;
+                height: calc(100vh - 60px);
+            }
+
+            .scrollable-half {
+                width: 50%;
+                height: calc(100vh - 60px);
+            }
+        }
+
+        /* Image styling */
         .image-container {
             position: relative;
             width: 100%;
             height: 100%;
-            overflow: hidden;
         }
 
         .image {
@@ -101,9 +115,10 @@
             opacity: 1;
         }
 
+        /* Content styling */
         .section {
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -111,7 +126,7 @@
 
         .subsection {
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -147,30 +162,9 @@
             cursor: pointer;
             font-size: 16px;
             margin-top: 20px;
-            transition: background-color 0.3s ease;
         }
 
-        button:hover {
-            background-color: #555;
-        }
-
-        /* Landscape orientation */
-        @media (orientation: landscape) {
-            .image-section {
-                width: 50%;
-                height: calc(100vh - 60px);
-            }
-
-            .content-section {
-                top: 60px;
-                left: 50%;
-                width: 50%;
-                height: calc(100vh - 60px);
-                overflow-y: auto;
-            }
-        }
-
-        /* Additional mobile adjustments */
+        /* Mobile adjustments */
         @media (max-width: 768px) {
             .navbar {
                 padding: 0 10px;
@@ -178,6 +172,11 @@
 
             .logo {
                 font-size: 20px;
+            }
+
+            .section, .subsection {
+                padding: 30px 20px;
+                min-height: 100%;
             }
 
             h2 {
@@ -191,29 +190,11 @@
             p {
                 font-size: 16px;
             }
-
-            /* Force the image section to stay fixed */
-            .image-section {
-                position: fixed !important;
-                top: 60px !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 50vh !important;
-                z-index: 5 !important;
-            }
-
-            /* Force the content section to be positioned correctly */
-            .content-section {
-                position: absolute !important;
-                top: calc(50vh + 60px) !important;
-                left: 0 !important;
-                width: 100% !important;
-                z-index: 10 !important;
-            }
         }
     </style>
 </head>
 <body>
+    <!-- Fixed navbar -->
     <div class="navbar">
         <div class="logo">PORTFOLIO</div>
         <div class="nav-links">
@@ -223,167 +204,175 @@
         </div>
     </div>
 
-    <div class="image-section">
-        <div class="image-container">
-            <!-- Main sections -->
-            <img src="/api/placeholder/1200/800" alt="Home" class="image active" data-section="home">
-            <img src="/api/placeholder/1200/800" alt="Work" class="image" data-section="work">
-            <img src="/api/placeholder/1200/800" alt="Contact" class="image" data-section="contact">
-            
-            <!-- Work subsections -->
-            <img src="/api/placeholder/1200/800" alt="Renders" class="image" data-section="renders">
-            <img src="/api/placeholder/1200/800" alt="3D" class="image" data-section="3d">
-            <img src="/api/placeholder/1200/800" alt="Drafting" class="image" data-section="drafting">
-            <img src="/api/placeholder/1200/800" alt="Video Editing" class="image" data-section="video">
-            <img src="/api/placeholder/1200/800" alt="GIS" class="image" data-section="gis">
-        </div>
-    </div>
-
-    <div class="content-section">
-        <!-- Home Section -->
-        <div id="home" class="section" data-section="home">
-            <div class="section-content">
-                <h2>Welcome</h2>
-                <p>Hello, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting and GIS mapping.</p>
-                <p>With over 10 years of experience, I've worked with clients across multiple industries to bring their visions to life through compelling visual storytelling and technical precision.</p>
-                <button>About Me</button>
+    <!-- Main container with fixed positioning -->
+    <div id="app-container">
+        <!-- Fixed image half -->
+        <div class="image-half">
+            <div class="image-container">
+                <!-- Main sections -->
+                <img src="/api/placeholder/1200/800" alt="Home" class="image active" data-section="home">
+                <img src="/api/placeholder/1200/800" alt="Work" class="image" data-section="work">
+                <img src="/api/placeholder/1200/800" alt="Contact" class="image" data-section="contact">
+                
+                <!-- Work subsections -->
+                <img src="/api/placeholder/1200/800" alt="Renders" class="image" data-section="renders">
+                <img src="/api/placeholder/1200/800" alt="3D" class="image" data-section="3d">
+                <img src="/api/placeholder/1200/800" alt="Drafting" class="image" data-section="drafting">
+                <img src="/api/placeholder/1200/800" alt="Video Editing" class="image" data-section="video">
+                <img src="/api/placeholder/1200/800" alt="GIS" class="image" data-section="gis">
             </div>
         </div>
 
-        <!-- Work Section -->
-        <div id="work" class="section" data-section="work">
-            <div class="section-content">
-                <h2>My Work</h2>
-                <p>Below you'll find samples of my professional work across different disciplines. Each category demonstrates my expertise in specific areas of visual and technical design.</p>
-                <p>Scroll down to explore each category and see examples of my projects.</p>
+        <!-- Scrollable content half -->
+        <div class="scrollable-half">
+            <!-- Home Section -->
+            <div id="home" class="section" data-section="home">
+                <div class="section-content">
+                    <h2>Welcome</h2>
+                    <p>Hello, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting and GIS mapping.</p>
+                    <p>With over 10 years of experience, I've worked with clients across multiple industries to bring their visions to life through compelling visual storytelling and technical precision.</p>
+                    <button>About Me</button>
+                </div>
             </div>
-        </div>
 
-        <!-- Work Subsections -->
-        <div id="renders" class="subsection" data-section="renders">
-            <div class="section-content">
-                <h3>Architectural Renders</h3>
-                <p>Photorealistic architectural visualizations created using industry-leading rendering software. These projects showcase interior and exterior spaces with attention to lighting, materials, and environmental details.</p>
-                <p>Each render is meticulously crafted to convey the design intent while creating an emotional connection with the viewer.</p>
-                <button>View Projects</button>
+            <!-- Work Section -->
+            <div id="work" class="section" data-section="work">
+                <div class="section-content">
+                    <h2>My Work</h2>
+                    <p>Below you'll find samples of my professional work across different disciplines. Each category demonstrates my expertise in specific areas of visual and technical design.</p>
+                    <p>Scroll down to explore each category and see examples of my projects.</p>
+                </div>
             </div>
-        </div>
 
-        <div id="3d" class="subsection" data-section="3d">
-            <div class="section-content">
-                <h3>3D Modeling</h3>
-                <p>Detailed 3D models created for various applications including product design, architectural visualization, and digital assets. My modeling work emphasizes accuracy, optimized geometry, and attention to detail.</p>
-                <p>I work with multiple modeling platforms to create assets that meet both technical and aesthetic requirements.</p>
-                <button>View Projects</button>
+            <!-- Work Subsections -->
+            <div id="renders" class="subsection" data-section="renders">
+                <div class="section-content">
+                    <h3>Architectural Renders</h3>
+                    <p>Photorealistic architectural visualizations created using industry-leading rendering software. These projects showcase interior and exterior spaces with attention to lighting, materials, and environmental details.</p>
+                    <p>Each render is meticulously crafted to convey the design intent while creating an emotional connection with the viewer.</p>
+                    <button>View Projects</button>
+                </div>
             </div>
-        </div>
 
-        <div id="drafting" class="subsection" data-section="drafting">
-            <div class="section-content">
-                <h3>Technical Drafting</h3>
-                <p>Precise technical drawings and documentation for architectural and engineering applications. My drafting work follows industry standards and best practices to ensure accuracy and clarity.</p>
-                <p>From construction documents to detailed drawings, I provide comprehensive technical documentation for projects of all scales.</p>
-                <button>View Projects</button>
+            <div id="3d" class="subsection" data-section="3d">
+                <div class="section-content">
+                    <h3>3D Modeling</h3>
+                    <p>Detailed 3D models created for various applications including product design, architectural visualization, and digital assets. My modeling work emphasizes accuracy, optimized geometry, and attention to detail.</p>
+                    <p>I work with multiple modeling platforms to create assets that meet both technical and aesthetic requirements.</p>
+                    <button>View Projects</button>
+                </div>
             </div>
-        </div>
 
-        <div id="video" class="subsection" data-section="video">
-            <div class="section-content">
-                <h3>Video Editing</h3>
-                <p>Professional video editing services for architectural walkthroughs, product presentations, and promotional content. My video work combines technical precision with narrative storytelling.</p>
-                <p>I specialize in creating compelling visual narratives that effectively communicate design concepts and project features.</p>
-                <button>View Projects</button>
+            <div id="drafting" class="subsection" data-section="drafting">
+                <div class="section-content">
+                    <h3>Technical Drafting</h3>
+                    <p>Precise technical drawings and documentation for architectural and engineering applications. My drafting work follows industry standards and best practices to ensure accuracy and clarity.</p>
+                    <p>From construction documents to detailed drawings, I provide comprehensive technical documentation for projects of all scales.</p>
+                    <button>View Projects</button>
+                </div>
             </div>
-        </div>
 
-        <div id="gis" class="subsection" data-section="gis">
-            <div class="section-content">
-                <h3>GIS Mapping</h3>
-                <p>Geographic Information System (GIS) mapping and analysis for urban planning, environmental studies, and spatial data visualization. My GIS work provides clear insights into complex spatial relationships.</p>
-                <p>I create custom maps and spatial analyses that support informed decision-making and effective communication of geographic data.</p>
-                <button>View Projects</button>
+            <div id="video" class="subsection" data-section="video">
+                <div class="section-content">
+                    <h3>Video Editing</h3>
+                    <p>Professional video editing services for architectural walkthroughs, product presentations, and promotional content. My video work combines technical precision with narrative storytelling.</p>
+                    <p>I specialize in creating compelling visual narratives that effectively communicate design concepts and project features.</p>
+                    <button>View Projects</button>
+                </div>
             </div>
-        </div>
 
-        <!-- Contact Section -->
-        <div id="contact" class="section" data-section="contact">
-            <div class="section-content">
-                <h2>Contact Me</h2>
-                <p>Interested in working together? I'm currently available for freelance projects and consulting opportunities. Get in touch to discuss how I can help bring your vision to life.</p>
-                <p>Email: contact@example.com<br>Phone: (123) 456-7890</p>
-                <button>Send Message</button>
+            <div id="gis" class="subsection" data-section="gis">
+                <div class="section-content">
+                    <h3>GIS Mapping</h3>
+                    <p>Geographic Information System (GIS) mapping and analysis for urban planning, environmental studies, and spatial data visualization. My GIS work provides clear insights into complex spatial relationships.</p>
+                    <p>I create custom maps and spatial analyses that support informed decision-making and effective communication of geographic data.</p>
+                    <button>View Projects</button>
+                </div>
+            </div>
+
+            <!-- Contact Section -->
+            <div id="contact" class="section" data-section="contact">
+                <div class="section-content">
+                    <h2>Contact Me</h2>
+                    <p>Interested in working together? I'm currently available for freelance projects and consulting opportunities. Get in touch to discuss how I can help bring your vision to life.</p>
+                    <p>Email: contact@example.com<br>Phone: (123) 456-7890</p>
+                    <button>Send Message</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const mainSections = document.querySelectorAll('.section');
-            const subSections = document.querySelectorAll('.subsection');
+            const sections = document.querySelectorAll('.section, .subsection');
             const images = document.querySelectorAll('.image');
+            const scrollableHalf = document.querySelector('.scrollable-half');
             
             // Function to check which section is in view
-            function checkSections() {
-                const scrollPosition = window.scrollY;
-                const windowHeight = window.innerHeight;
+            function checkVisibleSection() {
+                const scrollTop = scrollableHalf.scrollTop;
+                const viewportHeight = scrollableHalf.clientHeight;
                 
-                // Check main sections and subsections
-                const allSections = [...mainSections, ...subSections];
+                // Find which section is currently most visible
+                let mostVisibleSection = null;
+                let maxVisibleAmount = 0;
                 
-                allSections.forEach((section) => {
-                    const sectionTop = section.getBoundingClientRect().top + scrollPosition;
-                    const sectionHeight = section.offsetHeight;
-                    const sectionId = section.getAttribute('data-section');
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    const sectionTop = rect.top + scrollableHalf.scrollTop - scrollableHalf.getBoundingClientRect().top;
+                    const sectionBottom = sectionTop + rect.height;
                     
-                    // Calculate when section is in view (when it's about 40% into the viewport)
-                    if (
-                        (scrollPosition + windowHeight * 0.4) >= sectionTop && 
-                        scrollPosition < (sectionTop + sectionHeight)
-                    ) {
-                        // Update active image
-                        images.forEach((image) => {
-                            if (image.dataset.section === sectionId) {
-                                image.classList.add('active');
-                            } else {
-                                image.classList.remove('active');
-                            }
-                        });
+                    // Calculate how much of the section is visible
+                    const visibleTop = Math.max(scrollTop, sectionTop);
+                    const visibleBottom = Math.min(scrollTop + viewportHeight, sectionBottom);
+                    const visibleAmount = Math.max(0, visibleBottom - visibleTop);
+                    
+                    if (visibleAmount > maxVisibleAmount) {
+                        maxVisibleAmount = visibleAmount;
+                        mostVisibleSection = section;
                     }
                 });
+                
+                // Update active image based on most visible section
+                if (mostVisibleSection) {
+                    const sectionId = mostVisibleSection.getAttribute('data-section');
+                    
+                    images.forEach(image => {
+                        if (image.getAttribute('data-section') === sectionId) {
+                            image.classList.add('active');
+                        } else {
+                            image.classList.remove('active');
+                        }
+                    });
+                }
             }
             
             // Initial check
-            setTimeout(checkSections, 100);
+            setTimeout(checkVisibleSection, 100);
             
-            // Check sections on scroll
-            window.addEventListener('scroll', checkSections);
+            // Listen for scroll events on the scrollable container, not window
+            scrollableHalf.addEventListener('scroll', checkVisibleSection);
             
-            // Handle orientation changes and resize
-            window.addEventListener('resize', function() {
-                setTimeout(checkSections, 100);
-            });
-            
+            // Handle resize and orientation changes
+            window.addEventListener('resize', checkVisibleSection);
             window.addEventListener('orientationchange', function() {
-                setTimeout(checkSections, 100);
+                setTimeout(checkVisibleSection, 200);
             });
             
-            // Prevent any layout shifts
-            document.addEventListener('touchmove', function(e) {
-                checkSections();
-            });
-            
-            // Smooth scroll for navigation links
+            // Handle navigation clicks
             document.querySelectorAll('.nav-links a').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
                     
-                    window.scrollTo({
-                        top: targetElement.offsetTop,
-                        behavior: 'smooth'
-                    });
+                    if (targetElement) {
+                        scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
                 });
             });
         });
