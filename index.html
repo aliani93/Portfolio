@@ -42,6 +42,7 @@
         .nav-links {
             display: flex;
             gap: 20px;
+            align-items: center;
         }
 
         .nav-links a {
@@ -49,7 +50,61 @@
             text-decoration: none;
         }
 
-        /* Main container structure - this is the key change */
+        /* Dropdown styles */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown > a {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .dropdown-arrow {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 10px;
+            transition: transform 0.3s;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            min-width: 150px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            margin-top: 10px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-arrow.rotate {
+            transform: rotate(180deg);
+        }
+
+        /* Main container structure */
         #app-container {
             width: 100%;
             height: 100vh;
@@ -190,6 +245,13 @@
             p {
                 font-size: 16px;
             }
+            
+            .dropdown-content {
+                position: absolute;
+                left: 0;
+                transform: none;
+                width: 200px;
+            }
         }
     </style>
 </head>
@@ -199,7 +261,16 @@
         <div class="logo">PORTFOLIO</div>
         <div class="nav-links">
             <a href="#home">Home</a>
-            <a href="#work">Work</a>
+            <div class="dropdown">
+                <a href="#work" class="dropdown-trigger">Work <span class="dropdown-arrow">▼</span></a>
+                <div class="dropdown-content">
+                    <a href="#renders">Renders</a>
+                    <a href="#3d">3D Modeling</a>
+                    <a href="#drafting">Drafting</a>
+                    <a href="#video">Video Editing</a>
+                    <a href="#gis">GIS</a>
+                </div>
+            </div>
             <a href="#contact">Contact</a>
         </div>
     </div>
@@ -229,7 +300,7 @@
             <div id="home" class="section" data-section="home">
                 <div class="section-content">
                     <h2>Welcome</h2>
-                    <p>Hi there, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting and GIS mapping.</p>
+                    <p>Hey there, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting and GIS mapping.</p>
                     <p>With over 10 years of experience, I've worked with clients across multiple industries to bring their visions to life through compelling visual storytelling and technical precision.</p>
                     <button>About Me</button>
                 </div>
@@ -307,6 +378,26 @@
             const sections = document.querySelectorAll('.section, .subsection');
             const images = document.querySelectorAll('.image');
             const scrollableHalf = document.querySelector('.scrollable-half');
+            const dropdownTrigger = document.querySelector('.dropdown-trigger');
+            const dropdownContent = document.querySelector('.dropdown-content');
+            const dropdownArrow = document.querySelector('.dropdown-arrow');
+            
+            // Dropdown functionality
+            dropdownTrigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdownContent.classList.toggle('show');
+                dropdownArrow.classList.toggle('rotate');
+            });
+            
+            // Close dropdown when clicking outside
+            window.addEventListener('click', function(e) {
+                if (!e.target.matches('.dropdown-trigger') && !e.target.matches('.dropdown-arrow')) {
+                    if (dropdownContent.classList.contains('show')) {
+                        dropdownContent.classList.remove('show');
+                        dropdownArrow.classList.remove('rotate');
+                    }
+                }
+            });
             
             // Function to check which section is in view
             function checkVisibleSection() {
@@ -359,15 +450,25 @@
                 setTimeout(checkVisibleSection, 200);
             });
             
-            // Handle navigation clicks
+            // Handle navigation clicks including dropdown links
             document.querySelectorAll('.nav-links a').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
+                    if (this.classList.contains('dropdown-trigger')) {
+                        // Let the dropdown trigger handle this
+                        return;
+                    }
+                    
                     e.preventDefault();
                     
                     const targetId = this.getAttribute('href').substring(1);
                     const targetElement = document.getElementById(targetId);
                     
                     if (targetElement) {
+                        // Close dropdown if it's open
+                        dropdownContent.classList.remove('show');
+                        dropdownArrow.classList.remove('rotate');
+                        
+                        // Scroll to target
                         scrollableHalf.scrollTo({
                             top: targetElement.offsetTop,
                             behavior: 'smooth'
