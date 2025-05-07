@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fixed Top Half with Image Transitions</title>
+    <title>Fixed Split Layout with Image Transitions</title>
     <style>
         * {
             margin: 0;
@@ -14,11 +14,14 @@
 
         body {
             overflow-x: hidden;
+            margin: 0;
+            padding: 0;
         }
 
         .navbar {
             position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
             height: 60px;
             background-color: rgba(0, 0, 0, 0.8);
@@ -45,25 +48,26 @@
             text-decoration: none;
         }
 
-        .container {
+        /* Portrait Mode (default) */
+        .main-container {
+            width: 100%;
+            padding-top: 60px; /* For navbar */
             display: flex;
             flex-direction: column;
-            width: 100%;
-            height: 100vh;
-            padding-top: 60px; /* Account for navbar height */
         }
 
         .top-half {
             position: fixed;
-            top: 60px; /* Account for navbar height */
-            height: 50vh;
+            top: 60px; /* Below navbar */
+            left: 0;
             width: 100%;
-            overflow: hidden;
+            height: 50vh; /* 50% of viewport height */
             z-index: 10;
+            overflow: hidden;
         }
 
         .bottom-half {
-            margin-top: 50vh; /* Push content below the fixed top half */
+            margin-top: calc(50vh + 60px); /* Top half height + navbar */
             width: 100%;
             z-index: 20;
             background-color: white;
@@ -92,11 +96,10 @@
 
         .section {
             min-height: 100vh;
+            padding: 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 40px;
-            position: relative;
         }
 
         .section-content {
@@ -126,28 +129,25 @@
             margin-top: 20px;
         }
 
-        /* Media query for landscape orientation */
-        @media (orientation: landscape) and (max-width: 1024px) {
-            .container {
+        /* Landscape Mode */
+        @media (orientation: landscape) {
+            .main-container {
                 flex-direction: row;
             }
 
             .top-half {
-                position: fixed;
-                top: 60px;
-                left: 0;
-                width: 50%;
-                height: calc(100vh - 60px);
+                width: 50%; /* 50% of viewport width */
+                height: calc(100vh - 60px); /* Full height minus navbar */
             }
 
             .bottom-half {
-                margin-top: 0;
-                margin-left: 50%;
+                margin-top: 60px; /* Just navbar height */
+                margin-left: 50%; /* Width of top half */
                 width: 50%;
             }
 
             .section {
-                min-height: calc(100vh - 60px);
+                min-height: calc(100vh - 60px); /* Full height minus navbar */
             }
         }
 
@@ -186,7 +186,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="main-container">
         <div class="top-half">
             <div class="image-container">
                 <img src="/api/placeholder/1200/800" alt="Image 1" class="image active" data-section="section1">
@@ -243,17 +243,18 @@
             // Function to check which section is in view
             function checkSections() {
                 const scrollPosition = window.scrollY;
+                const windowHeight = window.innerHeight;
                 
                 sections.forEach((section) => {
-                    const sectionTop = section.offsetTop;
+                    const sectionTop = section.getBoundingClientRect().top + scrollPosition;
                     const sectionHeight = section.offsetHeight;
                     const sectionId = section.id;
                     
                     // Calculate when section is in view
-                    // Adjust this threshold as needed for when image should change
-                    if (scrollPosition >= sectionTop - window.innerHeight / 2 && 
-                        scrollPosition < sectionTop + sectionHeight - window.innerHeight / 2) {
-                        
+                    if (
+                        (scrollPosition + windowHeight * 0.6) >= sectionTop && 
+                        scrollPosition < (sectionTop + sectionHeight)
+                    ) {
                         // Update active image
                         images.forEach((image) => {
                             if (image.dataset.section === sectionId) {
@@ -272,10 +273,9 @@
             // Check sections on scroll
             window.addEventListener('scroll', checkSections);
             
-            // Handle orientation changes
-            window.addEventListener('resize', function() {
-                checkSections();
-            });
+            // Handle orientation changes and resize
+            window.addEventListener('resize', checkSections);
+            window.addEventListener('orientationchange', checkSections);
             
             // Smooth scroll for navigation links
             document.querySelectorAll('.nav-links a').forEach(anchor => {
