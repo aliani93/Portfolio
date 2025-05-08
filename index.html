@@ -124,12 +124,37 @@
             overflow: hidden;
             background-color: #000;
         }
+        
+        /* Add gradient fade effect */
+        .image-half::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+            pointer-events: none;
+        }
 
         .scrollable-half {
             width: 100%;
             height: 70%;
             overflow-y: auto;
             background-color: white;
+        }
+        
+        /* Add gradient fade effect to top of content */
+        .scrollable-half::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(to top, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 100%);
+            z-index: 10;
+            pointer-events: none;
         }
 
         /* Landscape layout */
@@ -142,10 +167,30 @@
                 width: 50%;
                 height: calc(100vh - 60px);
             }
+            
+            /* Adjust gradient for landscape orientation - horizontal fade */
+            .image-half::after {
+                height: 100%;
+                width: 30px;
+                top: 0;
+                right: 0;
+                left: auto;
+                bottom: auto;
+                background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+            }
 
             .scrollable-half {
                 width: 50%;
                 height: calc(100vh - 60px);
+            }
+            
+            /* Adjust content fade gradient for landscape orientation */
+            .scrollable-half::before {
+                height: 100%;
+                width: 30px;
+                top: 0;
+                left: 0;
+                background: linear-gradient(to left, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 100%);
             }
         }
 
@@ -329,7 +374,7 @@
 <body>
     <!-- Fixed navbar -->
     <div class="navbar">
-        <div class="logo">PORTFOLIO - <h style="color:hsla(0, 0%, 70%);">ALIA</h>NI</div>
+        <div class="logo">ALIA<h style="color:hsla(0, 0%, 70%);">NI</h> PORTFOLIO</div>
         <div class="nav-links">
             <a href="#home">Home</a>
             <div class="dropdown">
