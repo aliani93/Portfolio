@@ -14,8 +14,6 @@
 
         body {
             overflow-x: hidden;
-            margin: 0;
-            padding: 0;
         }
 
         /* Navigation styles */
@@ -85,11 +83,8 @@
         }
 
         .dropdown-content a {
-            color: white;
             padding: 10px 15px;
-            text-decoration: none;
             display: block;
-            text-align: center;
             transition: background-color 0.3s;
         }
 
@@ -138,12 +133,7 @@
                 flex-direction: row;
             }
 
-            .image-half {
-                width: 50%;
-                height: calc(100vh - 60px);
-            }
-
-            .scrollable-half {
+            .image-half, .scrollable-half {
                 width: 50%;
                 height: calc(100vh - 60px);
             }
@@ -165,11 +155,8 @@
             object-fit: cover;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
-            user-select: none; /* Prevent selection */
-            -webkit-user-select: none; /* For Safari */
-            -moz-user-select: none; /* For Firefox */
-            -ms-user-select: none; /* For IE/Edge */
-            pointer-events: none; /* Prevents direct interaction with the image */
+            user-select: none;
+            pointer-events: none;
         }
 
         .image.active {
@@ -210,15 +197,7 @@
         }
 
         /* Content styling */
-        .section {
-            min-height: 100vh;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .subsection {
+        .section, .subsection {
             min-height: 100vh;
             padding: 40px;
             display: flex;
@@ -258,37 +237,18 @@
             margin-top: 20px;
         }
 
-        /* Mobile adjustments */
+        /* Media queries - combined for efficiency */
         @media (max-width: 768px) {
-            .navbar {
-                padding: 0 10px;
+            .navbar { padding: 0 10px; }
+            .logo { font-size: 20px; }
+            .nav-links { gap: 15px; }
+            .section, .subsection { 
+                padding: 30px 20px; 
+                min-height: 100%; 
             }
-
-            .logo {
-                font-size: 20px;
-            }
-            
-            .nav-links {
-                gap: 15px;
-            }
-
-            .section, .subsection {
-                padding: 30px 20px;
-                min-height: 100%;
-            }
-
-            h2 {
-                font-size: 28px;
-            }
-
-            h3 {
-                font-size: 22px;
-            }
-
-            p {
-                font-size: 16px;
-            }
-            
+            h2 { font-size: 28px; }
+            h3 { font-size: 22px; }
+            p { font-size: 16px; }
             .dropdown-content {
                 position: absolute;
                 left: 0;
@@ -297,28 +257,12 @@
             }
         }
         
-        /* Small phone adjustments */
         @media (max-width: 480px) {
-            .navbar {
-                padding: 0 8px;
-            }
-            
-            .logo {
-                font-size: 18px;
-            }
-            
-            .nav-links {
-                gap: 12px;
-            }
-            
-            .nav-links a, .dropdown > a {
-                font-size: 14px;
-            }
-            
-            .dropdown-content {
-                width: 180px;
-            }
-            
+            .navbar { padding: 0 8px; }
+            .logo { font-size: 18px; }
+            .nav-links { gap: 12px; }
+            .nav-links a, .dropdown > a { font-size: 14px; }
+            .dropdown-content { width: 180px; }
             .dropdown-content a {
                 padding: 10px;
                 text-align: left;
@@ -495,109 +439,98 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const sections = document.querySelectorAll('.section, .subsection');
-            const images = document.querySelectorAll('.image');
+            // Cache DOM elements for better performance
             const scrollableHalf = document.querySelector('.scrollable-half');
             const dropdownTrigger = document.querySelector('.dropdown-trigger');
             const dropdownContent = document.querySelector('.dropdown-content');
             const dropdownArrow = document.querySelector('.dropdown-arrow');
-            const projectButtons = document.querySelectorAll('.project-button');
-            const imageHalf = document.querySelector('.image-half');
+            const images = document.querySelectorAll('.image');
+            const sections = document.querySelectorAll('.section, .subsection');
             
-            // Keep track of the current section
+            // Initialize state variables
             let currentSection = null;
             let currentProject = null;
             let scrollTriggered = true;
+            let scrollTimeout;
             
-            // Image protection
-            // Prevent context menu (right-click)
-            document.addEventListener('contextmenu', function(e) {
+            // Image protection - consolidated event listeners
+            document.addEventListener('contextmenu', e => {
                 if (e.target.classList.contains('image') || e.target.closest('.image-half')) {
                     e.preventDefault();
-                    return false;
                 }
             });
             
-            // Prevent drag and drop
-            document.addEventListener('dragstart', function(e) {
-                if (e.target.classList.contains('image')) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            
-            // Prevent keyboard shortcuts to save images
-            document.addEventListener('keydown', function(e) {
-                // Check for Ctrl+S, Ctrl+U, F12, etc.
-                if ((e.ctrlKey && (e.key === 's' || e.key === 'S' || e.key === 'u' || e.key === 'U')) || 
+            document.addEventListener('keydown', e => {
+                // Block common keyboard shortcuts for saving/inspecting
+                if ((e.ctrlKey && ['s', 'S', 'u', 'U'].includes(e.key)) || 
                     e.key === 'F12' || 
-                    (e.ctrlKey && e.shiftKey && (e.key === 'i' || e.key === 'I'))) {
+                    (e.ctrlKey && e.shiftKey && ['i', 'I'].includes(e.key))) {
                     e.preventDefault();
-                    return false;
                 }
             });
             
-            // Hide the actual URL paths with a data attribute
-            images.forEach(img => {
-                const originalSrc = img.src;
-                img.removeAttribute('src');
-                img.setAttribute('data-src', originalSrc);
-                // Use a safer way to load the image
-                const observer = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const img = entry.target;
+            // Lazy load images using Intersection Observer
+            const imgObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        // Only set src if it doesn't already have one
+                        if (!img.src && img.hasAttribute('data-src')) {
                             img.src = img.getAttribute('data-src');
-                            observer.unobserve(img);
+                            img.removeAttribute('data-src');
                         }
-                    });
+                        observer.unobserve(img);
+                    }
                 });
-                observer.observe(img);
+            });
+            
+            // Set data-src attribute and observe each image
+            images.forEach(img => {
+                if (img.src) {
+                    const originalSrc = img.src;
+                    img.removeAttribute('src');
+                    img.setAttribute('data-src', originalSrc);
+                    imgObserver.observe(img);
+                }
             });
             
             // Dropdown functionality
-            dropdownTrigger.addEventListener('click', function(e) {
+            dropdownTrigger.addEventListener('click', e => {
                 e.preventDefault();
                 dropdownContent.classList.toggle('show');
                 dropdownArrow.classList.toggle('rotate');
             });
             
-            // Close dropdown when clicking outside
-            window.addEventListener('click', function(e) {
-                if (!e.target.matches('.dropdown-trigger') && !e.target.matches('.dropdown-arrow')) {
-                    if (dropdownContent.classList.contains('show')) {
-                        dropdownContent.classList.remove('show');
-                        dropdownArrow.classList.remove('rotate');
-                    }
+            // Close dropdown when clicking outside - improved for performance
+            document.addEventListener('click', e => {
+                if (!e.target.closest('.dropdown') && dropdownContent.classList.contains('show')) {
+                    dropdownContent.classList.remove('show');
+                    dropdownArrow.classList.remove('rotate');
                 }
             });
             
-            // Project button functionality
-            projectButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const projectId = this.getAttribute('data-project');
+            // Project button functionality - delegated event handler
+            document.addEventListener('click', e => {
+                if (e.target.classList.contains('project-button')) {
+                    const projectId = e.target.getAttribute('data-project');
                     
                     // Save current section before changing to project
                     if (currentSection && !currentProject) {
-                        // We're in a section view, remember it
                         scrollTriggered = false;
                     }
                     
-                    // Hide all images first
-                    images.forEach(img => {
-                        img.classList.remove('active');
-                    });
+                    // Update image display
+                    images.forEach(img => img.classList.remove('active'));
                     
-                    // Show the project image
                     const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
                     if (projectImage) {
                         projectImage.classList.add('active');
                         currentProject = projectId;
                     }
-                });
+                }
             });
             
-            // Function to check which section is in view
+            // Optimized function to check which section is in view
             function checkVisibleSection() {
                 // Skip if we're viewing a project and the scroll wasn't triggered by the user
                 if (currentProject && !scrollTriggered) {
@@ -610,6 +543,7 @@
                 
                 const scrollTop = scrollableHalf.scrollTop;
                 const viewportHeight = scrollableHalf.clientHeight;
+                const scrollHalfTop = scrollableHalf.getBoundingClientRect().top;
                 
                 // Find which section is currently most visible
                 let mostVisibleSection = null;
@@ -617,7 +551,7 @@
                 
                 sections.forEach(section => {
                     const rect = section.getBoundingClientRect();
-                    const sectionTop = rect.top + scrollableHalf.scrollTop - scrollableHalf.getBoundingClientRect().top;
+                    const sectionTop = rect.top + scrollTop - scrollHalfTop;
                     const sectionBottom = sectionTop + rect.height;
                     
                     // Calculate how much of the section is visible
@@ -634,48 +568,54 @@
                 // Update active image based on most visible section
                 if (mostVisibleSection) {
                     const sectionId = mostVisibleSection.getAttribute('data-section');
-                    currentSection = sectionId;
                     
-                    images.forEach(image => {
-                        if (image.getAttribute('data-section') === sectionId) {
-                            image.classList.add('active');
-                        } else {
-                            image.classList.remove('active');
+                    // Only update if section changed
+                    if (currentSection !== sectionId) {
+                        currentSection = sectionId;
+                        
+                        // Find the matching image and make it active
+                        const activeImage = document.querySelector(`.image[data-section="${sectionId}"]`);
+                        if (activeImage) {
+                            images.forEach(img => img.classList.remove('active'));
+                            activeImage.classList.add('active');
                         }
-                    });
+                    }
                 }
             }
             
-            // Initial check
-            setTimeout(checkVisibleSection, 100);
-            
-            // Listen for scroll events on the scrollable container
-            scrollableHalf.addEventListener('scroll', function() {
+            // Debounced scroll handler for better performance
+            scrollableHalf.addEventListener('scroll', () => {
                 scrollTriggered = true;
-                checkVisibleSection();
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(checkVisibleSection, 50);
             });
             
-            // Handle resize and orientation changes
-            window.addEventListener('resize', checkVisibleSection);
-            window.addEventListener('orientationchange', function() {
-                setTimeout(checkVisibleSection, 200);
+            // Handle resize and orientation changes - debounced
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(checkVisibleSection, 100);
             });
             
-            // Handle navigation clicks including dropdown links
+            window.addEventListener('orientationchange', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(checkVisibleSection, 200);
+            });
+            
+            // Navigation with improved handling
             document.querySelectorAll('.nav-links a').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    if (this.classList.contains('dropdown-trigger')) {
-                        // Let the dropdown trigger handle this
+                anchor.addEventListener('click', e => {
+                    if (anchor.classList.contains('dropdown-trigger')) {
                         return;
                     }
                     
                     e.preventDefault();
                     
-                    const targetId = this.getAttribute('href').substring(1);
+                    const targetId = anchor.getAttribute('href').substring(1);
                     const targetElement = document.getElementById(targetId);
                     
                     if (targetElement) {
-                        // Close dropdown if it's open
+                        // Close dropdown if open
                         dropdownContent.classList.remove('show');
                         dropdownArrow.classList.remove('rotate');
                         
@@ -690,6 +630,9 @@
                     }
                 });
             });
+            
+            // Initial check
+            setTimeout(checkVisibleSection, 100);
         });
     </script>
 </body>
