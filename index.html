@@ -166,8 +166,10 @@
             
             /* Reset portrait fade and add landscape fade */
             .image-half::after {
+                content: '';
                 width: 40px;
                 height: 100%;
+                top: 0;
                 bottom: auto;
                 right: 0;
                 left: auto;
@@ -175,10 +177,11 @@
             }
             
             .scrollable-half::before {
+                content: '';
                 width: 40px;
                 height: 100%;
-                left: 0;
                 top: 0;
+                left: 0;
                 background: linear-gradient(to left, rgba(255,255,255,0), white);
             }
         }
