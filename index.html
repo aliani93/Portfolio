@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aliani</title>
+    <title>Portfolio with Fixed Images</title>
     <style>
         * {
             margin: 0;
@@ -81,6 +81,7 @@
             margin-top: 10px;
             border-radius: 4px;
             overflow: hidden;
+            text-align: center;
         }
 
         .dropdown-content a {
@@ -228,6 +229,10 @@
             .logo {
                 font-size: 20px;
             }
+            
+            .nav-links {
+                gap: 15px;
+            }
 
             .section, .subsection {
                 padding: 30px 20px;
@@ -253,12 +258,40 @@
                 width: 200px;
             }
         }
+        
+        /* Small phone adjustments */
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 0 8px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .nav-links {
+                gap: 12px;
+            }
+            
+            .nav-links a, .dropdown > a {
+                font-size: 14px;
+            }
+            
+            .dropdown-content {
+                width: 180px;
+            }
+            
+            .dropdown-content a {
+                padding: 10px;
+                text-align: left;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Fixed navbar -->
     <div class="navbar">
-        <div class="logo">PORTFOLIO_<h style="color:grey;">ALIA</h>NI</div>
+        <div class="logo">PORTFOLIO</div>
         <div class="nav-links">
             <a href="#home">Home</a>
             <div class="dropdown">
@@ -281,16 +314,16 @@
         <div class="image-half">
             <div class="image-container">
                 <!-- Main sections -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/images/Background%20image.jpg" alt="Home" class="image active" data-section="home">
+                <img src="/api/placeholder/1200/800" alt="Home" class="image active" data-section="home">
                 <img src="/api/placeholder/1200/800" alt="Work" class="image" data-section="work">
                 <img src="/api/placeholder/1200/800" alt="Contact" class="image" data-section="contact">
                 
                 <!-- Work subsections -->
-                <img src="hhttps://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/images/202104__3%20-%20Inside-AP.jpg" alt="Renders" class="image" data-section="renders">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/images/WW_Deltin%20Waterpark_C04_C.jpg" alt="3D" class="image" data-section="3d">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/images/Scale%20Bar.jpg" alt="Drafting" class="image" data-section="drafting">
-                <img src="https://www.easygifanimator.net/images/samples/video-to-gif-sample.gif" alt="Video Editing" class="image" data-section="video">
-                <img src="https://i.gifer.com/embedded/download/13yY.gif" alt="GIS" class="image" data-section="gis">
+                <img src="/api/placeholder/1200/800" alt="Renders" class="image" data-section="renders">
+                <img src="/api/placeholder/1200/800" alt="3D" class="image" data-section="3d">
+                <img src="/api/placeholder/1200/800" alt="Drafting" class="image" data-section="drafting">
+                <img src="/api/placeholder/1200/800" alt="Video Editing" class="image" data-section="video">
+                <img src="/api/placeholder/1200/800" alt="GIS" class="image" data-section="gis">
             </div>
         </div>
 
@@ -299,8 +332,8 @@
             <!-- Home Section -->
             <div id="home" class="section" data-section="home">
                 <div class="section-content">
-                <h2>Alia<h style="color:grey;">sut</h>_Ni<h style="color:grey;">kko</h></h2
-                    <p>Hey there, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting and GIS mapping.</p>
+                    <h2>Welcome</h2>
+                    <p>Hi there, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting and GIS mapping.</p>
                     <p>With over 10 years of experience, I've worked with clients across multiple industries to bring their visions to life through compelling visual storytelling and technical precision.</p>
                     <button>About Me</button>
                 </div>
