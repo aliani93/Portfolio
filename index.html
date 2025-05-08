@@ -170,6 +170,28 @@
         .image.active {
             opacity: 1;
         }
+        
+        /* Project buttons container */
+        .project-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .project-button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .project-button:hover {
+            background-color: #555;
+        }
 
         /* Content styling */
         .section {
@@ -324,6 +346,32 @@
                 <img src="/api/placeholder/1200/800" alt="Drafting" class="image" data-section="drafting">
                 <img src="/api/placeholder/1200/800" alt="Video Editing" class="image" data-section="video">
                 <img src="/api/placeholder/1200/800" alt="GIS" class="image" data-section="gis">
+                
+                <!-- Project-specific images -->
+                <!-- Renders projects -->
+                <img src="/api/placeholder/1200/800?text=Renders+Project+1" alt="Renders Project 1" class="image" data-project="renders-1">
+                <img src="/api/placeholder/1200/800?text=Renders+Project+2" alt="Renders Project 2" class="image" data-project="renders-2">
+                <img src="/api/placeholder/1200/800?text=Renders+Project+3" alt="Renders Project 3" class="image" data-project="renders-3">
+                
+                <!-- 3D projects -->
+                <img src="/api/placeholder/1200/800?text=3D+Project+1" alt="3D Project 1" class="image" data-project="3d-1">
+                <img src="/api/placeholder/1200/800?text=3D+Project+2" alt="3D Project 2" class="image" data-project="3d-2">
+                <img src="/api/placeholder/1200/800?text=3D+Project+3" alt="3D Project 3" class="image" data-project="3d-3">
+                
+                <!-- Drafting projects -->
+                <img src="/api/placeholder/1200/800?text=Drafting+Project+1" alt="Drafting Project 1" class="image" data-project="drafting-1">
+                <img src="/api/placeholder/1200/800?text=Drafting+Project+2" alt="Drafting Project 2" class="image" data-project="drafting-2">
+                <img src="/api/placeholder/1200/800?text=Drafting+Project+3" alt="Drafting Project 3" class="image" data-project="drafting-3">
+                
+                <!-- Video projects -->
+                <img src="/api/placeholder/1200/800?text=Video+Project+1" alt="Video Project 1" class="image" data-project="video-1">
+                <img src="/api/placeholder/1200/800?text=Video+Project+2" alt="Video Project 2" class="image" data-project="video-2">
+                <img src="/api/placeholder/1200/800?text=Video+Project+3" alt="Video Project 3" class="image" data-project="video-3">
+                
+                <!-- GIS projects -->
+                <img src="/api/placeholder/1200/800?text=GIS+Project+1" alt="GIS Project 1" class="image" data-project="gis-1">
+                <img src="/api/placeholder/1200/800?text=GIS+Project+2" alt="GIS Project 2" class="image" data-project="gis-2">
+                <img src="/api/placeholder/1200/800?text=GIS+Project+3" alt="GIS Project 3" class="image" data-project="gis-3">
             </div>
         </div>
 
@@ -354,7 +402,11 @@
                     <h3>Architectural Renders</h3>
                     <p>Photorealistic architectural visualizations created using industry-leading rendering software. These projects showcase interior and exterior spaces with attention to lighting, materials, and environmental details.</p>
                     <p>Each render is meticulously crafted to convey the design intent while creating an emotional connection with the viewer.</p>
-                    <button>View Projects</button>
+                    <div class="project-buttons">
+                        <button class="project-button" data-project="renders-1">Project 1</button>
+                        <button class="project-button" data-project="renders-2">Project 2</button>
+                        <button class="project-button" data-project="renders-3">Project 3</button>
+                    </div>
                 </div>
             </div>
 
@@ -363,7 +415,11 @@
                     <h3>3D Modeling</h3>
                     <p>Detailed 3D models created for various applications including product design, architectural visualization, and digital assets. My modeling work emphasizes accuracy, optimized geometry, and attention to detail.</p>
                     <p>I work with multiple modeling platforms to create assets that meet both technical and aesthetic requirements.</p>
-                    <button>View Projects</button>
+                    <div class="project-buttons">
+                        <button class="project-button" data-project="3d-1">Project 1</button>
+                        <button class="project-button" data-project="3d-2">Project 2</button>
+                        <button class="project-button" data-project="3d-3">Project 3</button>
+                    </div>
                 </div>
             </div>
 
@@ -372,7 +428,11 @@
                     <h3>Technical Drafting</h3>
                     <p>Precise technical drawings and documentation for architectural and engineering applications. My drafting work follows industry standards and best practices to ensure accuracy and clarity.</p>
                     <p>From construction documents to detailed drawings, I provide comprehensive technical documentation for projects of all scales.</p>
-                    <button>View Projects</button>
+                    <div class="project-buttons">
+                        <button class="project-button" data-project="drafting-1">Project 1</button>
+                        <button class="project-button" data-project="drafting-2">Project 2</button>
+                        <button class="project-button" data-project="drafting-3">Project 3</button>
+                    </div>
                 </div>
             </div>
 
@@ -381,7 +441,11 @@
                     <h3>Video Editing</h3>
                     <p>Professional video editing services for architectural walkthroughs, product presentations, and promotional content. My video work combines technical precision with narrative storytelling.</p>
                     <p>I specialize in creating compelling visual narratives that effectively communicate design concepts and project features.</p>
-                    <button>View Projects</button>
+                    <div class="project-buttons">
+                        <button class="project-button" data-project="video-1">Project 1</button>
+                        <button class="project-button" data-project="video-2">Project 2</button>
+                        <button class="project-button" data-project="video-3">Project 3</button>
+                    </div>
                 </div>
             </div>
 
@@ -390,7 +454,11 @@
                     <h3>GIS Mapping</h3>
                     <p>Geographic Information System (GIS) mapping and analysis for urban planning, environmental studies, and spatial data visualization. My GIS work provides clear insights into complex spatial relationships.</p>
                     <p>I create custom maps and spatial analyses that support informed decision-making and effective communication of geographic data.</p>
-                    <button>View Projects</button>
+                    <div class="project-buttons">
+                        <button class="project-button" data-project="gis-1">Project 1</button>
+                        <button class="project-button" data-project="gis-2">Project 2</button>
+                        <button class="project-button" data-project="gis-3">Project 3</button>
+                    </div>
                 </div>
             </div>
 
@@ -414,6 +482,12 @@
             const dropdownTrigger = document.querySelector('.dropdown-trigger');
             const dropdownContent = document.querySelector('.dropdown-content');
             const dropdownArrow = document.querySelector('.dropdown-arrow');
+            const projectButtons = document.querySelectorAll('.project-button');
+            
+            // Keep track of the current section
+            let currentSection = null;
+            let currentProject = null;
+            let scrollTriggered = true;
             
             // Dropdown functionality
             dropdownTrigger.addEventListener('click', function(e) {
@@ -432,8 +506,42 @@
                 }
             });
             
+            // Project button functionality
+            projectButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const projectId = this.getAttribute('data-project');
+                    
+                    // Save current section before changing to project
+                    if (currentSection && !currentProject) {
+                        // We're in a section view, remember it
+                        scrollTriggered = false;
+                    }
+                    
+                    // Hide all images first
+                    images.forEach(img => {
+                        img.classList.remove('active');
+                    });
+                    
+                    // Show the project image
+                    const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
+                    if (projectImage) {
+                        projectImage.classList.add('active');
+                        currentProject = projectId;
+                    }
+                });
+            });
+            
             // Function to check which section is in view
             function checkVisibleSection() {
+                // Skip if we're viewing a project and the scroll wasn't triggered by the user
+                if (currentProject && !scrollTriggered) {
+                    scrollTriggered = true;
+                    return;
+                }
+                
+                // Reset project view when scrolling
+                currentProject = null;
+                
                 const scrollTop = scrollableHalf.scrollTop;
                 const viewportHeight = scrollableHalf.clientHeight;
                 
@@ -460,6 +568,7 @@
                 // Update active image based on most visible section
                 if (mostVisibleSection) {
                     const sectionId = mostVisibleSection.getAttribute('data-section');
+                    currentSection = sectionId;
                     
                     images.forEach(image => {
                         if (image.getAttribute('data-section') === sectionId) {
@@ -474,8 +583,11 @@
             // Initial check
             setTimeout(checkVisibleSection, 100);
             
-            // Listen for scroll events on the scrollable container, not window
-            scrollableHalf.addEventListener('scroll', checkVisibleSection);
+            // Listen for scroll events on the scrollable container
+            scrollableHalf.addEventListener('scroll', function() {
+                scrollTriggered = true;
+                checkVisibleSection();
+            });
             
             // Handle resize and orientation changes
             window.addEventListener('resize', checkVisibleSection);
@@ -500,6 +612,9 @@
                         // Close dropdown if it's open
                         dropdownContent.classList.remove('show');
                         dropdownArrow.classList.remove('rotate');
+                        
+                        // Reset project view
+                        currentProject = null;
                         
                         // Scroll to target
                         scrollableHalf.scrollTo({
