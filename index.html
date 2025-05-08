@@ -12,42 +12,10 @@
             font-family: 'Arial', sans-serif;
         }
 
-        :root {
-            --bg-color: white;
-            --text-color: #333;
-            --navbar-bg: rgba(0, 0, 0, 0.8);
-            --navbar-text: white;
-            --button-bg: #333;
-            --button-text: white;
-            --button-hover: #555;
-            --dropdown-bg: rgba(0, 0, 0, 0.8);
-            --dropdown-hover: rgba(255, 255, 255, 0.1);
-            --fade-light: rgba(255, 255, 255, 0);
-            --fade-dark: rgba(255, 255, 255, 0.7);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #121212;
-                --text-color: #e0e0e0;
-                --navbar-bg: rgba(25, 25, 25, 0.9);
-                --navbar-text: #e0e0e0;
-                --button-bg: #333;
-                --button-text: #e0e0e0;
-                --button-hover: #555;
-                --dropdown-bg: rgba(25, 25, 25, 0.9);
-                --dropdown-hover: rgba(255, 255, 255, 0.1);
-                --fade-light: rgba(18, 18, 18, 0);
-                --fade-dark: rgba(18, 18, 18, 0.7);
-            }
-        }
-
         body {
             overflow-x: hidden;
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
         }
 
         /* Navigation styles */
@@ -57,13 +25,13 @@
             left: 0;
             width: 100%;
             height: 60px;
-            background-color: var(--navbar-bg);
+            background-color: rgba(0, 0, 0, 0.8);
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 20px;
             z-index: 1000;
-            color: var(--navbar-text);
+            color: white;
         }
 
         .logo {
@@ -78,7 +46,7 @@
         }
 
         .nav-links a {
-            color: var(--navbar-text);
+            color: white;
             text-decoration: none;
         }
 
@@ -106,7 +74,7 @@
             top: 100%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: var(--dropdown-bg);
+            background-color: rgba(0, 0, 0, 0.8);
             min-width: 150px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             z-index: 1001;
@@ -117,7 +85,7 @@
         }
 
         .dropdown-content a {
-            color: var(--navbar-text);
+            color: white;
             padding: 10px 15px;
             text-decoration: none;
             display: block;
@@ -126,7 +94,7 @@
         }
 
         .dropdown-content a:hover {
-            background-color: var(--dropdown-hover);
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .dropdown-content.show {
@@ -156,37 +124,12 @@
             overflow: hidden;
             background-color: #000;
         }
-        
-        /* Add gradient fade effect - Now to the TOP instead of bottom */
-        .image-half::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 30px;
-            background: linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
-            pointer-events: none;
-        }
 
         .scrollable-half {
             width: 100%;
             height: 70%;
             overflow-y: auto;
-            background-color: var(--bg-color);
-        }
-        
-        /* Add gradient fade effect to bottom of content instead of top */
-        .scrollable-half::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 30px;
-            background: linear-gradient(to bottom, var(--fade-light) 0%, var(--fade-dark) 100%);
-            z-index: 10;
-            pointer-events: none;
+            background-color: white;
         }
 
         /* Landscape layout */
@@ -199,31 +142,10 @@
                 width: 50%;
                 height: calc(100vh - 60px);
             }
-            
-            /* Adjust gradient for landscape orientation - left fade instead of right */
-            .image-half::after {
-                height: 100%;
-                width: 30px;
-                top: 0;
-                left: 0;
-                right: auto;
-                bottom: auto;
-                background: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
-            }
 
             .scrollable-half {
                 width: 50%;
                 height: calc(100vh - 60px);
-            }
-            
-            /* Adjust content fade gradient for landscape orientation - right side instead of left */
-            .scrollable-half::before {
-                height: 100%;
-                width: 30px;
-                top: 0;
-                right: 0;
-                left: auto;
-                background: linear-gradient(to right, var(--fade-light) 0%, var(--fade-dark) 100%);
             }
         }
 
@@ -274,8 +196,8 @@
 
         .project-button {
             padding: 10px 20px;
-            background-color: var(--button-bg);
-            color: var(--button-text);
+            background-color: #333;
+            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -284,7 +206,7 @@
         }
 
         .project-button:hover {
-            background-color: var(--button-hover);
+            background-color: #555;
         }
 
         /* Content styling */
@@ -312,56 +234,28 @@
         h2 {
             font-size: 32px;
             margin-bottom: 20px;
-            color: var(--text-color);
         }
 
         h3 {
             font-size: 24px;
             margin-bottom: 15px;
-            color: var(--text-color);
         }
 
         p {
             font-size: 18px;
             line-height: 1.6;
             margin-bottom: 20px;
-            color: var(--text-color);
         }
 
         button {
             padding: 12px 24px;
-            background-color: var(--button-bg);
-            color: var(--button-text);
+            background-color: #333;
+            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
             margin-top: 20px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: var(--button-hover);
-        }
-
-        /* Mode toggle button */
-        .mode-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--button-bg);
-            color: var(--button-text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 2000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            font-size: 20px;
-            border: none;
         }
 
         /* Mobile adjustments */
@@ -429,21 +323,13 @@
                 padding: 10px;
                 text-align: left;
             }
-
-            .mode-toggle {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-                bottom: 15px;
-                right: 15px;
-            }
         }
     </style>
 </head>
 <body>
     <!-- Fixed navbar -->
     <div class="navbar">
-        <div class="logo">ALIA<h style="color:hsla(0, 0%, 70%);">NI</h> PORTFOLIO</div>
+        <div class="logo">PORTFOLIO - <h style="color:hsla(0, 0%, 70%);">ALIA</h>NI</div>
         <div class="nav-links">
             <a href="#home">Home</a>
             <div class="dropdown">
@@ -607,11 +493,6 @@
         </div>
     </div>
 
-    <!-- Dark/Light mode toggle button -->
-    <button class="mode-toggle" id="mode-toggle" title="Toggle dark/light mode">
-        🌓
-    </button>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const sections = document.querySelectorAll('.section, .subsection');
@@ -622,45 +503,11 @@
             const dropdownArrow = document.querySelector('.dropdown-arrow');
             const projectButtons = document.querySelectorAll('.project-button');
             const imageHalf = document.querySelector('.image-half');
-            const modeToggle = document.getElementById('mode-toggle');
             
             // Keep track of the current section
             let currentSection = null;
             let currentProject = null;
             let scrollTriggered = true;
-            
-            // Dark mode toggle
-            let isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            // Manual dark mode toggle
-            modeToggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-mode');
-                isDarkMode = !isDarkMode;
-                
-                // Apply dark mode class to body for additional styling if needed
-                if (isDarkMode) {
-                    document.documentElement.style.setProperty('--bg-color', '#121212');
-                    document.documentElement.style.setProperty('--text-color', '#e0e0e0');
-                    document.documentElement.style.setProperty('--navbar-bg', 'rgba(25, 25, 25, 0.9)');
-                    document.documentElement.style.setProperty('--fade-light', 'rgba(18, 18, 18, 0)');
-                    document.documentElement.style.setProperty('--fade-dark', 'rgba(18, 18, 18, 0.7)');
-                } else {
-                    document.documentElement.style.setProperty('--bg-color', 'white');
-                    document.documentElement.style.setProperty('--text-color', '#333');
-                    document.documentElement.style.setProperty('--navbar-bg', 'rgba(0, 0, 0, 0.8)');
-                    document.documentElement.style.setProperty('--fade-light', 'rgba(255, 255, 255, 0)');
-                    document.documentElement.style.setProperty('--fade-dark', 'rgba(255, 255, 255, 0.7)');
-                }
-            });
-            
-            // Watch for system preference changes
-            if (window.matchMedia) {
-                const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-                colorSchemeQuery.addEventListener('change', (e) => {
-                    isDarkMode = e.matches;
-                    // No need to manually update here as CSS handles this with media query
-                });
-            }
             
             // Image protection
             // Prevent context menu (right-click)
@@ -730,4 +577,120 @@
                 button.addEventListener('click', function() {
                     const projectId = this.getAttribute('data-project');
                     
-                    // Save current section before changing to
+                    // Save current section before changing to project
+                    if (currentSection && !currentProject) {
+                        // We're in a section view, remember it
+                        scrollTriggered = false;
+                    }
+                    
+                    // Hide all images first
+                    images.forEach(img => {
+                        img.classList.remove('active');
+                    });
+                    
+                    // Show the project image
+                    const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
+                    if (projectImage) {
+                        projectImage.classList.add('active');
+                        currentProject = projectId;
+                    }
+                });
+            });
+            
+            // Function to check which section is in view
+            function checkVisibleSection() {
+                // Skip if we're viewing a project and the scroll wasn't triggered by the user
+                if (currentProject && !scrollTriggered) {
+                    scrollTriggered = true;
+                    return;
+                }
+                
+                // Reset project view when scrolling
+                currentProject = null;
+                
+                const scrollTop = scrollableHalf.scrollTop;
+                const viewportHeight = scrollableHalf.clientHeight;
+                
+                // Find which section is currently most visible
+                let mostVisibleSection = null;
+                let maxVisibleAmount = 0;
+                
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    const sectionTop = rect.top + scrollableHalf.scrollTop - scrollableHalf.getBoundingClientRect().top;
+                    const sectionBottom = sectionTop + rect.height;
+                    
+                    // Calculate how much of the section is visible
+                    const visibleTop = Math.max(scrollTop, sectionTop);
+                    const visibleBottom = Math.min(scrollTop + viewportHeight, sectionBottom);
+                    const visibleAmount = Math.max(0, visibleBottom - visibleTop);
+                    
+                    if (visibleAmount > maxVisibleAmount) {
+                        maxVisibleAmount = visibleAmount;
+                        mostVisibleSection = section;
+                    }
+                });
+                
+                // Update active image based on most visible section
+                if (mostVisibleSection) {
+                    const sectionId = mostVisibleSection.getAttribute('data-section');
+                    currentSection = sectionId;
+                    
+                    images.forEach(image => {
+                        if (image.getAttribute('data-section') === sectionId) {
+                            image.classList.add('active');
+                        } else {
+                            image.classList.remove('active');
+                        }
+                    });
+                }
+            }
+            
+            // Initial check
+            setTimeout(checkVisibleSection, 100);
+            
+            // Listen for scroll events on the scrollable container
+            scrollableHalf.addEventListener('scroll', function() {
+                scrollTriggered = true;
+                checkVisibleSection();
+            });
+            
+            // Handle resize and orientation changes
+            window.addEventListener('resize', checkVisibleSection);
+            window.addEventListener('orientationchange', function() {
+                setTimeout(checkVisibleSection, 200);
+            });
+            
+            // Handle navigation clicks including dropdown links
+            document.querySelectorAll('.nav-links a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    if (this.classList.contains('dropdown-trigger')) {
+                        // Let the dropdown trigger handle this
+                        return;
+                    }
+                    
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Close dropdown if it's open
+                        dropdownContent.classList.remove('show');
+                        dropdownArrow.classList.remove('rotate');
+                        
+                        // Reset project view
+                        currentProject = null;
+                        
+                        // Scroll to target
+                        scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
