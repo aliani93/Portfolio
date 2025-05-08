@@ -165,10 +165,26 @@
             object-fit: cover;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
+            user-select: none; /* Prevent selection */
+            -webkit-user-select: none; /* For Safari */
+            -moz-user-select: none; /* For Firefox */
+            -ms-user-select: none; /* For IE/Edge */
+            pointer-events: none; /* Prevents direct interaction with the image */
         }
 
         .image.active {
             opacity: 1;
+        }
+        
+        /* Overlay to capture mouse events */
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            cursor: default;
         }
         
         /* Project buttons container */
@@ -313,7 +329,7 @@
 <body>
     <!-- Fixed navbar -->
     <div class="navbar">
-        <div class="logo">ALIA<h style="color:hsla(0, 0%, 70%);">NI</h> PORTFOLIO</div>
+        <div class="logo">PORTFOLIO - <h style="color:hsla(0, 0%, 70%);">ALIA</h>NI</div>
         <div class="nav-links">
             <a href="#home">Home</a>
             <div class="dropdown">
@@ -336,42 +352,45 @@
         <div class="image-half">
             <div class="image-container">
                 <!-- Main sections -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Home" class="image active" data-section="home">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="Work" class="image" data-section="work">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(3).jpg" alt="Contact" class="image" data-section="contact">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Home" class="image active" data-section="home" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="Work" class="image" data-section="work" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(3).jpg" alt="Contact" class="image" data-section="contact" draggable="false">
                 
                 <!-- Work subsections -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg" alt="Renders" class="image" data-section="renders">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D" class="image" data-section="3d">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(1).jpg" alt="Drafting" class="image" data-section="drafting">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(1).jpg" alt="Video Editing" class="image" data-section="video">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS.jpg" alt="GIS" class="image" data-section="gis">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg" alt="Renders" class="image" data-section="renders" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D" class="image" data-section="3d" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(1).jpg" alt="Drafting" class="image" data-section="drafting" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(1).jpg" alt="Video Editing" class="image" data-section="video" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS.jpg" alt="GIS" class="image" data-section="gis" draggable="false">
                 
                 <!-- Project-specific images -->
                 <!-- Renders projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(2).jpg" alt="Renders Project 1" class="image" data-project="renders-1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(3).jpg" alt="Renders Project 2" class="image" data-project="renders-2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg" alt="Renders Project 3" class="image" data-project="renders-3">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(2).jpg" alt="Renders Project 1" class="image" data-project="renders-1" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(3).jpg" alt="Renders Project 2" class="image" data-project="renders-2" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg" alt="Renders Project 3" class="image" data-project="renders-3" draggable="false">
                 
                 <!-- 3D projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 1" class="image" data-project="3d-1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 2" class="image" data-project="3d-2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 3" class="image" data-project="3d-3">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 1" class="image" data-project="3d-1" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 2" class="image" data-project="3d-2" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 3" class="image" data-project="3d-3" draggable="false">
                 
                 <!-- Drafting projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(2).jpg" alt="Drafting Project 1" class="image" data-project="drafting-1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(3).jpg" alt="Drafting Project 2" class="image" data-project="drafting-2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(4).jpg" alt="Drafting Project 3" class="image" data-project="drafting-3">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(2).jpg" alt="Drafting Project 1" class="image" data-project="drafting-1" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(3).jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(4).jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" draggable="false">
                 
                 <!-- Video projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(2).jpg" alt="Video Project 1" class="image" data-project="video-1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(3).jpg" alt="Video Project 2" class="image" data-project="video-2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(4).jpg" alt="Video Project 3" class="image" data-project="video-3">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(2).jpg" alt="Video Project 1" class="image" data-project="video-1" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(3).jpg" alt="Video Project 2" class="image" data-project="video-2" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(4).jpg" alt="Video Project 3" class="image" data-project="video-3" draggable="false">
                 
                 <!-- GIS projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_1.jpg" alt="GIS Project 1" class="image" data-project="gis-1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_2.jpg" alt="GIS Project 2" class="image" data-project="gis-2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_3.png" alt="GIS Project 3" class="image" data-project="gis-3">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_1.jpg" alt="GIS Project 1" class="image" data-project="gis-1" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_2.jpg" alt="GIS Project 2" class="image" data-project="gis-2" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_3.png" alt="GIS Project 3" class="image" data-project="gis-3" draggable="false">
+                
+                <!-- Add overlay to capture mouse events -->
+                <div class="image-overlay"></div>
             </div>
         </div>
 
@@ -483,11 +502,58 @@
             const dropdownContent = document.querySelector('.dropdown-content');
             const dropdownArrow = document.querySelector('.dropdown-arrow');
             const projectButtons = document.querySelectorAll('.project-button');
+            const imageHalf = document.querySelector('.image-half');
             
             // Keep track of the current section
             let currentSection = null;
             let currentProject = null;
             let scrollTriggered = true;
+            
+            // Image protection
+            // Prevent context menu (right-click)
+            document.addEventListener('contextmenu', function(e) {
+                if (e.target.classList.contains('image') || e.target.closest('.image-half')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Prevent drag and drop
+            document.addEventListener('dragstart', function(e) {
+                if (e.target.classList.contains('image')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Prevent keyboard shortcuts to save images
+            document.addEventListener('keydown', function(e) {
+                // Check for Ctrl+S, Ctrl+U, F12, etc.
+                if ((e.ctrlKey && (e.key === 's' || e.key === 'S' || e.key === 'u' || e.key === 'U')) || 
+                    e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && (e.key === 'i' || e.key === 'I'))) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Hide the actual URL paths with a data attribute
+            images.forEach(img => {
+                const originalSrc = img.src;
+                img.removeAttribute('src');
+                img.setAttribute('data-src', originalSrc);
+                // Use a safer way to load the image
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.src = img.getAttribute('data-src');
+                            observer.unobserve(img);
+                        }
+                    });
+                });
+                observer.observe(img);
+            });
             
             // Dropdown functionality
             dropdownTrigger.addEventListener('click', function(e) {
