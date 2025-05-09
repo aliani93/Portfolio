@@ -226,6 +226,7 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .project-button {
@@ -241,6 +242,40 @@
 
         .project-button:hover {
             background-color: #555;
+        }
+        
+        .project-button.active {
+            background-color: #666;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Project description styling */
+        .project-description {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-description.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .project-description h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .project-description p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 10px;
         }
 
         /* Content styling */
@@ -301,6 +336,13 @@
                 left: 0;
                 transform: none;
                 width: 200px;
+            }
+            .project-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .project-button {
+                width: 100%;
             }
         }
         
@@ -416,6 +458,21 @@
                         <button class="project-button" data-project="renders-2">Project 2</button>
                         <button class="project-button" data-project="renders-3">Project 3</button>
                     </div>
+                    <div class="project-description" data-project="renders-1">
+                        <h4>Modern Residential Interior</h4>
+                        <p>A minimalist residential interior featuring open floor plan design with floor-to-ceiling windows that maximize natural light. This project demonstrates careful material selection and lighting techniques to create a warm, inviting atmosphere while maintaining clean architectural lines.</p>
+                        <p>Software used: 3ds Max with Corona Renderer</p>
+                    </div>
+                    <div class="project-description" data-project="renders-2">
+                        <h4>Urban Commercial Space</h4>
+                        <p>An adaptive reuse project converting an industrial warehouse into a contemporary commercial space. This visualization emphasizes the contrast between preserved historical elements and modern interventions, showcasing how lighting can transform spatial perception.</p>
+                        <p>Software used: Blender with Cycles Renderer</p>
+                    </div>
+                    <div class="project-description" data-project="renders-3">
+                        <h4>Residential Exterior at Dusk</h4>
+                        <p>This exterior visualization captures a custom residential design at the magic hour, showcasing how architectural forms interact with dramatic lighting conditions. The render demonstrates landscape integration and material transitions that respond to the natural environment.</p>
+                        <p>Software used: Lumion with Adobe Photoshop post-processing</p>
+                    </div>
                 </div>
             </div>
 
@@ -428,6 +485,21 @@
                         <button class="project-button" data-project="3d-1">Project 1</button>
                         <button class="project-button" data-project="3d-2">Project 2</button>
                         <button class="project-button" data-project="3d-3">Project 3</button>
+                    </div>
+                    <div class="project-description" data-project="3d-1">
+                        <h4>Product Design Prototype</h4>
+                        <p>High-fidelity 3D model of an ergonomic chair design, created for manufacturing evaluation and marketing materials. The model includes accurate material specifications and mechanical assembly details to support the production process.</p>
+                        <p>Software used: Rhino 3D with Grasshopper parametric design</p>
+                    </div>
+                    <div class="project-description" data-project="3d-2">
+                        <h4>Architectural Detail Model</h4>
+                        <p>Detailed 3D model of a custom facade system showing construction assembly and material transitions. This model was used for both visualization and fabrication documentation, ensuring constructability of the design intent.</p>
+                        <p>Software used: Revit with additional detailing in 3ds Max</p>
+                    </div>
+                    <div class="project-description" data-project="3d-3">
+                        <h4>Historical Reconstruction</h4>
+                        <p>Digital reconstruction of a historical building based on archival photographs and drawings. This model was created for heritage documentation and educational purposes, requiring extensive research to ensure historical accuracy.</p>
+                        <p>Software used: SketchUp with V-Ray for visualization</p>
                     </div>
                 </div>
             </div>
@@ -442,6 +514,21 @@
                         <button class="project-button" data-project="drafting-2">Project 2</button>
                         <button class="project-button" data-project="drafting-3">Project 3</button>
                     </div>
+                    <div class="project-description" data-project="drafting-1">
+                        <h4>Commercial Building Construction Documents</h4>
+                        <p>Complete set of construction documents for a three-story commercial building, including floor plans, elevations, sections, and details. This project demonstrates my ability to manage complex drawing sets while maintaining consistency and clarity.</p>
+                        <p>Software used: AutoCAD Architecture with custom standards</p>
+                    </div>
+                    <div class="project-description" data-project="drafting-2">
+                        <h4>Custom Millwork Details</h4>
+                        <p>Detailed shop drawings for custom millwork and cabinetry, including dimensioned elevations, sections, and assembly details. These drawings were provided to fabricators for precise manufacturing of custom architectural elements.</p>
+                        <p>Software used: AutoCAD with specialized millwork libraries</p>
+                    </div>
+                    <div class="project-description" data-project="drafting-3">
+                        <h4>Site Development Plan</h4>
+                        <p>Comprehensive site development drawings for a mixed-use project, including grading, drainage, utility plans, and landscape details. This project required coordination with civil engineers and landscape architects to integrate multiple systems.</p>
+                        <p>Software used: Civil 3D with AutoCAD</p>
+                    </div>
                 </div>
             </div>
 
@@ -455,6 +542,21 @@
                         <button class="project-button" data-project="video-2">Project 2</button>
                         <button class="project-button" data-project="video-3">Project 3</button>
                     </div>
+                    <div class="project-description" data-project="video-1">
+                        <h4>Architectural Walkthrough</h4>
+                        <p>Immersive architectural walkthrough of a proposed cultural center, featuring camera movement that simulates the visitor experience. This video combines rendered footage with motion graphics to highlight key design features and spatial relationships.</p>
+                        <p>Software used: Unreal Engine with Adobe Premiere Pro</p>
+                    </div>
+                    <div class="project-description" data-project="video-2">
+                        <h4>Project Process Documentary</h4>
+                        <p>Short documentary showcasing the design and construction process of an award-winning residential project. This video combines time-lapse footage, interviews, and 3D visualizations to tell the story of the project's evolution.</p>
+                        <p>Software used: Adobe Premiere Pro with After Effects</p>
+                    </div>
+                    <div class="project-description" data-project="video-3">
+                        <h4>Product Animation</h4>
+                        <p>Technical animation demonstrating the functionality and assembly of a modular furniture system. This video uses detailed 3D animations with clear visual storytelling to communicate complex product features without relying on narration.</p>
+                        <p>Software used: Cinema 4D with Final Cut Pro</p>
+                    </div>
                 </div>
             </div>
 
@@ -467,6 +569,21 @@
                         <button class="project-button" data-project="gis-1">Project 1</button>
                         <button class="project-button" data-project="gis-2">Project 2</button>
                         <button class="project-button" data-project="gis-3">Project 3</button>
+                    </div>
+                    <div class="project-description" data-project="gis-1">
+                        <h4>Urban Development Impact Analysis</h4>
+                        <p>Comprehensive GIS analysis examining the potential impacts of a proposed urban development on traffic patterns, land use, and public services. This study integrated multiple data sources to create visualizations that informed stakeholder decisions.</p>
+                        <p>Software used: ArcGIS Pro with custom Python scripts</p>
+                    </div>
+                    <div class="project-description" data-project="gis-2">
+                        <h4>Environmental Conservation Mapping</h4>
+                        <p>Detailed mapping of sensitive ecological areas for a conservation initiative, including habitat analysis and biodiversity indicators. These maps were used to identify priority areas for protection and guide resource allocation.</p>
+                        <p>Software used: QGIS with R for statistical analysis</p>
+                    </div>
+                    <div class="project-description" data-project="gis-3">
+                        <h4>Interactive Community Planning Tool</h4>
+                        <p>Web-based GIS application allowing community members to explore and provide input on neighborhood development plans. This interactive tool visualized proposed changes and collected spatial data from community feedback sessions.</p>
+                        <p>Software used: Mapbox GL JS with ArcGIS Online</p>
                     </div>
                 </div>
             </div>
@@ -494,6 +611,8 @@
             const images = document.querySelectorAll('.image');
             const sections = document.querySelectorAll('.section, .subsection');
             const navLinks = document.querySelectorAll('.nav-links a');
+            const projectButtons = document.querySelectorAll('.project-button');
+            const projectDescriptions = document.querySelectorAll('.project-description');
             
             // State variables
             let currentSection = null;
@@ -512,6 +631,12 @@
                     timeout = setTimeout(() => func.apply(context, args), delay);
                 };
             };
+            
+            // Hide all project descriptions initially
+            projectDescriptions.forEach(desc => {
+                desc.style.display = 'none';
+                desc.classList.remove('active');
+            });
             
             // Image protection
             document.addEventListener('contextmenu', e => {
@@ -554,6 +679,27 @@
                     scrollTriggered = false;
                 }
                 
+                // Remove active class from all buttons
+                projectButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                projectButton.classList.add('active');
+                
+                // Hide all project descriptions
+                projectDescriptions.forEach(desc => {
+                    desc.style.display = 'none';
+                    desc.classList.remove('active');
+                });
+                
+                // Show the selected project description
+                const targetDescription = document.querySelector(`.project-description[data-project="${projectId}"]`);
+                if (targetDescription) {
+                    targetDescription.style.display = 'block';
+                    // Trigger reflow for animation
+                    void targetDescription.offsetWidth;
+                    targetDescription.classList.add('active');
+                }
+                
                 // Update image display
                 images.forEach(img => img.classList.remove('active'));
                 
@@ -572,9 +718,33 @@
                     return;
                 }
                 
-                // Reset project view when scrolling
-                currentProject = null;
+                // Reset project view when scrolling to a new section
+                const newSection = getCurrentSection();
                 
+                if (currentSection !== newSection) {
+                    // Hide all project descriptions when changing sections
+                    projectDescriptions.forEach(desc => {
+                        desc.style.display = 'none';
+                        desc.classList.remove('active');
+                    });
+                    
+                    // Reset all project buttons
+                    projectButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    currentProject = null;
+                    currentSection = newSection;
+                    
+                    // Update active image for the section
+                    const activeImage = document.querySelector(`.image[data-section="${newSection}"]`);
+                    if (activeImage) {
+                        images.forEach(img => img.classList.remove('active'));
+                        activeImage.classList.add('active');
+                    }
+                }
+            };
+            
+            // Helper to get current most visible section
+            const getCurrentSection = () => {
                 const scrollTop = scrollableHalf.scrollTop;
                 const viewportHeight = scrollableHalf.clientHeight;
                 const scrollHalfTop = scrollableHalf.getBoundingClientRect().top;
@@ -595,66 +765,9 @@
                     
                     if (visibleAmount > maxVisibleAmount) {
                         maxVisibleAmount = visibleAmount;
-                        mostVisibleSection = section;
+                        mostVisibleSection = section.dataset.section;
                     }
                 });
                 
-                // Update active image if section changed
-                if (mostVisibleSection) {
-                    const sectionId = mostVisibleSection.dataset.section;
-                    
-                    if (currentSection !== sectionId) {
-                        currentSection = sectionId;
-                        
-                        const activeImage = document.querySelector(`.image[data-section="${sectionId}"]`);
-                        if (activeImage) {
-                            images.forEach(img => img.classList.remove('active'));
-                            activeImage.classList.add('active');
-                        }
-                    }
-                }
+                return mostVisibleSection;
             };
-            
-            // Event listeners with debouncing
-            scrollableHalf.addEventListener('scroll', () => {
-                scrollTriggered = true;
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(checkVisibleSection, 50);
-            });
-            
-            window.addEventListener('resize', debounce(checkVisibleSection, 100));
-            window.addEventListener('orientationchange', debounce(checkVisibleSection, 200));
-            
-            // Navigation
-            navLinks.forEach(anchor => {
-                anchor.addEventListener('click', e => {
-                    if (anchor.classList.contains('dropdown-trigger')) return;
-                    
-                    e.preventDefault();
-                    
-                    const targetId = anchor.getAttribute('href').substring(1);
-                    const targetElement = document.getElementById(targetId);
-                    
-                    if (targetElement) {
-                        // Close dropdown if open
-                        dropdownContent.classList.remove('show');
-                        dropdownArrow.classList.remove('rotate');
-                        
-                        // Reset project view
-                        currentProject = null;
-                        
-                        // Scroll to target
-                        scrollableHalf.scrollTo({
-                            top: targetElement.offsetTop,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-            
-            // Initial check
-            setTimeout(checkVisibleSection, 100);
-        });
-    </script>
-</body>
-</html>
