@@ -429,15 +429,16 @@
             </div>
 
             <!-- Work Subsections -->
+        <!-- Work Subsections -->
             <div id="renders" class="subsection" data-section="renders">
                 <div class="section-content">
                     <h3>Architectural Renders</h3>
                     <p>Photorealistic architectural visualizations created using industry-leading rendering software. These projects showcase interior and exterior spaces with attention to lighting, materials, and environmental details.</p>
                     <p>Each render is meticulously crafted to convey the design intent while creating an emotional connection with the viewer.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="renders-1">Project 1</button>
-                        <button class="project-button" data-project="renders-2">Project 2</button>
-                        <button class="project-button" data-project="renders-3">Project 3</button>
+                        <button class="project-button" data-project="renders-1" data-category="renders">Project 1</button>
+                        <button class="project-button" data-project="renders-2" data-category="renders">Project 2</button>
+                        <button class="project-button" data-project="renders-3" data-category="renders">Project 3</button>
                     </div>
                     <div class="project-description" id="project-description-renders"></div>
                 </div>
@@ -449,9 +450,9 @@
                     <p>Detailed 3D models created for various applications including product design, architectural visualization, and digital assets. My modeling work emphasizes accuracy, optimized geometry, and attention to detail.</p>
                     <p>I work with multiple modeling platforms to create assets that meet both technical and aesthetic requirements.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="3d-1">Project 1</button>
-                        <button class="project-button" data-project="3d-2">Project 2</button>
-                        <button class="project-button" data-project="3d-3">Project 3</button>
+                        <button class="project-button" data-project="3d-1" data-category="3d">Project 1</button>
+                        <button class="project-button" data-project="3d-2" data-category="3d">Project 2</button>
+                        <button class="project-button" data-project="3d-3" data-category="3d">Project 3</button>
                     </div>
                     <div class="project-description" id="project-description-3d"></div>
                 </div>
@@ -463,9 +464,9 @@
                     <p>Precise technical drawings and documentation for architectural and engineering applications. My drafting work follows industry standards and best practices to ensure accuracy and clarity.</p>
                     <p>From construction documents to detailed drawings, I provide comprehensive technical documentation for projects of all scales.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="drafting-1">Project 1</button>
-                        <button class="project-button" data-project="drafting-2">Project 2</button>
-                        <button class="project-button" data-project="drafting-3">Project 3</button>
+                        <button class="project-button" data-project="drafting-1" data-category="drafting">Project 1</button>
+                        <button class="project-button" data-project="drafting-2" data-category="drafting">Project 2</button>
+                        <button class="project-button" data-project="drafting-3" data-category="drafting">Project 3</button>
                     </div>
                     <div class="project-description" id="project-description-drafting"></div>
                 </div>
@@ -477,9 +478,9 @@
                     <p>Professional video editing services for architectural walkthroughs, product presentations, and promotional content. My video work combines technical precision with narrative storytelling.</p>
                     <p>I specialize in creating compelling visual narratives that effectively communicate design concepts and project features.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="video-1">Project 1</button>
-                        <button class="project-button" data-project="video-2">Project 2</button>
-                        <button class="project-button" data-project="video-3">Project 3</button>
+                        <button class="project-button" data-project="video-1" data-category="video">Project 1</button>
+                        <button class="project-button" data-project="video-2" data-category="video">Project 2</button>
+                        <button class="project-button" data-project="video-3" data-category="video">Project 3</button>
                     </div>
                     <div class="project-description" id="project-description-video"></div>
                 </div>
@@ -491,9 +492,9 @@
                     <p>Geographic Information System (GIS) mapping and analysis for urban planning, environmental studies, and spatial data visualization. My GIS work provides clear insights into complex spatial relationships.</p>
                     <p>I create custom maps and spatial analyses that support informed decision-making and effective communication of geographic data.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="gis-1">Project 1</button>
-                        <button class="project-button" data-project="gis-2">Project 2</button>
-                        <button class="project-button" data-project="gis-3">Project 3</button>
+                        <button class="project-button" data-project="gis-1" data-category="gis">Project 1</button>
+                        <button class="project-button" data-project="gis-2" data-category="gis">Project 2</button>
+                        <button class="project-button" data-project="gis-3" data-category="gis">Project 3</button>
                     </div>
                     <div class="project-description" id="project-description-gis"></div>
                 </div>
@@ -512,10 +513,9 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             // Cache DOM elements
             const scrollableHalf = document.querySelector('.scrollable-half');
-            const dropdown = document.querySelector('.dropdown');
             const dropdownTrigger = document.querySelector('.dropdown-trigger');
             const dropdownContent = document.querySelector('.dropdown-content');
             const dropdownArrow = document.querySelector('.dropdown-arrow');
@@ -523,7 +523,6 @@
             const sections = document.querySelectorAll('.section, .subsection');
             const navLinks = document.querySelectorAll('.nav-links a');
             const projectDescriptions = document.querySelectorAll('.project-description');
-            const projectButtons = document.querySelectorAll('.project-button');
             
             // State variables
             let currentSection = null;
@@ -560,53 +559,44 @@
                 'gis-3': 'This demographic mapping project visualized population data across multiple variables for urban planning purposes. The maps revealed patterns in income distribution, housing density, and access to community resources across different neighborhoods.'
             };
             
-            // Utility functions
-            const debounce = (func, delay) => {
-                let timeout;
-                return function() {
-                    const context = this;
-                    const args = arguments;
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(context, args), delay);
-                };
-            };
-            
             // Hide all project descriptions
-            const hideAllProjectDescriptions = () => {
-                projectDescriptions.forEach(desc => {
+            function hideAllProjectDescriptions() {
+                document.querySelectorAll('.project-description').forEach(function(desc) {
                     desc.classList.remove('visible');
+                    desc.style.display = 'none';
                 });
-                projectButtons.forEach(btn => {
+                
+                document.querySelectorAll('.project-button').forEach(function(btn) {
                     btn.classList.remove('active');
                 });
-            };
+            }
             
             // Show project description
-            const showProjectDescription = (projectId) => {
-                // Extract the category from the project ID (e.g., 'renders' from 'renders-1')
-                const category = projectId.split('-')[0];
-                const descriptionElement = document.getElementById(`project-description-${category}`);
+            function showProjectDescription(projectId, category) {
+                const descriptionElement = document.getElementById('project-description-' + category);
                 
                 if (descriptionElement) {
                     // Update content and show description
                     descriptionElement.textContent = projectContent[projectId] || '';
-                    descriptionElement.classList.add('visible');
+                    descriptionElement.style.display = 'block';
+                    setTimeout(function() {
+                        descriptionElement.classList.add('visible');
+                    }, 10);
                     
                     // Highlight active button
-                    const activeButton = document.querySelector(`.project-button[data-project="${projectId}"]`);
-                    if (activeButton) {
-                        activeButton.classList.add('active');
-                    }
+                    document.querySelectorAll('.project-button[data-project="' + projectId + '"]').forEach(function(btn) {
+                        btn.classList.add('active');
+                    });
                 }
-            };
+            }
             
             // Image protection
-            document.addEventListener('contextmenu', e => {
+            document.addEventListener('contextmenu', function(e) {
                 if (e.target.closest('.image-half')) e.preventDefault();
             });
             
             // Block common keyboard shortcuts
-            document.addEventListener('keydown', e => {
+            document.addEventListener('keydown', function(e) {
                 if ((e.ctrlKey && ['s', 'S', 'u', 'U'].includes(e.key)) || 
                     e.key === 'F12' || 
                     (e.ctrlKey && e.shiftKey && ['i', 'I'].includes(e.key))) {
@@ -615,27 +605,249 @@
             });
             
             // Toggle dropdown
-            dropdownTrigger.addEventListener('click', e => {
+            dropdownTrigger.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 dropdownContent.classList.toggle('show');
                 dropdownArrow.classList.toggle('rotate');
             });
             
             // Close dropdown when clicking outside
-            document.addEventListener('click', e => {
+            document.addEventListener('click', function(e) {
                 if (!e.target.closest('.dropdown') && dropdownContent.classList.contains('show')) {
                     dropdownContent.classList.remove('show');
                     dropdownArrow.classList.remove('rotate');
                 }
             });
             
-            // Handle project button clicks - event delegation
-            document.addEventListener('click', e => {
-                const projectButton = e.target.closest('.project-button');
-                if (!projectButton) return;
+            // Handle project button clicks - using direct event handlers for better compatibility
+            document.querySelectorAll('.project-button').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const projectId = this.getAttribute('data-project');
+                    const category = this.getAttribute('data-category');
+                    
+                    // Save current section before changing to project
+                    if (currentSection && !currentProject) {
+                        scrollTriggered = false;
+                    }
+                    
+                    // Update image display
+                    images.forEach(function(img) {
+                        img.classList.remove('active');
+                    });
+                    
+                    const projectImage = document.querySelector('.image[data-project="' + projectId + '"]');
+                    if (projectImage) {
+                        projectImage.classList.add('active');
+                        currentProject = projectId;
+                        
+                        // Hide all descriptions first
+                        hideAllProjectDescriptions();
+                        
+                        // Then show the selected project description
+                        showProjectDescription(projectId, category);
+                    }
+                });
+            });
+            
+            // Check which section is in view
+            function checkVisibleSection() {
+                // Skip if we're viewing a project and scroll wasn't user-triggered
+                if (currentProject && !scrollTriggered) {
+                    scrollTriggered = true;
+                    return;
+                }
                 
-                const projectId = projectButton.dataset.project;
+                // Check if we're scrolling to a new section
+                if (currentProject) {
+                    const previousSection = currentSection;
+                    
+                    // Find most visible section
+                    const scrollTop = scrollableHalf.scrollTop;
+                    const viewportHeight = scrollableHalf.clientHeight;
+                    const scrollHalfTop = scrollableHalf.getBoundingClientRect().top;
+                    
+                    let mostVisibleSection = null;
+                    let maxVisibleAmount = 0;
+                    
+                    for (let i = 0; i < sections.length; i++) {
+                        const section = sections[i];
+                        const rect = section.getBoundingClientRect();
+                        const sectionTop = rect.top + scrollTop - scrollHalfTop;
+                        const sectionBottom = sectionTop + rect.height;
+                        
+                        // Calculate visible portion
+                        const visibleTop = Math.max(scrollTop, sectionTop);
+                        const visibleBottom = Math.min(scrollTop + viewportHeight, sectionBottom);
+                        const visibleAmount = Math.max(0, visibleBottom - visibleTop);
+                        
+                        if (visibleAmount > maxVisibleAmount) {
+                            maxVisibleAmount = visibleAmount;
+                            mostVisibleSection = section;
+                        }
+                    }
+                    
+                    if (mostVisibleSection && mostVisibleSection.getAttribute('data-section') !== previousSection) {
+                        currentProject = null;
+                        hideAllProjectDescriptions();
+                    }
+                }
                 
+                const scrollTop = scrollableHalf.scrollTop;
+                const viewportHeight = scrollableHalf.clientHeight;
+                const scrollHalfTop = scrollableHalf.getBoundingClientRect().top;
+                
+                // Find most visible section
+                let mostVisibleSection = null;
+                let maxVisibleAmount = 0;
+                
+                for (let i = 0; i < sections.length; i++) {
+                    const section = sections[i];
+                    const rect = section.getBoundingClientRect();
+                    const sectionTop = rect.top + scrollTop - scrollHalfTop;
+                    const sectionBottom = sectionTop + rect.height;
+                    
+                    // Calculate visible portion
+                    const visibleTop = Math.max(scrollTop, sectionTop);
+                    const visibleBottom = Math.min(scrollTop + viewportHeight, sectionBottom);
+                    const visibleAmount = Math.max(0, visibleBottom - visibleTop);
+                    
+                    if (visibleAmount > maxVisibleAmount) {
+                        maxVisibleAmount = visibleAmount;
+                        mostVisibleSection = section;
+                    }
+                }
+                
+                // Update active image if section changed
+                if (mostVisibleSection) {
+                    const sectionId = mostVisibleSection.getAttribute('data-section');
+                    
+                    if (currentSection !== sectionId) {
+                        currentSection = sectionId;
+                        
+                        const activeImage = document.querySelector('.image[data-section="' + sectionId + '"]');
+                        if (activeImage) {
+                            images.forEach(function(img) {
+                                img.classList.remove('active');
+                            });
+                            activeImage.classList.add('active');
+                        }
+                    }
+                }
+            }
+            
+            // Event listeners with debouncing
+            scrollableHalf.addEventListener('scroll', function() {
+                scrollTriggered = true;
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(checkVisibleSection, 50);
+            });
+            
+            // Debounce function
+            function debounce(func, delay) {
+                let timeout;
+                return function() {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function() {
+                        func.apply(context, args);
+                    }, delay);
+                };
+            }
+            
+            window.addEventListener('resize', debounce(checkVisibleSection, 100));
+            window.addEventListener('orientationchange', debounce(checkVisibleSection, 200));
+            
+            // Navigation - ensure Work link doesn't get handled by dropdown event system
+            dropdownTrigger.addEventListener('click', function(e) {
+                // This is just for the dropdown, don't navigate
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            
+            document.querySelector('.dropdown > a[href="#work"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const targetElement = document.getElementById('work');
+                
+                if (targetElement) {
+                    // Close dropdown if open
+                    dropdownContent.classList.remove('show');
+                    dropdownArrow.classList.remove('rotate');
+                    
+                    // Reset project view
+                    currentProject = null;
+                    hideAllProjectDescriptions();
+                    
+                    // Scroll to target
+                    scrollableHalf.scrollTo({
+                        top: targetElement.offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+            
+            // Handle other nav links
+            document.querySelectorAll('.nav-links a:not(.dropdown-trigger)').forEach(function(anchor) {
+                if (anchor.closest('.dropdown-content')) return; // Skip dropdown content links for now
+                
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Close dropdown if open
+                        dropdownContent.classList.remove('show');
+                        dropdownArrow.classList.remove('rotate');
+                        
+                        // Reset project view
+                        currentProject = null;
+                        hideAllProjectDescriptions();
+                        
+                        // Scroll to target
+                        scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Handle dropdown menu links
+            document.querySelectorAll('.dropdown-content a').forEach(function(anchor) {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Close dropdown
+                        dropdownContent.classList.remove('show');
+                        dropdownArrow.classList.remove('rotate');
+                        
+                        // Reset project view
+                        currentProject = null;
+                        hideAllProjectDescriptions();
+                        
+                        // Scroll to target
+                        scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Initial check
+            setTimeout(checkVisibleSection, 100);
+        });
+    </script>
+                                
                 // Save current section before changing to project
                 if (currentSection && !currentProject) {
                     scrollTriggered = false;
