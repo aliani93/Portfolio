@@ -1,4 +1,178 @@
-<!DOCTYPE html>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements - cache them using a single querySelectorAll where possible
+            const elements = {};
+            const selectors = {
+                scrollableHalf: '.scrollable-half',
+                dropdown: '.dropdown',
+                dropdownTrigger: '.dropdown-trigger',
+                dropdownContent: '.dropdown-content',
+                dropdownArrow: '.dropdown-arrow',
+                images: '.image',
+                sections: '.section, .subsection',
+                navLinks: '.nav-links a',
+                projectButtons: '.project-button',
+                projectDescription: '.project-description'
+            };
+            
+            // More efficiently select and cache DOM elements 
+            Object.entries(selectors).forEach(([key, selector]) => {
+                const result = document.querySelectorAll(selector);
+                elements[key] = result.length === 1 ? result[0] : result;
+            });
+            
+            // State management
+            const state = {
+                currentSection: 'home',
+                currentProject: null,
+                userInitiatedScroll: true,
+                isTransitioning: false,
+                projectDescriptions: {},
+                scrolling: false,
+                resizeTimer: null,
+                observers: []
+            };
+            
+            // Constants
+            const TRANSITION_DELAY = 300; // Match CSS transition time
+            const SCROLL_DELAY = 50;
+            const RESIZE_DELAY = 200;
+            const PRELOAD_TIMEOUT = 2000;
+            
+            // Initialize project descriptions
+            elements.projectButtons.forEach(button => {
+                const projectId = button.dataset.project;
+                const description = button.dataset.description;
+                if (projectId && description) {
+                    state.projectDescriptions[projectId] = description;
+                }
+            });
+            
+            // Check for browser support of various features
+            const supportsIntersectionObserver = 'IntersectionObserver' in window;
+            const supportsTouchEvents = 'ontouchstart' in window;
+            const supportsPassiveEvents = (function() {
+                let supportsPassive = false;
+                try {
+                    // Test via a getter in the options object to check for passive event listener support
+                    const opts = Object.defineProperty({}, 'passive', {
+                        get: function() {
+                            supportsPassive = true;
+                            return true;
+                        }
+                    });
+                    window.addEventListener('testPassive', null, opts);
+                    window.removeEventListener('testPassive', null, opts);
+                } catch (e) {}
+                return supportsPassive;
+            })();
+            
+            // Utility functions
+            // Improved debounce with immediate option
+            function debounce(func, wait, immediate = false) {
+                let timeout;
+                return function(...args) {
+                    const context = this;
+                    const later = function() {
+                        timeout = null;
+                        if (!immediate) func.apply(context, args);
+                    };
+                    const callNow = immediate && !timeout;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                    if (callNow) func.apply(context, args);
+                };
+            }
+            
+            // Throttle function to limit execution frequency
+            function throttle(func, limit) {
+                let inThrottle;
+                return function(...args) {
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                };
+            }
+            
+            // RAF-based throttle for high-performance animations
+            function rafThrottle(func) {
+                let ticking = false;
+                return function(...args) {
+                    const context = this;
+                    if (!ticking) {
+                        requestAnimationFrame(() => {
+                            func.apply(context, args);
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                };
+            }
+            
+            // Preload all images
+            function preloadImages() {
+                // Mark document as loading
+                document.body.classList.add('preloading');
+                
+                // Setting priority for all images
+                const mainImages = document.querySelectorAll('.image');
+                const imagePromises = [];
+                
+                mainImages.forEach(img => {
+                    if (!img.complete) {
+                        // Force immediate load for important images
+                        img.setAttribute('importance', 'high');
+                        img.setAttribute('loading', 'eager');
+                        
+                        // Create promise for image load
+                        const promise = new Promise((resolve) => {
+                            img.onload = resolve;
+                            img.onerror = resolve; // Resolve even on error to not block
+                            
+                            // Create image object to preload
+                            const preloadImg = new Image();
+                            preloadImg.src = img.src;
+                        });
+                        
+                        imagePromises.push(promise);
+                    }
+                });
+                
+                // Wait for all images to load or timeout
+                Promise.race([
+                    Promise.all(imagePromises),
+                    new Promise(resolve => setTimeout(resolve, PRELOAD_TIMEOUT))
+                ]).then(() => {
+                    // Remove loading state
+                    document.body.classList.remove('preloading');
+                });
+            }
+            
+            // Description handlers
+            function hideDescription() {
+                elements.projectDescription.classList.remove('visible');
+                setTimeout(() => {
+                    if (!elements.projectDescription.classList.contains('visible')) {
+                        elements.projectDescription.textContent = '';
+                    }
+                }, TRANSITION_DELAY);
+            }
+            
+            function showDescription(text) {
+                if (!text) return;
+                elements.projectDescription.textContent = text;
+                // Small delay to ensure DOM update before animation
+                requestAnimationFrame(() => {
+                    elements.projectDescription.classList.add('visible');
+                });
+            }
+            
+            // Image management
+            function updateActiveImage(sectionId, immediate = false) {
+                if (state<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -24,9 +198,16 @@
             font-family: 'Arial', sans-serif;
         }
         
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
             overflow-x: hidden;
             height: 100vh;
+            text-rendering: optimizeSpeed;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         /* Typography */
@@ -62,6 +243,8 @@
             padding: 0 max(20px, 5%);
             z-index: 1000;
             color: var(--text-light);
+            will-change: transform;
+            backface-visibility: hidden;
         }
         
         .logo {
@@ -80,6 +263,11 @@
             color: var(--text-light);
             text-decoration: none;
             font-size: clamp(14px, 2.5vw, 16px);
+            transition: color 0.2s ease;
+        }
+        
+        .nav-links a:hover {
+            color: rgba(255, 255, 255, 0.8);
         }
         
         /* Dropdown */
@@ -114,6 +302,7 @@
             border-radius: 4px;
             overflow: hidden;
             text-align: center;
+            will-change: transform, opacity;
         }
         
         .dropdown-content a {
@@ -175,6 +364,7 @@
             left: 0;
             display: flex;
             flex-direction: column;
+            will-change: contents;
         }
         
         /* Portrait layout */
@@ -194,6 +384,7 @@
             background-color: white;
             position: relative;
             scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
         
         /* Fade effects */
@@ -272,6 +463,8 @@
             user-select: none;
             pointer-events: none;
             will-change: opacity;
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
         
         .image.active {
@@ -294,6 +487,7 @@
             font-size: clamp(14px, 3vw, 16px);
             line-height: 1.5;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            will-change: transform;
         }
         
         .project-description.visible {
@@ -343,6 +537,7 @@
             margin-top: 0;
             position: relative;
             overflow: hidden;
+            transition: background-color 0.2s ease, transform 0.1s ease;
         }
         
         .project-button::after {
@@ -354,6 +549,14 @@
             height: 2px;
             background-color: var(--text-light);
             transition: width 0.3s ease;
+        }
+        
+        .project-button:hover {
+            transform: translateY(-1px);
+        }
+        
+        .project-button:active {
+            transform: translateY(1px);
         }
         
         .project-button:hover::after {
@@ -386,6 +589,42 @@
             .project-description {
                 padding: 12px 15px;
                 font-size: clamp(13px, 3vw, 15px);
+            }
+        }
+        
+        /* Preload animation to indicate loading state if needed */
+        @keyframes preloadPulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.6; }
+        }
+        
+        .preloading .image-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 10;
+            animation: preloadPulse 1.5s infinite;
+        }
+        
+        /* Better touch feedback */
+        @media (hover: hover) {
+            .nav-links a:hover,
+            button:hover {
+                opacity: 0.9;
+            }
+        }
+        
+        /* Reduced motion preference support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001s !important;
+                transition-duration: 0.001s !important;
+                scroll-behavior: auto !important;
             }
         }
     </style>
@@ -559,90 +798,186 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // DOM elements
-            const scrollableHalf = document.querySelector('.scrollable-half');
-            const dropdownTrigger = document.querySelector('.dropdown-trigger');
-            const dropdownContent = document.querySelector('.dropdown-content');
-            const dropdownArrow = document.querySelector('.dropdown-arrow');
-            const images = document.querySelectorAll('.image');
-            const sections = document.querySelectorAll('.section, .subsection');
-            const navLinks = document.querySelectorAll('.nav-links a');
-            const projectButtons = document.querySelectorAll('.project-button');
-            const projectDescription = document.querySelector('.project-description');
+            // DOM elements - cache them using a single querySelectorAll where possible
+            const elements = {};
+            const selectors = {
+                scrollableHalf: '.scrollable-half',
+                dropdown: '.dropdown',
+                dropdownTrigger: '.dropdown-trigger',
+                dropdownContent: '.dropdown-content',
+                dropdownArrow: '.dropdown-arrow',
+                images: '.image',
+                sections: '.section, .subsection',
+                navLinks: '.nav-links a',
+                projectButtons: '.project-button',
+                projectDescription: '.project-description'
+            };
+            
+            // More efficiently select and cache DOM elements 
+            Object.entries(selectors).forEach(([key, selector]) => {
+                const result = document.querySelectorAll(selector);
+                elements[key] = result.length === 1 ? result[0] : result;
+            });
             
             // State management
-            let currentSection = 'home';
-            let currentProject = null;
-            let userInitiatedScroll = true;
-            let isTransitioning = false;
+            const state = {
+                currentSection: 'home',
+                currentProject: null,
+                userInitiatedScroll: true,
+                isTransitioning: false,
+                projectDescriptions: {},
+                scrolling: false,
+                resizeTimer: null,
+                observers: []
+            };
             
             // Constants
             const TRANSITION_DELAY = 300; // Match CSS transition time
+            const SCROLL_DELAY = 50;
+            const RESIZE_DELAY = 200;
+            const PRELOAD_TIMEOUT = 2000;
             
-            // Project descriptions map
-            const projectDescriptions = {};
-            projectButtons.forEach(button => {
+            // Initialize project descriptions
+            elements.projectButtons.forEach(button => {
                 const projectId = button.dataset.project;
                 const description = button.dataset.description;
                 if (projectId && description) {
-                    projectDescriptions[projectId] = description;
+                    state.projectDescriptions[projectId] = description;
                 }
             });
             
+            // Check for browser support of various features
+            const supportsIntersectionObserver = 'IntersectionObserver' in window;
+            const supportsTouchEvents = 'ontouchstart' in window;
+            const supportsPassiveEvents = (function() {
+                let supportsPassive = false;
+                try {
+                    // Test via a getter in the options object to check for passive event listener support
+                    const opts = Object.defineProperty({}, 'passive', {
+                        get: function() {
+                            supportsPassive = true;
+                            return true;
+                        }
+                    });
+                    window.addEventListener('testPassive', null, opts);
+                    window.removeEventListener('testPassive', null, opts);
+                } catch (e) {}
+                return supportsPassive;
+            })();
+            
             // Utility functions
-            function debounce(func, wait) {
+            // Improved debounce with immediate option
+            function debounce(func, wait, immediate = false) {
                 let timeout;
                 return function(...args) {
+                    const context = this;
+                    const later = function() {
+                        timeout = null;
+                        if (!immediate) func.apply(context, args);
+                    };
+                    const callNow = immediate && !timeout;
                     clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
+                    timeout = setTimeout(later, wait);
+                    if (callNow) func.apply(context, args);
                 };
             }
             
-            // Preload all images immediately
+            // Throttle function to limit execution frequency
+            function throttle(func, limit) {
+                let inThrottle;
+                return function(...args) {
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                };
+            }
+            
+            // RAF-based throttle for high-performance animations
+            function rafThrottle(func) {
+                let ticking = false;
+                return function(...args) {
+                    const context = this;
+                    if (!ticking) {
+                        requestAnimationFrame(() => {
+                            func.apply(context, args);
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                };
+            }
+            
+            // Preload all images
             function preloadImages() {
-                // Setting priority for section images
+                // Mark document as loading
+                document.body.classList.add('preloading');
+                
+                // Setting priority for all images
                 const mainImages = document.querySelectorAll('.image');
+                const imagePromises = [];
+                
                 mainImages.forEach(img => {
                     if (!img.complete) {
                         // Force immediate load for important images
                         img.setAttribute('importance', 'high');
+                        img.setAttribute('loading', 'eager');
                         
-                        // Create image object to preload
-                        const preloadImg = new Image();
-                        preloadImg.src = img.src;
+                        // Create promise for image load
+                        const promise = new Promise((resolve) => {
+                            img.onload = resolve;
+                            img.onerror = resolve; // Resolve even on error to not block
+                            
+                            // Create image object to preload
+                            const preloadImg = new Image();
+                            preloadImg.src = img.src;
+                        });
+                        
+                        imagePromises.push(promise);
                     }
+                });
+                
+                // Wait for all images to load or timeout
+                Promise.race([
+                    Promise.all(imagePromises),
+                    new Promise(resolve => setTimeout(resolve, PRELOAD_TIMEOUT))
+                ]).then(() => {
+                    // Remove loading state
+                    document.body.classList.remove('preloading');
                 });
             }
             
             // Description handlers
             function hideDescription() {
-                projectDescription.classList.remove('visible');
+                elements.projectDescription.classList.remove('visible');
                 setTimeout(() => {
-                    if (!projectDescription.classList.contains('visible')) {
-                        projectDescription.textContent = '';
+                    if (!elements.projectDescription.classList.contains('visible')) {
+                        elements.projectDescription.textContent = '';
                     }
                 }, TRANSITION_DELAY);
             }
             
             function showDescription(text) {
                 if (!text) return;
-                projectDescription.textContent = text;
+                elements.projectDescription.textContent = text;
                 // Small delay to ensure DOM update before animation
-                setTimeout(() => {
-                    projectDescription.classList.add('visible');
-                }, 10);
+                requestAnimationFrame(() => {
+                    elements.projectDescription.classList.add('visible');
+                });
             }
             
             // Image management
             function updateActiveImage(sectionId, immediate = false) {
-                if (isTransitioning) return;
+                if (state.isTransitioning) return;
                 
-                isTransitioning = true;
+                state.isTransitioning = true;
                 
                 const activeImage = document.querySelector(`.image[data-section="${sectionId}"]`);
                 if (activeImage) {
                     // Remove active class from all images
-                    images.forEach(img => img.classList.remove('active'));
+                    elements.images.forEach(img => img.classList.remove('active'));
                     
                     // Force reflow to ensure clean transition
                     void activeImage.offsetWidth;
@@ -652,20 +987,20 @@
                     
                     // Reset transition state after delay
                     setTimeout(() => {
-                        isTransitioning = false;
+                        state.isTransitioning = false;
                     }, immediate ? 10 : TRANSITION_DELAY);
                 } else {
-                    isTransitioning = false;
+                    state.isTransitioning = false;
                 }
             }
             
             function showProjectImage(projectId) {
-                if (isTransitioning) return;
+                if (state.isTransitioning) return;
                 
-                isTransitioning = true;
+                state.isTransitioning = true;
                 
                 // Remove active class from all images
-                images.forEach(img => img.classList.remove('active'));
+                elements.images.forEach(img => img.classList.remove('active'));
                 
                 const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
                 if (projectImage) {
@@ -674,192 +1009,309 @@
                     
                     // Add active class to make image visible
                     projectImage.classList.add('active');
-                    currentProject = projectId;
+                    state.currentProject = projectId;
                     
                     // Show project description
-                    const description = projectDescriptions[projectId];
+                    const description = state.projectDescriptions[projectId];
                     showDescription(description);
                     
                     // Reset transition state after delay
                     setTimeout(() => {
-                        isTransitioning = false;
+                        state.isTransitioning = false;
                     }, TRANSITION_DELAY);
                 } else {
-                    isTransitioning = false;
+                    state.isTransitioning = false;
                 }
             }
             
-            // Section visibility tracking with optimized threshold
-            const observer = new IntersectionObserver((entries) => {
-                // Critical fix: We now process even when currentProject is set,
-                // as long as userInitiatedScroll is true
-                if (!userInitiatedScroll || isTransitioning) return;
-                
-                let bestEntry = null;
-                let maxRatio = 0;
-                
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
-                        maxRatio = entry.intersectionRatio;
-                        bestEntry = entry;
+            // Section visibility tracking with optimized threshold using IntersectionObserver
+            function setupSectionObserver() {
+                if (!supportsIntersectionObserver) {
+                    // Fallback for browsers without IntersectionObserver
+                    function checkVisibility() {
+                        if (!state.userInitiatedScroll || state.isTransitioning) return;
+                        
+                        const scrollTop = elements.scrollableHalf.scrollTop;
+                        const viewportHeight = elements.scrollableHalf.clientHeight;
+                        
+                        let bestSection = null;
+                        let maxVisibleAmount = 0;
+                        
+                        elements.sections.forEach(section => {
+                            const rect = section.getBoundingClientRect();
+                            const sectionTop = rect.top + scrollTop - elements.scrollableHalf.offsetTop;
+                            const sectionBottom = sectionTop + rect.height;
+                            
+                            // Calculate visible portion
+                            const visibleTop = Math.max(scrollTop, sectionTop);
+                            const visibleBottom = Math.min(scrollTop + viewportHeight, sectionBottom);
+                            const visibleAmount = Math.max(0, visibleBottom - visibleTop);
+                            
+                            if (visibleAmount > maxVisibleAmount) {
+                                maxVisibleAmount = visibleAmount;
+                                bestSection = section;
+                            }
+                        });
+                        
+                        if (bestSection && bestSection.dataset.section) {
+                            const sectionId = bestSection.dataset.section;
+                            
+                            if (state.currentSection !== sectionId) {
+                                // Reset project state when scrolling to new section
+                                if (state.currentProject) {
+                                    hideDescription();
+                                    state.currentProject = null;
+                                    
+                                    // Mark all project buttons as inactive
+                                    elements.projectButtons.forEach(btn => {
+                                        btn.classList.remove('active');
+                                    });
+                                }
+                                
+                                state.currentSection = sectionId;
+                                updateActiveImage(sectionId);
+                            }
+                        }
                     }
+                    
+                    // Use throttled scroll handler as a fallback
+                    elements.scrollableHalf.addEventListener('scroll', throttle(checkVisibility, SCROLL_DELAY));
+                    window.addEventListener('resize', debounce(checkVisibility, RESIZE_DELAY));
+                    
+                    return null;
+                }
+                
+                // Modern browsers: Use IntersectionObserver
+                const observer = new IntersectionObserver((entries) => {
+                    // Process entries even with currentProject, as long as userInitiatedScroll is true
+                    if (!state.userInitiatedScroll || state.isTransitioning) return;
+                    
+                    let bestEntry = null;
+                    let maxRatio = 0;
+                    
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+                            maxRatio = entry.intersectionRatio;
+                            bestEntry = entry;
+                        }
+                    });
+                    
+                    if (bestEntry && bestEntry.target.dataset.section) {
+                        const sectionId = bestEntry.target.dataset.section;
+                        
+                        if (state.currentSection !== sectionId) {
+                            // Reset project state when scrolling to new section
+                            if (state.currentProject) {
+                                hideDescription();
+                                state.currentProject = null;
+                                
+                                // Mark all project buttons as inactive
+                                elements.projectButtons.forEach(btn => {
+                                    btn.classList.remove('active');
+                                });
+                            }
+                            
+                            state.currentSection = sectionId;
+                            updateActiveImage(sectionId);
+                        }
+                    }
+                }, {
+                    root: elements.scrollableHalf,
+                    threshold: [0.2, 0.5, 0.75], // Multiple thresholds for better accuracy
+                    rootMargin: '0px'
                 });
                 
-                if (bestEntry && bestEntry.target.dataset.section) {
-                    const sectionId = bestEntry.target.dataset.section;
-                    
-                    if (currentSection !== sectionId) {
-                        // Reset project state when scrolling to new section
-                        if (currentProject) {
-                            hideDescription();
-                            currentProject = null;
-                            
-                            // Mark all project buttons as inactive
-                            projectButtons.forEach(btn => btn.classList.remove('active'));
-                        }
-                        
-                        currentSection = sectionId;
-                        updateActiveImage(sectionId);
-                    }
-                }
-            }, {
-                root: scrollableHalf,
-                threshold: [0.2, 0.5, 0.75], // Multiple thresholds for better accuracy
-                rootMargin: '0px'
-            });
-            
-            // Initialize observers
-            sections.forEach(section => observer.observe(section));
+                // Track the observer for cleanup
+                state.observers.push(observer);
+                
+                // Observe all sections
+                elements.sections.forEach(section => observer.observe(section));
+                
+                return observer;
+            }
             
             // Event handlers
-            function handleProjectButtonClick(e) {
-                const projectButton = e.target.closest('.project-button');
-                if (!projectButton || isTransitioning) return;
+            const handlers = {
+                // Project button click
+                projectButtonClick: function(e) {
+                    const projectButton = e.target.closest('.project-button');
+                    if (!projectButton || state.isTransitioning) return;
+                    
+                    const projectId = projectButton.dataset.project;
+                    state.userInitiatedScroll = false; // Mark as programmatic change
+                    
+                    // Update button active state
+                    elements.projectButtons.forEach(btn => {
+                        btn.classList.toggle('active', btn === projectButton);
+                    });
+                    
+                    showProjectImage(projectId);
+                    
+                    // Reset userInitiatedScroll after a short delay
+                    // This allows scrolling to work again after clicking a project
+                    setTimeout(() => {
+                        state.userInitiatedScroll = true;
+                    }, 200);
+                },
                 
-                const projectId = projectButton.dataset.project;
-                userInitiatedScroll = false; // Mark as programmatic change
+                // Dropdown toggle
+                dropdownToggle: function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    elements.dropdownContent.classList.toggle('show');
+                    elements.dropdownArrow.classList.toggle('rotate');
+                },
                 
-                // Update button active state
-                projectButtons.forEach(btn => {
-                    btn.classList.toggle('active', btn === projectButton);
+                // Document click for dropdown closing
+                documentClick: function(e) {
+                    if (!e.target.closest('.dropdown') && elements.dropdownContent.classList.contains('show')) {
+                        elements.dropdownContent.classList.remove('show');
+                        elements.dropdownArrow.classList.remove('rotate');
+                    }
+                },
+                
+                // Navigation link click
+                navLinkClick: function(e) {
+                    if (this.classList.contains('dropdown-trigger')) return;
+                    
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Close dropdown if open
+                        elements.dropdownContent.classList.remove('show');
+                        elements.dropdownArrow.classList.remove('rotate');
+                        
+                        // Reset project view
+                        state.currentProject = null;
+                        hideDescription();
+                        elements.projectButtons.forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        
+                        // Immediately update image 
+                        if (targetElement.dataset.section) {
+                            state.currentSection = targetElement.dataset.section;
+                            updateActiveImage(state.currentSection, true);
+                        }
+                        
+                        // Scroll to target (with small delay to let image update first)
+                        requestAnimationFrame(() => {
+                            elements.scrollableHalf.scrollTo({
+                                top: targetElement.offsetTop,
+                                behavior: 'smooth'
+                            });
+                        });
+                    }
+                },
+                
+                // Enhanced scroll handler
+                scroll: throttle(function() {
+                    // Mark scroll as user-initiated
+                    state.userInitiatedScroll = true;
+                }, SCROLL_DELAY),
+                
+                // Touch and mouse handlers to detect user interaction
+                touchStart: function() {
+                    state.userInitiatedScroll = true;
+                },
+                
+                mouseDown: function() {
+                    state.userInitiatedScroll = true;
+                },
+                
+                // Window resize handler
+                resize: debounce(function() {
+                    // Force update active image to fix any visual glitches
+                    if (state.currentProject) {
+                        showProjectImage(state.currentProject);
+                    } else {
+                        updateActiveImage(state.currentSection, true);
+                    }
+                }, RESIZE_DELAY),
+                
+                // Security handlers
+                contextMenu: function(e) {
+                    if (e.target.closest('.image-half')) e.preventDefault();
+                },
+                
+                keydown: function(e) {
+                    if ((e.ctrlKey && ['s', 'S', 'u', 'U'].includes(e.key)) || 
+                        e.key === 'F12' || 
+                        (e.ctrlKey && e.shiftKey && ['i', 'I'].includes(e.key))) {
+                        e.preventDefault();
+                    }
+                }
+            };
+            
+            // Set up event listeners with passive option where appropriate
+            function setupEventListeners() {
+                // Project buttons (using event delegation)
+                document.addEventListener('click', handlers.projectButtonClick);
+                
+                // Dropdown toggle
+                elements.dropdownTrigger.addEventListener('click', handlers.dropdownToggle);
+                
+                // Document click (for dropdown closing)
+                document.addEventListener('click', handlers.documentClick);
+                
+                // Navigation links
+                elements.navLinks.forEach(link => {
+                    link.addEventListener('click', handlers.navLinkClick);
                 });
                 
-                showProjectImage(projectId);
+                // Scroll event - use passive for better performance
+                const passiveOpt = supportsPassiveEvents ? { passive: true } : false;
+                elements.scrollableHalf.addEventListener('scroll', handlers.scroll, passiveOpt);
                 
-                // Critical fix: Reset userInitiatedScroll after a short delay
-                // This allows scrolling to work again after clicking a project
-                setTimeout(() => {
-                    userInitiatedScroll = true;
-                }, 200);
+                // Touch and mouse events to detect user interaction
+                if (supportsTouchEvents) {
+                    elements.scrollableHalf.addEventListener('touchstart', handlers.touchStart, passiveOpt);
+                }
+                elements.scrollableHalf.addEventListener('mousedown', handlers.mouseDown);
+                
+                // Window events
+                window.addEventListener('resize', handlers.resize);
+                
+                // Security events
+                document.addEventListener('contextmenu', handlers.contextMenu);
+                document.addEventListener('keydown', handlers.keydown);
             }
             
-            function handleDropdownToggle(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                dropdownContent.classList.toggle('show');
-                dropdownArrow.classList.toggle('rotate');
+            // Clean up all observers and event listeners
+            function cleanup() {
+                window.addEventListener('beforeunload', () => {
+                    // Disconnect all observers
+                    state.observers.forEach(observer => {
+                        if (observer && typeof observer.disconnect === 'function') {
+                            observer.disconnect();
+                        }
+                    });
+                });
             }
             
-            function handleDocumentClick(e) {
-                if (!e.target.closest('.dropdown') && dropdownContent.classList.contains('show')) {
-                    dropdownContent.classList.remove('show');
-                    dropdownArrow.classList.remove('rotate');
-                }
+            // Initialize everything
+            function init() {
+                // Preload images
+                preloadImages();
+                
+                // Set up section observers
+                setupSectionObserver();
+                
+                // Set up event listeners
+                setupEventListeners();
+                
+                // Initialize first image
+                updateActiveImage(state.currentSection, true);
+                
+                // Set up cleanup
+                cleanup();
             }
             
-            function handleNavLinkClick(e) {
-                if (this.classList.contains('dropdown-trigger')) return;
-                
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                
-                if (targetElement) {
-                    // Close dropdown if open
-                    dropdownContent.classList.remove('show');
-                    dropdownArrow.classList.remove('rotate');
-                    
-                    // Reset project view
-                    currentProject = null;
-                    hideDescription();
-                    projectButtons.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Immediately update image 
-                    if (targetElement.dataset.section) {
-                        currentSection = targetElement.dataset.section;
-                        updateActiveImage(currentSection, true);
-                    }
-                    
-                    // Scroll to target (with small delay to let image update first)
-                    setTimeout(() => {
-                        scrollableHalf.scrollTo({
-                            top: targetElement.offsetTop,
-                            behavior: 'smooth'
-                        });
-                    }, 50);
-                }
-            }
-            
-            // Enhanced scroll handler that makes better decisions about
-            // whether to keep project view or reset to section view
-            const handleScroll = debounce(() => {
-                // Mark scroll as user-initiated
-                userInitiatedScroll = true;
-                
-                // Fix: We no longer auto-hide descriptions on scroll
-                // Instead we let the intersection observer determine
-                // if we need to change section/image
-            }, 50);
-            
-            // Set up event listeners
-            document.addEventListener('click', handleProjectButtonClick);
-            dropdownTrigger.addEventListener('click', handleDropdownToggle);
-            document.addEventListener('click', handleDocumentClick);
-            navLinks.forEach(link => link.addEventListener('click', handleNavLinkClick));
-            scrollableHalf.addEventListener('scroll', handleScroll);
-            
-            // Add a manual touch/mouse event to reset project mode
-            scrollableHalf.addEventListener('touchstart', function() {
-                userInitiatedScroll = true;
-            });
-            
-            scrollableHalf.addEventListener('mousedown', function() {
-                userInitiatedScroll = true;
-            });
-            
-            // Resize handler for orientation changes
-            window.addEventListener('resize', debounce(() => {
-                // Force update active image to fix any visual glitches
-                if (currentProject) {
-                    showProjectImage(currentProject);
-                } else {
-                    updateActiveImage(currentSection, true);
-                }
-            }, 100));
-            
-            // Security - prevent right-click on images
-            document.addEventListener('contextmenu', e => {
-                if (e.target.closest('.image-half')) e.preventDefault();
-            });
-            
-            // Block specific keyboard shortcuts
-            document.addEventListener('keydown', e => {
-                if ((e.ctrlKey && ['s', 'S', 'u', 'U'].includes(e.key)) || 
-                    e.key === 'F12' || 
-                    (e.ctrlKey && e.shiftKey && ['i', 'I'].includes(e.key))) {
-                    e.preventDefault();
-                }
-            });
-            
-            // Initialize
-            preloadImages();
-            updateActiveImage(currentSection, true);
-            
-            // Clean up on unload
-            window.addEventListener('beforeunload', () => {
-                observer.disconnect();
-            });
+            // Start the app
+            init();
         });
     </script>
