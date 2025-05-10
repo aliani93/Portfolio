@@ -1,36 +1,4 @@
-/* Profile picture */
-        .profile-pic {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 20px;
-            border: 3px solid var(--primary-bg);
-        }            // Build project descriptions map
-            const projectDescriptions = {};
-            projectButtons.forEach(button => {
-                const projectId = button.dataset.project;
-                const description = button.dataset.description;
-                if (projectId && description) {
-                    projectDescriptions[projectId] = description;
-                }
-            });
-            
-            // Utility function: Debounce
-            function debounce(func, wait) {
-                let timeout;
-                return function(...args) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
-                };
-            }
-            
-            // Mobile menu handler
-            function toggleMobileMenu() {
-                mobileMenuToggle.classList.toggle('active');
-                navLinksContainer.classList.toggle('active');
-                document.body.classList.toggle('menu-open');
-            }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -46,10 +14,6 @@
             --overlay-dark: rgba(0, 0, 0, 0.8);
             --fade-length: 40px;
             --transition-speed: 0.3s;
-            /* Mobile breakpoints */
-            --breakpoint-sm: 576px;
-            --breakpoint-md: 768px;
-            --breakpoint-lg: 992px;
         }
         
         * {
@@ -116,23 +80,11 @@
             color: var(--text-light);
             text-decoration: none;
             font-size: clamp(14px, 2.5vw, 16px);
-            padding: 5px 0;
-            position: relative;
+            transition: opacity 0.3s;
         }
         
-        .nav-links a:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: var(--text-light);
-            transition: width 0.3s;
-        }
-        
-        .nav-links a:hover:after {
-            width: 100%;
+        .nav-links a:hover {
+            opacity: 0.8;
         }
         
         /* Mobile navigation */
@@ -152,18 +104,6 @@
             width: 100%;
             background-color: var(--text-light);
             transition: transform 0.3s, opacity 0.3s;
-        }
-        
-        .mobile-menu-toggle.active span:nth-child(1) {
-            transform: translateY(9px) rotate(45deg);
-        }
-        
-        .mobile-menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-        
-        .mobile-menu-toggle.active span:nth-child(3) {
-            transform: translateY(-9px) rotate(-45deg);
         }
         
         @media (max-width: 768px) {
@@ -190,31 +130,11 @@
                 right: 0;
             }
             
-            .nav-links a, .dropdown > a {
+            .nav-links a {
                 font-size: 18px;
                 padding: 15px 0;
                 width: 100%;
                 text-align: center;
-            }
-            
-            .dropdown-content {
-                position: static;
-                width: 100%;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.3s ease;
-                box-shadow: none;
-                margin-top: 0;
-                background-color: rgba(255, 255, 255, 0.1);
-            }
-            
-            .dropdown-content.show {
-                max-height: 300px;
-            }
-            
-            .dropdown-content a {
-                padding: 10px 15px;
-                font-size: 16px;
             }
         }
         
@@ -243,7 +163,7 @@
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--overlay-dark);
-            min-width: 200px;
+            min-width: 180px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             z-index: 1001;
             margin-top: 10px;
@@ -264,16 +184,10 @@
         
         .dropdown-content.show {
             display: block;
-            animation: fadeIn 0.2s ease-out;
         }
         
         .dropdown-arrow.rotate {
             transform: rotate(180deg);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px) translateX(-50%); }
-            to { opacity: 1; transform: translateY(0) translateX(-50%); }
         }
         
         /* Mobile dropdown adjustments */
@@ -286,15 +200,15 @@
                 margin-top: 0;
                 box-shadow: none;
                 border-radius: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+                display: block;
+                background-color: rgba(255, 255, 255, 0.1);
             }
             
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            
-            .dropdown > a:after {
-                width: 0 !important;
+            .dropdown-content.show {
+                max-height: 500px;
             }
         }
         
@@ -326,21 +240,6 @@
             background-color: white;
             position: relative;
             scroll-behavior: smooth;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary-hover) #f1f1f1;
-        }
-        
-        /* Customize scrollbar */
-        .scrollable-half::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .scrollable-half::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        
-        .scrollable-half::-webkit-scrollbar-thumb {
-            background: var(--primary-hover);
         }
         
         /* Fade effects */
@@ -497,30 +396,49 @@
             padding: 10px 20px;
             margin-top: 0;
             position: relative;
-            overflow: hidden;
-        }
-        
-        .project-button::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--text-light);
-            transition: width 0.3s ease;
-        }
-        
-        .project-button:hover::after {
-            width: 100%;
         }
         
         .project-button.active {
             background-color: var(--primary-hover);
         }
         
-        .project-button.active::after {
+        /* Profile picture */
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 3px solid var(--primary-bg);
+        }
+        
+        /* Skills section */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .skill-item {
+            background-color: #f5f5f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        /* Form styles */
+        form input, form textarea {
             width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
         }
         
         /* Small screens */
@@ -559,73 +477,6 @@
                 text-align: center;
             }
         }
-        
-        /* Skills section */
-        .skills-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .skill-item {
-            background-color: #f5f5f5;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .skill-progress {
-            width: 100%;
-            height: 6px;
-            background-color: #e0e0e0;
-            border-radius: 3px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        
-        .skill-progress-bar {
-            height: 100%;
-            background-color: var(--primary-bg);
-            border-radius: 3px;
-        }
-        
-        /* Testimonials */
-        .testimonials {
-            margin: 30px 0;
-        }
-        
-        .testimonial {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        
-        .testimonial::before {
-            content: '"';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 60px;
-            color: rgba(0,0,0,0.1);
-            line-height: 1;
-        }
-        
-        .testimonial-content {
-            padding-left: 20px;
-            font-style: italic;
-        }
-        
-        .testimonial-author {
-            margin-top: 15px;
-            font-weight: bold;
-            text-align: right;
-        }
     </style>
 </head>
 <body>
@@ -663,43 +514,43 @@
         <div class="image-half">
             <div class="image-container">
                 <!-- Main sections -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Home" class="image active" data-section="home" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="Work" class="image" data-section="work" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(3).jpg" alt="About" class="image" data-section="about" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="Contact" class="image" data-section="contact" loading="lazy" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Home" class="image active" data-section="home">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="Work" class="image" data-section="work">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(3).jpg" alt="About" class="image" data-section="about">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="Contact" class="image" data-section="contact">
                 
                 <!-- Work subsections -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg" alt="Renders" class="image" data-section="renders" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D" class="image" data-section="3d" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(1).jpg" alt="Drafting" class="image" data-section="drafting" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(1).jpg" alt="Video Editing" class="image" data-section="video" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS.jpg" alt="GIS" class="image" data-section="gis" loading="lazy" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg" alt="Renders" class="image" data-section="renders">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D" class="image" data-section="3d">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(1).jpg" alt="Drafting" class="image" data-section="drafting">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(1).jpg" alt="Video Editing" class="image" data-section="video">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS.jpg" alt="GIS" class="image" data-section="gis">
                 
                 <!-- Project-specific images -->
                 <!-- Renders projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(2).jpg" alt="Renders Project 1" class="image" data-project="renders-1" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(3).jpg" alt="Renders Project 2" class="image" data-project="renders-2" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg" alt="Renders Project 3" class="image" data-project="renders-3" loading="lazy" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(2).jpg" alt="Renders Project 1" class="image" data-project="renders-1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(3).jpg" alt="Renders Project 2" class="image" data-project="renders-2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg" alt="Renders Project 3" class="image" data-project="renders-3">
                 
                 <!-- 3D projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 1" class="image" data-project="3d-1" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 2" class="image" data-project="3d-2" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 3" class="image" data-project="3d-3" loading="lazy" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 1" class="image" data-project="3d-1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 2" class="image" data-project="3d-2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 3" class="image" data-project="3d-3">
                 
                 <!-- Drafting projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(2).jpg" alt="Drafting Project 1" class="image" data-project="drafting-1" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(3).jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(4).jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" loading="lazy" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(2).jpg" alt="Drafting Project 1" class="image" data-project="drafting-1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(3).jpg" alt="Drafting Project 2" class="image" data-project="drafting-2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(4).jpg" alt="Drafting Project 3" class="image" data-project="drafting-3">
                 
                 <!-- Video projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(2).jpg" alt="Video Project 1" class="image" data-project="video-1" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(3).jpg" alt="Video Project 2" class="image" data-project="video-2" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(4).jpg" alt="Video Project 3" class="image" data-project="video-3" loading="lazy" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(2).jpg" alt="Video Project 1" class="image" data-project="video-1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(3).jpg" alt="Video Project 2" class="image" data-project="video-2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(4).jpg" alt="Video Project 3" class="image" data-project="video-3">
                 
                 <!-- GIS projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_1.jpg" alt="GIS Project 1" class="image" data-project="gis-1" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_2.jpg" alt="GIS Project 2" class="image" data-project="gis-2" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_3.png" alt="GIS Project 3" class="image" data-project="gis-3" loading="lazy" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_1.jpg" alt="GIS Project 1" class="image" data-project="gis-1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_2.jpg" alt="GIS Project 2" class="image" data-project="gis-2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_3.png" alt="GIS Project 3" class="image" data-project="gis-3">
                 
                 <!-- Project description overlay -->
                 <div class="project-description"></div>
@@ -748,7 +599,6 @@
                 <div class="section-content">
                     <h3>Architectural Renders</h3>
                     <p>Photorealistic architectural visualizations created using industry-leading rendering software. These projects showcase interior and exterior spaces with attention to lighting, materials, and environmental details.</p>
-                    <p>Each render is meticulously crafted to convey the design intent while creating an emotional connection with the viewer.</p>
                     <div class="project-buttons">
                         <button class="project-button" data-project="renders-1" data-description="Luxury waterfront villa with sustainable features and panoramic ocean views.">Waterfront Villa</button>
                         <button class="project-button" data-project="renders-2" data-description="Contemporary urban apartment with minimalist design and innovative lighting solutions.">Urban Apartment</button>
@@ -761,7 +611,6 @@
                 <div class="section-content">
                     <h3>3D Modeling</h3>
                     <p>Detailed 3D models created for various applications including product design, architectural visualization, and digital assets. My modeling work emphasizes accuracy, optimized geometry, and attention to detail.</p>
-                    <p>I work with multiple modeling platforms to create assets that meet both technical and aesthetic requirements.</p>
                     <div class="project-buttons">
                         <button class="project-button" data-project="3d-1" data-description="High-poly architectural model for an eco-friendly housing development with complex geometry.">Eco Housing</button>
                         <button class="project-button" data-project="3d-2" data-description="Detailed furniture modeling collection with physically accurate materials and connections.">Furniture Collection</button>
@@ -774,7 +623,6 @@
                 <div class="section-content">
                     <h3>Technical Drafting</h3>
                     <p>Precise technical drawings and documentation for architectural and engineering applications. My drafting work follows industry standards and best practices to ensure accuracy and clarity.</p>
-                    <p>From construction documents to detailed drawings, I provide comprehensive technical documentation for projects of all scales.</p>
                     <div class="project-buttons">
                         <button class="project-button" data-project="drafting-1" data-description="Comprehensive construction documentation for a 12-story mixed-use development in Chicago.">Mixed-Use Tower</button>
                         <button class="project-button" data-project="drafting-2" data-description="Detailed section drawings showcasing innovative building envelope systems for extreme climates.">Building Envelope</button>
@@ -787,7 +635,6 @@
                 <div class="section-content">
                     <h3>Video Editing</h3>
                     <p>Professional video editing services for architectural walkthroughs, product presentations, and promotional content. My video work combines technical precision with narrative storytelling.</p>
-                    <p>I specialize in creating compelling visual narratives that effectively communicate design concepts and project features.</p>
                     <div class="project-buttons">
                         <button class="project-button" data-project="video-1" data-description="Dynamic architectural walkthrough of a museum showcasing lighting changes throughout the day.">Museum Walkthrough</button>
                         <button class="project-button" data-project="video-2" data-description="Fast-paced promotional video for a new residential development highlighting key amenities.">Residential Promo</button>
@@ -800,7 +647,6 @@
                 <div class="section-content">
                     <h3>GIS Mapping</h3>
                     <p>Geographic Information System (GIS) mapping and analysis for urban planning, environmental studies, and spatial data visualization. My GIS work provides clear insights into complex spatial relationships.</p>
-                    <p>I create custom maps and spatial analyses that support informed decision-making and effective communication of geographic data.</p>
                     <div class="project-buttons">
                         <button class="project-button" data-project="gis-1" data-description="Urban heat island analysis for metropolitan planning with temperature gradient visualization.">Urban Heat Map</button>
                         <button class="project-button" data-project="gis-2" data-description="Transportation accessibility study highlighting public transit coverage and gaps in service.">Transit Coverage</button>
@@ -816,56 +662,17 @@
                     <p>With a background in architecture and digital design, I've spent the last decade honing my skills across multiple visualization disciplines. My journey began with a passion for creating spaces and evolved into a comprehensive skill set that bridges technical precision with artistic expression.</p>
                     
                     <h3>My Approach</h3>
-                    <p>I believe that effective visualization is about more than just creating beautiful images—it's about telling stories, solving problems, and communicating ideas clearly. Whether I'm creating photorealistic renders or technical drawings, I focus on understanding the core purpose of each project and tailoring my approach to meet those specific needs.</p>
+                    <p>I believe that effective visualization is about more than just creating beautiful images—it's about telling stories, solving problems, and communicating ideas clearly. Whether I'm creating photorealistic renders or technical drawings, I focus on understanding the core purpose of each project.</p>
                     
                     <h3>Skills & Expertise</h3>
                     <div class="skills-container">
-                        <div class="skill-item">
-                            <span>3D Modeling</span>
-                            <div class="skill-progress">
-                                <div class="skill-progress-bar" style="width: 95%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span>Architectural Rendering</span>
-                            <div class="skill-progress">
-                                <div class="skill-progress-bar" style="width: 90%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span>Technical Drafting</span>
-                            <div class="skill-progress">
-                                <div class="skill-progress-bar" style="width: 85%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span>Video Editing</span>
-                            <div class="skill-progress">
-                                <div class="skill-progress-bar" style="width: 80%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span>GIS Mapping</span>
-                            <div class="skill-progress">
-                                <div class="skill-progress-bar" style="width: 75%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <h3>Testimonials</h3>
-                    <div class="testimonials">
-                        <div class="testimonial">
-                            <div class="testimonial-content">
-                                The architectural renders created for our development project exceeded our expectations. The attention to detail and ability to capture the essence of our design vision was remarkable.
-                            </div>
-                            <div class="testimonial-author">— John Smith, Architect</div>
-                        </div>
-                        <div class="testimonial">
-                            <div class="testimonial-content">
-                                Working with Aliani on our technical documentation was a seamless experience. The precision and organization of the drawings made our construction process significantly more efficient.
-                            </div>
-                            <div class="testimonial-author">— Sarah Johnson, Project Manager</div>
-                        </div>
+                        <div class="skill-item">3D Modeling</div>
+                        <div class="skill-item">Architectural Rendering</div>
+                        <div class="skill-item">Technical Drafting</div>
+                        <div class="skill-item">Video Editing</div>
+                        <div class="skill-item">GIS Mapping</div>
+                        <div class="skill-item">Digital Photography</div>
+                        <div class="skill-item">VR/AR Visualization</div>
                     </div>
                     
                     <button onclick="window.open('resume.pdf', '_blank')">Download Resume</button>
@@ -879,19 +686,19 @@
                     <p>Interested in working together? I'm currently available for freelance projects and consulting opportunities. Get in touch to discuss how I can help bring your vision to life.</p>
                     
                     <form id="contact-form">
-                        <div style="margin-bottom: 15px;">
-                            <label for="name" style="display: block; margin-bottom: 5px;">Name</label>
-                            <input type="text" id="name" name="name" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <div>
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name">
                         </div>
                         
-                        <div style="margin-bottom: 15px;">
-                            <label for="email" style="display: block; margin-bottom: 5px;">Email</label>
-                            <input type="email" id="email" name="email" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <div>
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email">
                         </div>
                         
-                        <div style="margin-bottom: 15px;">
-                            <label for="message" style="display: block; margin-bottom: 5px;">Message</label>
-                            <textarea id="message" name="message" rows="5" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+                        <div>
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5"></textarea>
                         </div>
                         
                         <button type="submit">Send Message</button>
@@ -908,3 +715,267 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const scrollableHalf = document.querySelector('.scrollable-half');
+            const dropdownTrigger = document.querySelector('.dropdown-trigger');
+            const dropdownContent = document.querySelector('.dropdown-content');
+            const dropdownArrow = document.querySelector('.dropdown-arrow');
+            const images = document.querySelectorAll('.image');
+            const sections = document.querySelectorAll('.section, .subsection');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const projectButtons = document.querySelectorAll('.project-button');
+            const projectDescription = document.querySelector('.project-description');
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinksContainer = document.querySelector('.nav-links');
+            
+            // State management
+            let currentSection = 'home';
+            let currentProject = null;
+            
+            // Store project descriptions
+            const projectDescriptions = {};
+            projectButtons.forEach(button => {
+                const projectId = button.dataset.project;
+                const description = button.dataset.description;
+                if (projectId && description) {
+                    projectDescriptions[projectId] = description;
+                }
+            });
+            
+            // Simple mobile menu toggle
+            mobileMenuToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                navLinksContainer.classList.toggle('active');
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.mobile-menu-toggle') && 
+                    !e.target.closest('.nav-links') && 
+                    navLinksContainer.classList.contains('active')) {
+                    mobileMenuToggle.classList.remove('active');
+                    navLinksContainer.classList.remove('active');
+                }
+            });
+            
+            // Handle dropdown menu
+            dropdownTrigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                dropdownContent.classList.toggle('show');
+                dropdownArrow.classList.toggle('rotate');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown') && dropdownContent.classList.contains('show')) {
+                    dropdownContent.classList.remove('show');
+                    dropdownArrow.classList.remove('rotate');
+                }
+            });
+            
+            // Handle navigation clicks
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.classList.contains('dropdown-trigger')) return;
+                    
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Close dropdown if open
+                        dropdownContent.classList.remove('show');
+                        dropdownArrow.classList.remove('rotate');
+                        
+                        // Close mobile menu if open
+                        if (navLinksContainer.classList.contains('active')) {
+                            mobileMenuToggle.classList.remove('active');
+                            navLinksContainer.classList.remove('active');
+                        }
+                        
+                        // Reset project view
+                        hideDescription();
+                        resetProjectButtons();
+                        
+                        // Update image if section has one
+                        if (targetElement.dataset.section) {
+                            updateActiveImage(targetElement.dataset.section);
+                        }
+                        
+                        // Scroll to target
+                        scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Handle scrolling to detect current section
+            scrollableHalf.addEventListener('scroll', function() {
+                // Find visible sections
+                const visibleSections = [];
+                
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    const containerTop = scrollableHalf.getBoundingClientRect().top;
+                    const containerHeight = scrollableHalf.clientHeight;
+                    
+                    // Check if section is visible in the scrollable container
+                    if (rect.top < containerTop + containerHeight && rect.bottom > containerTop) {
+                        visibleSections.push({
+                            section: section,
+                            visibleHeight: Math.min(rect.bottom, containerTop + containerHeight) - 
+                                           Math.max(rect.top, containerTop)
+                        });
+                    }
+                });
+                
+                // Find the most visible section
+                if (visibleSections.length > 0) {
+                    visibleSections.sort((a, b) => b.visibleHeight - a.visibleHeight);
+                    const mostVisibleSection = visibleSections[0].section;
+                    
+                    if (mostVisibleSection.dataset.section && mostVisibleSection.dataset.section !== currentSection) {
+                        // Update current section and image
+                        currentSection = mostVisibleSection.dataset.section;
+                        updateActiveImage(currentSection);
+                    }
+                }
+            });
+            
+            // Handle project button clicks
+            projectButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const projectId = this.dataset.project;
+                    
+                    // Reset all buttons and set this one as active
+                    resetProjectButtons();
+                    this.classList.add('active');
+                    
+                    // Show the project image
+                    showProjectImage(projectId);
+                    
+                    // Show description
+                    const description = projectDescriptions[projectId];
+                    showDescription(description);
+                });
+            });
+            
+            // Image management functions
+            function updateActiveImage(sectionId) {
+                // First reset any active project
+                currentProject = null;
+                
+                // Remove active class from all images
+                images.forEach(img => img.classList.remove('active'));
+                
+                // Find and activate the image for this section
+                const sectionImage = document.querySelector(`.image[data-section="${sectionId}"]`);
+                if (sectionImage) {
+                    sectionImage.classList.add('active');
+                }
+            }
+            
+            function showProjectImage(projectId) {
+                // Set current project
+                currentProject = projectId;
+                
+                // Remove active class from all images
+                images.forEach(img => img.classList.remove('active'));
+                
+                // Find and activate the project image
+                const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
+                if (projectImage) {
+                    projectImage.classList.add('active');
+                }
+            }
+            
+            // Description functions
+            function showDescription(text) {
+                if (!text) return;
+                
+                projectDescription.textContent = text;
+                projectDescription.classList.add('visible');
+            }
+            
+            function hideDescription() {
+                projectDescription.classList.remove('visible');
+            }
+            
+            // Reset project buttons
+            function resetProjectButtons() {
+                projectButtons.forEach(btn => btn.classList.remove('active'));
+            }
+            
+            // Handle form submission
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Simple form validation
+                    const name = this.querySelector('#name').value.trim();
+                    const email = this.querySelector('#email').value.trim();
+                    const message = this.querySelector('#message').value.trim();
+                    
+                    if (!name || !email || !message) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+                    
+                    // Simulate form submission
+                    alert('Thank you for your message! I will get back to you soon.');
+                    this.reset();
+                });
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                // When resizing, make sure the right image is showing
+                if (currentProject) {
+                    showProjectImage(currentProject);
+                } else {
+                    updateActiveImage(currentSection);
+                }
+                
+                // Close mobile menu on window resize to desktop
+                if (window.innerWidth > 768 && navLinksContainer.classList.contains('active')) {
+                    mobileMenuToggle.classList.remove('active');
+                    navLinksContainer.classList.remove('active');
+                }
+            });
+            
+            // Handle initial hash in URL
+            if (window.location.hash) {
+                const hash = window.location.hash.substring(1);
+                const targetElement = document.getElementById(hash);
+                
+                if (targetElement) {
+                    // Scroll to target after a small delay
+                    setTimeout(() => {
+                        scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'auto'
+                        });
+                        
+                        // Update image if section has one
+                        if (targetElement.dataset.section) {
+                            currentSection = targetElement.dataset.section;
+                            updateActiveImage(currentSection);
+                        }
+                    }, 200);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
