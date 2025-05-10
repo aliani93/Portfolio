@@ -257,6 +257,7 @@
             position: relative;
             width: 100%;
             height: 100%;
+            background-color: #000;
         }
         
         .image {
@@ -267,7 +268,7 @@
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.3s ease-in-out;
             user-select: none;
             pointer-events: none;
             will-change: opacity;
@@ -275,6 +276,7 @@
         
         .image.active {
             opacity: 1;
+            z-index: 2;
         }
         
         /* Project description overlay */
@@ -572,6 +574,10 @@
             let currentSection = 'home';
             let currentProject = null;
             let userInitiatedScroll = true;
+            let isTransitioning = false;
+            
+            // Constants
+            const TRANSITION_DELAY = 300; // Match CSS transition time
             
             // Project descriptions map
             const projectDescriptions = {};
@@ -592,6 +598,22 @@
                 };
             }
             
+            // Preload all images immediately
+            function preloadImages() {
+                // Setting priority for section images
+                const mainImages = document.querySelectorAll('.image');
+                mainImages.forEach(img => {
+                    if (!img.complete) {
+                        // Force immediate load for important images
+                        img.setAttribute('importance', 'high');
+                        
+                        // Create image object to preload
+                        const preloadImg = new Image();
+                        preloadImg.src = img.src;
+                    }
+                });
+            }
+            
             // Description handlers
             function hideDescription() {
                 projectDescription.classList.remove('visible');
@@ -599,44 +621,77 @@
                     if (!projectDescription.classList.contains('visible')) {
                         projectDescription.textContent = '';
                     }
-                }, 300);
+                }, TRANSITION_DELAY);
             }
             
             function showDescription(text) {
                 if (!text) return;
                 projectDescription.textContent = text;
+                // Small delay to ensure DOM update before animation
                 setTimeout(() => {
                     projectDescription.classList.add('visible');
                 }, 10);
             }
             
             // Image management
-            function updateActiveImage(sectionId) {
-                if (currentProject) return;
+            function updateActiveImage(sectionId, immediate = false) {
+                if (currentProject || isTransitioning) return;
+                
+                isTransitioning = true;
                 
                 const activeImage = document.querySelector(`.image[data-section="${sectionId}"]`);
                 if (activeImage) {
+                    // Remove active class from all images
                     images.forEach(img => img.classList.remove('active'));
+                    
+                    // Force reflow to ensure clean transition
+                    void activeImage.offsetWidth;
+                    
+                    // Add active class to make image visible
                     activeImage.classList.add('active');
+                    
+                    // Reset transition state after delay
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, immediate ? 10 : TRANSITION_DELAY);
+                } else {
+                    isTransitioning = false;
                 }
             }
             
             function showProjectImage(projectId) {
+                if (isTransitioning) return;
+                
+                isTransitioning = true;
+                
+                // Remove active class from all images
                 images.forEach(img => img.classList.remove('active'));
                 
                 const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
                 if (projectImage) {
+                    // Force reflow for clean transition
+                    void projectImage.offsetWidth;
+                    
+                    // Add active class to make image visible
                     projectImage.classList.add('active');
                     currentProject = projectId;
                     
+                    // Show project description
                     const description = projectDescriptions[projectId];
                     showDescription(description);
+                    
+                    // Reset transition state after delay
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, TRANSITION_DELAY);
+                } else {
+                    isTransitioning = false;
                 }
             }
             
-            // Section visibility tracking
+            // Section visibility tracking with optimized threshold
             const observer = new IntersectionObserver((entries) => {
-                if (!userInitiatedScroll && currentProject) return;
+                if (!userInitiatedScroll || currentProject || isTransitioning) return;
                 
                 let bestEntry = null;
                 let maxRatio = 0;
@@ -654,6 +709,8 @@
                     if (currentSection !== sectionId) {
                         hideDescription();
                         currentProject = null;
+                        
+                        // Mark all project buttons as inactive
                         projectButtons.forEach(btn => btn.classList.remove('active'));
                         
                         currentSection = sectionId;
@@ -662,7 +719,8 @@
                 }
             }, {
                 root: scrollableHalf,
-                threshold: 0.2
+                threshold: [0.2, 0.5, 0.75], // Multiple thresholds for better accuracy
+                rootMargin: '0px'
             });
             
             // Initialize observers
@@ -671,11 +729,12 @@
             // Event handlers
             function handleProjectButtonClick(e) {
                 const projectButton = e.target.closest('.project-button');
-                if (!projectButton) return;
+                if (!projectButton || isTransitioning) return;
                 
                 const projectId = projectButton.dataset.project;
                 userInitiatedScroll = false;
                 
+                // Update button active state
                 projectButtons.forEach(btn => {
                     btn.classList.toggle('active', btn === projectButton);
                 });
@@ -707,45 +766,55 @@
                 const targetElement = document.getElementById(targetId);
                 
                 if (targetElement) {
+                    // Close dropdown if open
                     dropdownContent.classList.remove('show');
                     dropdownArrow.classList.remove('rotate');
                     
+                    // Reset project view
                     currentProject = null;
                     hideDescription();
                     projectButtons.forEach(btn => btn.classList.remove('active'));
                     
-                    scrollableHalf.scrollTo({
-                        top: targetElement.offsetTop,
-                        behavior: 'smooth'
-                    });
+                    // Immediately update image 
+                    if (targetElement.dataset.section) {
+                        currentSection = targetElement.dataset.section;
+                        updateActiveImage(currentSection, true);
+                    }
+                    
+                    // Scroll to target (with small delay to let image update first)
+                    setTimeout(() => {
+                        scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }, 50);
                 }
             }
             
-            function handleScroll() {
+            const handleScroll = debounce(() => {
                 userInitiatedScroll = true;
                 
                 if (!currentProject) {
                     hideDescription();
                 }
-            }
-            
-            // Preload critical images
-            function preloadImages() {
-                const mainImages = document.querySelectorAll('.image[data-section]');
-                mainImages.forEach(img => {
-                    if (!img.complete) {
-                        img.setAttribute('importance', 'high');
-                    }
-                });
-            }
+            }, 50);
             
             // Set up event listeners
             document.addEventListener('click', handleProjectButtonClick);
             dropdownTrigger.addEventListener('click', handleDropdownToggle);
             document.addEventListener('click', handleDocumentClick);
             navLinks.forEach(link => link.addEventListener('click', handleNavLinkClick));
-            scrollableHalf.addEventListener('scroll', debounce(handleScroll, 50));
-            window.addEventListener('resize', debounce(() => {}, 100));
+            scrollableHalf.addEventListener('scroll', handleScroll);
+            
+            // Resize handler for orientation changes
+            window.addEventListener('resize', debounce(() => {
+                // Force update active image to fix any visual glitches
+                if (currentProject) {
+                    showProjectImage(currentProject);
+                } else {
+                    updateActiveImage(currentSection, true);
+                }
+            }, 100));
             
             // Security - prevent right-click on images
             document.addEventListener('contextmenu', e => {
@@ -763,6 +832,7 @@
             
             // Initialize
             preloadImages();
+            updateActiveImage(currentSection, true);
             
             // Clean up on unload
             window.addEventListener('beforeunload', () => {
