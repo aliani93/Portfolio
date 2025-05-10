@@ -1,4 +1,313 @@
-<!DOCTYPE html>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM elements
+            const elements = {
+                scrollableHalf: document.querySelector('.scrollable-half'),
+                dropdown: document.querySelector('.dropdown'),
+                dropdownTrigger: document.querySelector('.dropdown-trigger'),
+                dropdownContent: document.querySelector('.dropdown-content'),
+                dropdownArrow: document.querySelector('.dropdown-arrow'),
+                images: document.querySelectorAll('.image'),
+                sections: document.querySelectorAll('.section, .subsection'),
+                navLinks: document.querySelectorAll('.nav-links a'),
+                projectButtons: document.querySelectorAll('.project-button'),
+                projectDescription: document.querySelector('.project-description')
+            };
+            
+            // Configuration
+            const config = {
+                scrollDelay: 50,
+                resizeDelay: 100,
+                intersectionThreshold: 0.2,
+                descriptionFadeDelay: 300
+            };
+            
+            // State
+            const state = {
+                currentSection: 'home',
+                currentProject: null,
+                userInitiatedScroll: true,
+                projectDescriptions: {}
+            };
+            
+            // Initialize project descriptions from data attributes
+            elements.projectButtons.forEach(button => {
+                const projectId = button.dataset.project;
+                const description = button.dataset.description;
+                if (projectId && description) {
+                    state.projectDescriptions[projectId] = description;
+                }
+            });
+            
+            // Utility functions
+            const utils = {
+                // Debounce function to limit execution frequency
+                debounce: (func, delay) => {
+                    let timeout;
+                    return function(...args) {
+                        clearTimeout(timeout);
+                        timeout = setTimeout(() => func.apply(this, args), delay);
+                    };
+                },
+                
+                // Preload critical images for better performance
+                preloadImages: () => {
+                    const mainImages = document.querySelectorAll('.image[data-section]');
+                    mainImages.forEach(img => {
+                        if (!img.complete) {
+                            img.setAttribute('importance', 'high');
+                        }
+                    });
+                }
+            };
+            
+            // Description handling
+            const description = {
+                hide: () => {
+                    elements.projectDescription.classList.remove('visible');
+                    setTimeout(() => {
+                        if (!elements.projectDescription.classList.contains('visible')) {
+                            elements.projectDescription.textContent = '';
+                        }
+                    }, config.descriptionFadeDelay);
+                },
+                
+                show: (text) => {
+                    if (!text) return;
+                    
+                    elements.projectDescription.textContent = text;
+                    // Small delay to ensure DOM update before animation
+                    setTimeout(() => {
+                        elements.projectDescription.classList.add('visible');
+                    }, 10);
+                }
+            };
+            
+            // Image handling
+            const imageManager = {
+                updateActive: (sectionId) => {
+                    // If we're in project view, don't change the image
+                    if (state.currentProject) return;
+                    
+                    const activeImage = document.querySelector(`.image[data-section="${sectionId}"]`);
+                    if (activeImage) {
+                        elements.images.forEach(img => img.classList.remove('active'));
+                        activeImage.classList.add('active');
+                    }
+                },
+                
+                showProject: (projectId) => {
+                    elements.images.forEach(img => img.classList.remove('active'));
+                    
+                    const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
+                    if (projectImage) {
+                        projectImage.classList.add('active');
+                        state.currentProject = projectId;
+                        
+                        // Show project description
+                        const descText = state.projectDescriptions[projectId];
+                        description.show(descText);
+                    }
+                }
+            };
+            
+            // Section tracking with IntersectionObserver
+            const setupIntersectionObserver = () => {
+                const options = {
+                    root: elements.scrollableHalf,
+                    rootMargin: '0px',
+                    threshold: config.intersectionThreshold
+                };
+                
+                const sectionObserver = new IntersectionObserver((entries) => {
+                    // Skip if not user initiated scroll
+                    if (!state.userInitiatedScroll && state.currentProject) return;
+                    
+                    // Find the most visible section
+                    let bestEntry = null;
+                    let maxRatio = 0;
+                    
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+                            maxRatio = entry.intersectionRatio;
+                            bestEntry = entry;
+                        }
+                    });
+                    
+                    if (bestEntry && bestEntry.target.dataset.section) {
+                        const sectionId = bestEntry.target.dataset.section;
+                        
+                        if (state.currentSection !== sectionId) {
+                            // We're changing sections, hide any project description
+                            description.hide();
+                            
+                            // Reset project view when scrolling to a new section
+                            state.currentProject = null;
+                            
+                            // Mark all project buttons as inactive
+                            elements.projectButtons.forEach(btn => btn.classList.remove('active'));
+                            
+                            state.currentSection = sectionId;
+                            imageManager.updateActive(sectionId);
+                        }
+                    }
+                }, options);
+                
+                // Observe all sections
+                elements.sections.forEach(section => sectionObserver.observe(section));
+                
+                return sectionObserver;
+            };
+            
+            // Event handlers
+            const handlers = {
+                // Project button click
+                projectButtonClick: (e) => {
+                    const projectButton = e.target.closest('.project-button');
+                    if (!projectButton) return;
+                    
+                    const projectId = projectButton.dataset.project;
+                    state.userInitiatedScroll = false;
+                    
+                    // Update button active state
+                    elements.projectButtons.forEach(btn => {
+                        btn.classList.toggle('active', btn === projectButton);
+                    });
+                    
+                    imageManager.showProject(projectId);
+                },
+                
+                // Dropdown toggle
+                dropdownToggle: (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    elements.dropdownContent.classList.toggle('show');
+                    elements.dropdownArrow.classList.toggle('rotate');
+                },
+                
+                // Close dropdown when clicking outside
+                documentClick: (e) => {
+                    if (!e.target.closest('.dropdown') && elements.dropdownContent.classList.contains('show')) {
+                        elements.dropdownContent.classList.remove('show');
+                        elements.dropdownArrow.classList.remove('rotate');
+                    }
+                },
+                
+                // Navigation link click
+                navLinkClick: (e) => {
+                    const anchor = e.currentTarget;
+                    if (anchor.classList.contains('dropdown-trigger')) return;
+                    
+                    e.preventDefault();
+                    
+                    const targetId = anchor.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Close dropdown if open
+                        elements.dropdownContent.classList.remove('show');
+                        elements.dropdownArrow.classList.remove('rotate');
+                        
+                        // Reset project view
+                        state.currentProject = null;
+                        
+                        // Hide any project description
+                        description.hide();
+                        
+                        // Mark all project buttons as inactive
+                        elements.projectButtons.forEach(btn => btn.classList.remove('active'));
+                        
+                        // Scroll to target
+                        elements.scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                },
+                
+                // Scroll handler
+                scroll: utils.debounce(() => {
+                    state.userInitiatedScroll = true;
+                    
+                    // If we're scrolling and not viewing a specific project,
+                    // hide any visible project description
+                    if (!state.currentProject) {
+                        description.hide();
+                    }
+                }, config.scrollDelay),
+                
+                // Resize handler
+                resize: utils.debounce(() => {
+                    // Any specific resize logic would go here
+                }, config.resizeDelay),
+                
+                // Security - prevent right-click on images
+                contextMenu: (e) => {
+                    if (e.target.closest('.image-half')) e.preventDefault();
+                },
+                
+                // Block specific keyboard shortcuts
+                keydown: (e) => {
+                    if ((e.ctrlKey && ['s', 'S', 'u', 'U'].includes(e.key)) || 
+                        e.key === 'F12' || 
+                        (e.ctrlKey && e.shiftKey && ['i', 'I'].includes(e.key))) {
+                        e.preventDefault();
+                    }
+                }
+            };
+            
+            // Initialize event listeners
+            const initEventListeners = () => {
+                // Project buttons (using event delegation)
+                document.addEventListener('click', handlers.projectButtonClick);
+                
+                // Dropdown toggle
+                elements.dropdownTrigger.addEventListener('click', handlers.dropdownToggle);
+                
+                // Document click (for dropdown closing)
+                document.addEventListener('click', handlers.documentClick);
+                
+                // Navigation links
+                elements.navLinks.forEach(anchor => {
+                    anchor.addEventListener('click', handlers.navLinkClick);
+                });
+                
+                // Scroll event
+                elements.scrollableHalf.addEventListener('scroll', handlers.scroll);
+                
+                // Window events
+                window.addEventListener('resize', handlers.resize);
+                window.addEventListener('orientationchange', handlers.resize);
+                
+                // Security events
+                document.addEventListener('contextmenu', handlers.contextMenu);
+                document.addEventListener('keydown', handlers.keydown);
+            };
+            
+            // Cleanup function
+            const cleanup = (sectionObserver) => {
+                window.addEventListener('beforeunload', () => {
+                    if (sectionObserver) sectionObserver.disconnect();
+                    
+                    // Cleanup event listeners if needed
+                    // Would need to use named functions instead of anonymous ones to remove them
+                });
+            };
+            
+            // Initialization
+            const init = () => {
+                utils.preloadImages();
+                const sectionObserver = setupIntersectionObserver();
+                initEventListeners();
+                cleanup(sectionObserver);
+            };
+            
+            // Start application
+            init();
+        });
+    </script>
+                document.addEventListener<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,8 +318,10 @@
         :root {
             --navbar-height: 60px;
             --primary-bg: #333;
+            --primary-hover: #555;
             --text-light: white;
             --overlay-dark: rgba(0, 0, 0, 0.8);
+            --overlay-light: rgba(0, 0, 0, 0.7);
             --fade-length: 40px;
             --transition-speed: 0.3s;
         }
@@ -281,14 +592,15 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
+            background: var(--overlay-light);
+            color: var(--text-light);
+            padding: 15px 20px;
             transform: translateY(100%);
             transition: transform 0.3s ease;
-            z-index: 10;
+            z-index: 6;
             font-size: clamp(14px, 3vw, 16px);
-            line-height: 1.4;
+            line-height: 1.5;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
         }
         
         .project-description.visible {
@@ -323,7 +635,7 @@
         }
         
         button:hover {
-            background-color: #555;
+            background-color: var(--primary-hover);
         }
         
         .project-buttons {
@@ -336,10 +648,31 @@
         .project-button {
             padding: 10px 20px;
             margin-top: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--text-light);
+            transition: width 0.3s ease;
+        }
+        
+        .project-button:hover::after {
+            width: 100%;
         }
         
         .project-button.active {
-            background-color: #555;
+            background-color: var(--primary-hover);
+        }
+        
+        .project-button.active::after {
+            width: 100%;
         }
         
         /* Small screens */
@@ -355,6 +688,11 @@
             
             .project-buttons {
                 justify-content: center;
+            }
+            
+            .project-description {
+                padding: 12px 15px;
+                font-size: clamp(13px, 3vw, 15px);
             }
         }
     </style>
