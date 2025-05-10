@@ -1,78 +1,110 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aliani</title>
+    <title>Aliani - Portfolio</title>
     <style>
+        /* Base styles and reset */
+        :root {
+            --navbar-height: 60px;
+            --primary-bg: #333;
+            --text-light: white;
+            --overlay-dark: rgba(0, 0, 0, 0.8);
+            --fade-length: 40px;
+            --transition-speed: 0.3s;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
         }
-
+        
         body {
             overflow-x: hidden;
+            height: 100vh;
         }
-
-        /* Navigation styles */
+        
+        /* Typography */
+        h2 {
+            font-size: clamp(24px, 5vw, 32px);
+            margin-bottom: 20px;
+            color: var(--primary-bg);
+        }
+        
+        h3 {
+            font-size: clamp(20px, 4vw, 24px);
+            margin-bottom: 15px;
+            color: var(--primary-bg);
+        }
+        
+        p {
+            font-size: clamp(16px, 3vw, 18px);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        /* Navigation */
         .navbar {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 60px;
-            background-color: rgba(0, 0, 0, 0.8);
+            height: var(--navbar-height);
+            background-color: var(--overlay-dark);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
+            padding: 0 max(20px, 5%);
             z-index: 1000;
-            color: white;
+            color: var(--text-light);
         }
-
+        
         .logo {
-            font-size: 24px;
+            font-size: clamp(18px, 4vw, 24px);
             font-weight: bold;
+            white-space: nowrap;
         }
-
+        
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: clamp(12px, 3vw, 20px);
             align-items: center;
         }
-
+        
         .nav-links a {
-            color: white;
+            color: var(--text-light);
             text-decoration: none;
+            font-size: clamp(14px, 2.5vw, 16px);
         }
-
-        /* Dropdown styles */
+        
+        /* Dropdown */
         .dropdown {
             position: relative;
         }
-
+        
         .dropdown > a {
             display: flex;
             align-items: center;
             cursor: pointer;
         }
-
+        
         .dropdown-arrow {
             display: inline-block;
             margin-left: 5px;
             font-size: 10px;
-            transition: transform 0.3s;
+            transition: transform var(--transition-speed);
         }
-
+        
         .dropdown-content {
             display: none;
             position: absolute;
             top: 100%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: var(--overlay-dark);
             min-width: 150px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             z-index: 1001;
@@ -81,37 +113,43 @@
             overflow: hidden;
             text-align: center;
         }
-
+        
         .dropdown-content a {
             padding: 10px 15px;
             display: block;
-            transition: background-color 0.3s;
+            transition: background-color var(--transition-speed);
         }
-
+        
         .dropdown-content a:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
-
+        
         .dropdown-content.show {
             display: block;
+            animation: fadeIn 0.2s ease-out;
         }
-
+        
         .dropdown-arrow.rotate {
             transform: rotate(180deg);
         }
-
-        /* Main container structure */
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+            to { opacity: 1; transform: translateY(0) translateX(-50%); }
+        }
+        
+        /* Layout structure */
         #app-container {
             width: 100%;
-            height: 100vh;
+            height: calc(100vh - var(--navbar-height));
             position: fixed;
-            top: 60px; /* Account for navbar */
+            top: var(--navbar-height);
             left: 0;
             display: flex;
             flex-direction: column;
         }
-
-        /* Portrait layout (default for mobile) */
+        
+        /* Portrait layout */
         .image-half {
             width: 100%;
             height: 30%;
@@ -120,25 +158,27 @@
             background-color: #000;
             z-index: 1;
         }
-
+        
         .scrollable-half {
             width: 100%;
             height: 70%;
             overflow-y: auto;
             background-color: white;
             position: relative;
+            scroll-behavior: smooth;
         }
         
-        /* Fade effect for portrait mode */
+        /* Fade effects */
         .image-half::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 40px;
+            height: var(--fade-length);
             background: linear-gradient(to bottom, rgba(0,0,0,0), white);
             z-index: 5;
+            pointer-events: none;
         }
         
         .scrollable-half::before {
@@ -147,27 +187,26 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 40px;
+            height: var(--fade-length);
             background: linear-gradient(to top, rgba(255,255,255,0), white);
             z-index: 5;
             pointer-events: none;
         }
-
+        
         /* Landscape layout */
         @media (orientation: landscape) {
             #app-container {
                 flex-direction: row;
             }
-
+            
             .image-half, .scrollable-half {
                 width: 50%;
-                height: calc(100vh - 60px);
+                height: 100%;
             }
             
             /* Reset portrait fade and add landscape fade */
             .image-half::after {
-                content: '';
-                width: 40px;
+                width: var(--fade-length);
                 height: 100%;
                 top: 0;
                 bottom: auto;
@@ -177,22 +216,21 @@
             }
             
             .scrollable-half::before {
-                content: '';
-                width: 40px;
+                width: var(--fade-length);
                 height: 100%;
                 top: 0;
                 left: 0;
                 background: linear-gradient(to left, rgba(255,255,255,0), white);
             }
         }
-
+        
         /* Image styling */
         .image-container {
             position: relative;
             width: 100%;
             height: 100%;
         }
-
+        
         .image {
             position: absolute;
             top: 0;
@@ -204,115 +242,68 @@
             transition: opacity 0.5s ease-in-out;
             user-select: none;
             pointer-events: none;
+            will-change: opacity;
         }
-
+        
         .image.active {
             opacity: 1;
         }
         
-        /* Overlay to capture mouse events */
-        .image-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            cursor: default;
-        }
-        
-        /* Project buttons container */
-        .project-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .project-button {
-            padding: 10px 20px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        .project-button:hover {
-            background-color: #555;
-        }
-
-        /* Content styling */
+        /* Content sections */
         .section, .subsection {
             min-height: 100vh;
-            padding: 40px;
+            padding: clamp(20px, 5vw, 40px);
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-
+        
         .section-content {
             max-width: 800px;
             margin: 0 auto;
         }
-
-        h2 {
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-
-        h3 {
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        p {
-            font-size: 18px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
+        
+        /* Buttons */
         button {
             padding: 12px 24px;
-            background-color: #333;
-            color: white;
+            background-color: var(--primary-bg);
+            color: var(--text-light);
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: clamp(14px, 2.5vw, 16px);
+            margin-top: 20px;
+            transition: background-color var(--transition-speed);
+        }
+        
+        button:hover {
+            background-color: #555;
+        }
+        
+        .project-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-top: 20px;
         }
-
-        /* Media queries - combined for efficiency */
+        
+        .project-button {
+            padding: 10px 20px;
+            margin-top: 0;
+        }
+        
+        /* Small screens */
         @media (max-width: 768px) {
-            .navbar { padding: 0 10px; }
-            .logo { font-size: 20px; }
-            .nav-links { gap: 15px; }
-            .section, .subsection { 
-                padding: 30px 20px; 
-                min-height: 100%; 
-            }
-            h2 { font-size: 28px; }
-            h3 { font-size: 22px; }
-            p { font-size: 16px; }
             .dropdown-content {
                 position: absolute;
                 left: 0;
                 transform: none;
                 width: 200px;
             }
-        }
-        
-        @media (max-width: 480px) {
-            .navbar { padding: 0 8px; }
-            .logo { font-size: 18px; }
-            .nav-links { gap: 12px; }
-            .nav-links a, .dropdown > a { font-size: 14px; }
-            .dropdown-content { width: 180px; }
-            .dropdown-content a {
-                padding: 10px;
-                text-align: left;
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
             }
         }
     </style>
@@ -379,8 +370,6 @@
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_1.jpg" alt="GIS Project 1" class="image" data-project="gis-1" loading="lazy" draggable="false">
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_2.jpg" alt="GIS Project 2" class="image" data-project="gis-2" loading="lazy" draggable="false">
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_3.png" alt="GIS Project 3" class="image" data-project="gis-3" loading="lazy" draggable="false">
-                
-                <div class="image-overlay"></div>
             </div>
         </div>
 
@@ -485,7 +474,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Cache DOM elements
+            // Cache DOM elements using more efficient selectors
             const scrollableHalf = document.querySelector('.scrollable-half');
             const dropdown = document.querySelector('.dropdown');
             const dropdownTrigger = document.querySelector('.dropdown-trigger');
@@ -495,64 +484,96 @@
             const sections = document.querySelectorAll('.section, .subsection');
             const navLinks = document.querySelectorAll('.nav-links a');
             
-            // State variables
-            let currentSection = null;
-            let currentProject = null;
-            let scrollTriggered = true;
-            let scrollTimeout;
-            let resizeTimeout;
+            // Configuration constants
+            const SCROLL_DEBOUNCE_DELAY = 50;
+            const RESIZE_DEBOUNCE_DELAY = 100;
+            const INTERSECTION_THRESHOLD = 0.2;
             
-            // Utility functions
+            // State variables
+            let currentSection = 'home';
+            let currentProject = null;
+            let userInitiatedScroll = true;
+            
+            // Optimized debounce function
             const debounce = (func, delay) => {
                 let timeout;
-                return function() {
-                    const context = this;
-                    const args = arguments;
+                return function(...args) {
                     clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(context, args), delay);
+                    timeout = setTimeout(() => func.apply(this, args), delay);
                 };
             };
             
-            // Image protection
-            document.addEventListener('contextmenu', e => {
-                if (e.target.closest('.image-half')) e.preventDefault();
-            });
+            // Preload critical images
+            const preloadImages = () => {
+                const mainImages = document.querySelectorAll('.image[data-section]');
+                mainImages.forEach(img => {
+                    if (!img.complete) {
+                        img.setAttribute('importance', 'high');
+                    }
+                });
+            };
             
-            // Block common keyboard shortcuts
-            document.addEventListener('keydown', e => {
-                if ((e.ctrlKey && ['s', 'S', 'u', 'U'].includes(e.key)) || 
-                    e.key === 'F12' || 
-                    (e.ctrlKey && e.shiftKey && ['i', 'I'].includes(e.key))) {
-                    e.preventDefault();
+            // Use IntersectionObserver to determine visible sections
+            const setupIntersectionObserver = () => {
+                const options = {
+                    root: scrollableHalf,
+                    rootMargin: '0px',
+                    threshold: INTERSECTION_THRESHOLD
+                };
+                
+                const sectionObserver = new IntersectionObserver((entries) => {
+                    // Skip if not user initiated scroll
+                    if (!userInitiatedScroll && currentProject) return;
+                    
+                    // Reset project view when scrolling
+                    if (userInitiatedScroll) currentProject = null;
+                    
+                    // Find the most visible section
+                    let bestEntry = null;
+                    let maxRatio = 0;
+                    
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+                            maxRatio = entry.intersectionRatio;
+                            bestEntry = entry;
+                        }
+                    });
+                    
+                    if (bestEntry && bestEntry.target.dataset.section) {
+                        const sectionId = bestEntry.target.dataset.section;
+                        
+                        if (currentSection !== sectionId) {
+                            currentSection = sectionId;
+                            updateActiveImage(sectionId);
+                        }
+                    }
+                }, options);
+                
+                // Observe all sections
+                sections.forEach(section => sectionObserver.observe(section));
+                
+                return sectionObserver;
+            };
+            
+            // Update the active image
+            const updateActiveImage = (sectionId) => {
+                // If we're in project view, don't change the image
+                if (currentProject) return;
+                
+                const activeImage = document.querySelector(`.image[data-section="${sectionId}"]`);
+                if (activeImage) {
+                    images.forEach(img => img.classList.remove('active'));
+                    activeImage.classList.add('active');
                 }
-            });
+            };
             
-            // Toggle dropdown
-            dropdownTrigger.addEventListener('click', e => {
-                e.preventDefault();
-                dropdownContent.classList.toggle('show');
-                dropdownArrow.classList.toggle('rotate');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', e => {
-                if (!e.target.closest('.dropdown') && dropdownContent.classList.contains('show')) {
-                    dropdownContent.classList.remove('show');
-                    dropdownArrow.classList.remove('rotate');
-                }
-            });
-            
-            // Handle project button clicks - event delegation
+            // Handle project button clicks using event delegation
             document.addEventListener('click', e => {
                 const projectButton = e.target.closest('.project-button');
                 if (!projectButton) return;
                 
                 const projectId = projectButton.dataset.project;
-                
-                // Save current section before changing to project
-                if (currentSection && !currentProject) {
-                    scrollTriggered = false;
-                }
+                userInitiatedScroll = false;
                 
                 // Update image display
                 images.forEach(img => img.classList.remove('active'));
@@ -564,66 +585,22 @@
                 }
             });
             
-            // Check which section is in view
-            const checkVisibleSection = () => {
-                // Skip if we're viewing a project and scroll wasn't user-triggered
-                if (currentProject && !scrollTriggered) {
-                    scrollTriggered = true;
-                    return;
-                }
+            // Toggle dropdown
+            dropdownTrigger.addEventListener('click', e => {
+                e.preventDefault();
+                e.stopPropagation();
                 
-                // Reset project view when scrolling
-                currentProject = null;
-                
-                const scrollTop = scrollableHalf.scrollTop;
-                const viewportHeight = scrollableHalf.clientHeight;
-                const scrollHalfTop = scrollableHalf.getBoundingClientRect().top;
-                
-                // Find most visible section
-                let mostVisibleSection = null;
-                let maxVisibleAmount = 0;
-                
-                sections.forEach(section => {
-                    const rect = section.getBoundingClientRect();
-                    const sectionTop = rect.top + scrollTop - scrollHalfTop;
-                    const sectionBottom = sectionTop + rect.height;
-                    
-                    // Calculate visible portion
-                    const visibleTop = Math.max(scrollTop, sectionTop);
-                    const visibleBottom = Math.min(scrollTop + viewportHeight, sectionBottom);
-                    const visibleAmount = Math.max(0, visibleBottom - visibleTop);
-                    
-                    if (visibleAmount > maxVisibleAmount) {
-                        maxVisibleAmount = visibleAmount;
-                        mostVisibleSection = section;
-                    }
-                });
-                
-                // Update active image if section changed
-                if (mostVisibleSection) {
-                    const sectionId = mostVisibleSection.dataset.section;
-                    
-                    if (currentSection !== sectionId) {
-                        currentSection = sectionId;
-                        
-                        const activeImage = document.querySelector(`.image[data-section="${sectionId}"]`);
-                        if (activeImage) {
-                            images.forEach(img => img.classList.remove('active'));
-                            activeImage.classList.add('active');
-                        }
-                    }
-                }
-            };
-            
-            // Event listeners with debouncing
-            scrollableHalf.addEventListener('scroll', () => {
-                scrollTriggered = true;
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(checkVisibleSection, 50);
+                dropdownContent.classList.toggle('show');
+                dropdownArrow.classList.toggle('rotate');
             });
             
-            window.addEventListener('resize', debounce(checkVisibleSection, 100));
-            window.addEventListener('orientationchange', debounce(checkVisibleSection, 200));
+            // Close dropdown when clicking outside
+            document.addEventListener('click', e => {
+                if (!e.target.closest('.dropdown') && dropdownContent.classList.contains('show')) {
+                    dropdownContent.classList.remove('show');
+                    dropdownArrow.classList.remove('rotate');
+                }
+            });
             
             // Navigation
             navLinks.forEach(anchor => {
@@ -652,8 +629,41 @@
                 });
             });
             
-            // Initial check
-            setTimeout(checkVisibleSection, 100);
+            // Scroll event handler
+            scrollableHalf.addEventListener('scroll', debounce(() => {
+                userInitiatedScroll = true;
+            }, SCROLL_DEBOUNCE_DELAY));
+            
+            // Responsive handling
+            const handleResize = debounce(() => {
+                // If there's any specific resize logic needed, it would go here
+            }, RESIZE_DEBOUNCE_DELAY);
+            
+            window.addEventListener('resize', handleResize);
+            window.addEventListener('orientationchange', handleResize);
+            
+            // Security - prevent right-click on images
+            document.addEventListener('contextmenu', e => {
+                if (e.target.closest('.image-half')) e.preventDefault();
+            });
+            
+            // Block specific keyboard shortcuts
+            document.addEventListener('keydown', e => {
+                if ((e.ctrlKey && ['s', 'S', 'u', 'U'].includes(e.key)) || 
+                    e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && ['i', 'I'].includes(e.key))) {
+                    e.preventDefault();
+                }
+            });
+            
+            // Initialize
+            preloadImages();
+            const sectionObserver = setupIntersectionObserver();
+            
+            // Ensure proper cleanup on unload
+            window.addEventListener('beforeunload', () => {
+                if (sectionObserver) sectionObserver.disconnect();
+            });
         });
     </script>
 </body>
