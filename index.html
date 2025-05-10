@@ -133,6 +133,32 @@
             transform: rotate(180deg);
         }
         
+        /* Mobile dropdown adjustments */
+        @media (max-width: 768px) {
+            .dropdown-content {
+                position: absolute;
+                top: calc(100% + 5px);
+                left: auto;
+                right: 0;
+                transform: none;
+                width: 200px;
+                text-align: left;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        }
+        
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .dropdown-content {
+                width: 180px;
+                right: -10px; /* Further adjustment for very small screens */
+            }
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px) translateX(-50%); }
             to { opacity: 1; transform: translateY(0) translateX(-50%); }
