@@ -242,42 +242,6 @@
             scroll-behavior: smooth;
         }
         
-        /* Fade effects */
-        .image-half::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: var(--fade-length);
-            background: linear-gradient(to bottom, rgba(0,0,0,0), white);
-            z-index: 5;
-            pointer-events: none;
-        }
-        
-        /* Landscape layout */
-        @media (orientation: landscape) {
-            #app-container {
-                flex-direction: row;
-            }
-            
-            .image-half, .scrollable-half {
-                width: 50%;
-                height: 100%;
-            }
-            
-            /* Reset portrait fade and add landscape fade */
-            .image-half::after {
-                width: var(--fade-length);
-                height: 100%;
-                top: 0;
-                bottom: auto;
-                right: 0;
-                left: auto;
-                background: linear-gradient(to right, rgba(0,0,0,0), white);
-            }
-        }
-        
         /* Image styling */
         .image-container {
             position: relative;
@@ -315,7 +279,7 @@
             padding: 15px 20px;
             transform: translateY(100%);
             transition: transform 0.3s ease;
-            z-index: 6;
+            z-index: 11;
             font-size: clamp(14px, 3vw, 16px);
             line-height: 1.5;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
@@ -323,6 +287,18 @@
         
         .project-description.visible {
             transform: translateY(0);
+        }
+        
+        /* Landscape layout */
+        @media (orientation: landscape) {
+            #app-container {
+                flex-direction: row;
+            }
+            
+            .image-half, .scrollable-half {
+                width: 50%;
+                height: 100%;
+            }
         }
         
         /* Content sections */
@@ -333,6 +309,7 @@
             flex-direction: column;
             justify-content: center;
             scroll-margin-top: var(--navbar-height);
+            position: relative;
         }
         
         .section-content {
@@ -848,6 +825,16 @@
                         // Update current section and image
                         currentSection = mostVisibleSection.dataset.section;
                         updateActiveImage(currentSection);
+                        
+                        // Hide any project description
+                        hideDescription();
+                        resetProjectButtons();
+                        
+                        // If we're showing a main section, hide all subsections
+                        const isMainSection = ['home', 'work', 'about', 'contact'].includes(currentSection);
+                        if (isMainSection) {
+                            currentProject = null;
+                        }
                     }
                 }
             });
