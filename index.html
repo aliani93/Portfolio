@@ -12,7 +12,7 @@
             --primary-hover: #555;
             --text-light: white;
             --overlay-dark: rgba(0, 0, 0, 0.8);
-            --fade-length: 60px; /* Increased fade length */
+            --fade-length: 80px; /* Increased fade length for more dramatic effect */
             --transition-speed: 0.3s;
         }
         
@@ -255,6 +255,19 @@
             pointer-events: none;
         }
         
+        /* Add fade effect to the top of scrollable content */
+        .scrollable-half::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--fade-length);
+            background: linear-gradient(to top, rgba(255,255,255,0), rgba(255,255,255,1));
+            z-index: 5;
+            pointer-events: none;
+        }
+        
         /* Landscape layout */
         @media (orientation: landscape) {
             #app-container {
@@ -275,6 +288,15 @@
                 right: 0;
                 left: auto;
                 background: linear-gradient(to right, rgba(0,0,0,0), rgba(255,255,255,1));
+            }
+            
+            /* Adjust content fade for landscape */
+            .scrollable-half::before {
+                width: var(--fade-length);
+                height: 100%;
+                top: 0;
+                left: 0;
+                background: linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,1));
             }
         }
         
@@ -329,10 +351,12 @@
         .section, .subsection {
             min-height: 100%;
             padding: clamp(30px, 5vw, 50px) clamp(20px, 5vw, 40px);
+            padding-top: calc(var(--fade-length) + 20px); /* Add extra padding at top for fade effect */
             display: flex;
             flex-direction: column;
             justify-content: center;
             scroll-margin-top: var(--navbar-height);
+            position: relative;
         }
         
         .section-content {
