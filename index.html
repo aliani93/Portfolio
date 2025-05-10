@@ -1,4 +1,12 @@
-// Build project descriptions map
+/* Profile picture */
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 3px solid var(--primary-bg);
+        }            // Build project descriptions map
             const projectDescriptions = {};
             projectButtons.forEach(button => {
                 const projectId = button.dataset.project;
@@ -552,49 +560,6 @@
             }
         }
         
-        /* Loading indicator */
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease-out;
-        }
-        
-        .loader.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .loader-content {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Profile picture */
-        .profile-pic {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 20px;
-            border: 3px solid var(--primary-bg);
-        }
-        
         /* Skills section */
         .skills-container {
             display: flex;
@@ -664,11 +629,6 @@
     </style>
 </head>
 <body>
-    <!-- Loading indicator -->
-    <div class="loader">
-        <div class="loader-content"></div>
-    </div>
-
     <!-- Fixed navbar -->
     <div class="navbar">
         <div class="logo">PORTFOLIO - <span style="color:hsla(0, 0%, 70%);">ALIA</span>NI</div>
