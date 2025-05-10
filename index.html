@@ -258,22 +258,13 @@
                 background: linear-gradient(to right, rgba(0,0,0,0), white);
             }
             
-            /* Adjust content fades for landscape */
-            .content-fade-top {
+            /* Adjust fade for landscape orientation */
+            .fade-overlay {
+                height: 100%;
+                width: var(--fade-length);
                 top: 0;
                 left: 0;
-                width: var(--fade-length);
-                height: 100%;
                 background: linear-gradient(to right, white, rgba(255,255,255,0));
-            }
-            
-            .content-fade-bottom {
-                top: 0;
-                left: auto;
-                right: 0;
-                width: var(--fade-length);
-                height: 100%;
-                background: linear-gradient(to left, white, rgba(255,255,255,0));
             }
         }
         
@@ -484,9 +475,8 @@
 
         <!-- Scrollable content half -->
         <div class="scrollable-half">
-            <!-- Content fade effects -->
-            <div class="content-fade-top"></div>
-            <div class="content-fade-bottom"></div>
+            <!-- Top sticky fade overlay for scrolling content -->
+            <div class="fade-overlay"></div>
             
             <!-- Home Section -->
             <div id="home" class="section" data-section="home">
