@@ -1,4 +1,28 @@
-<!DOCTYPE html>
+// Build project descriptions map
+            const projectDescriptions = {};
+            projectButtons.forEach(button => {
+                const projectId = button.dataset.project;
+                const description = button.dataset.description;
+                if (projectId && description) {
+                    projectDescriptions[projectId] = description;
+                }
+            });
+            
+            // Utility function: Debounce
+            function debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
+            
+            // Mobile menu handler
+            function toggleMobileMenu() {
+                mobileMenuToggle.classList.toggle('active');
+                navLinksContainer.classList.toggle('active');
+                document.body.classList.toggle('menu-open');
+            }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
