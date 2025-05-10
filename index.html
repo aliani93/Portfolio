@@ -12,7 +12,6 @@
             --primary-hover: #555;
             --text-light: white;
             --overlay-dark: rgba(0, 0, 0, 0.8);
-            --overlay-light: rgba(0, 0, 0, 0.7);
             --fade-length: 40px;
             --transition-speed: 0.3s;
         }
@@ -196,9 +195,8 @@
             scroll-behavior: smooth;
         }
         
-        /* Fade effects */
-        .image-half::after {
-            content: '';
+        /* Image-content transition fade */
+        .image-content-fade {
             position: absolute;
             bottom: 0;
             left: 0;
@@ -207,33 +205,6 @@
             background: linear-gradient(to bottom, rgba(0,0,0,0), white);
             z-index: 5;
             pointer-events: none;
-        }
-        
-        .scrollable-half::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--fade-length);
-            background: linear-gradient(to top, rgba(255,255,255,0), white);
-            z-index: 5;
-            pointer-events: none;
-        }
-        
-        /* Added additional fade for bottom of scrollable content in portrait mode */
-        @media (orientation: portrait) {
-            .scrollable-half::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: var(--fade-length);
-                background: linear-gradient(to bottom, rgba(255,255,255,0), white);
-                z-index: 5;
-                pointer-events: none;
-            }
         }
         
         /* Landscape layout */
@@ -247,8 +218,7 @@
                 height: 100%;
             }
             
-            /* Reset portrait fade and add landscape fade */
-            .image-half::after {
+            .image-content-fade {
                 width: var(--fade-length);
                 height: 100%;
                 top: 0;
@@ -256,15 +226,6 @@
                 right: 0;
                 left: auto;
                 background: linear-gradient(to right, rgba(0,0,0,0), white);
-            }
-            
-            /* Adjust fade for landscape orientation */
-            .fade-overlay {
-                height: 100%;
-                width: var(--fade-length);
-                top: 0;
-                left: 0;
-                background: linear-gradient(to right, white, rgba(255,255,255,0));
             }
         }
         
@@ -300,7 +261,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: var(--overlay-light);
+            background-color: rgba(0, 0, 0, 0.7);
             color: var(--text-light);
             padding: 15px 20px;
             transform: translateY(100%);
@@ -470,14 +431,14 @@
                 
                 <!-- Project description overlay -->
                 <div class="project-description"></div>
+                
+                <!-- Image to content transition fade -->
+                <div class="image-content-fade"></div>
             </div>
         </div>
 
         <!-- Scrollable content half -->
         <div class="scrollable-half">
-            <!-- Top sticky fade overlay for scrolling content -->
-            <div class="fade-overlay"></div>
-            
             <!-- Home Section -->
             <div id="home" class="section" data-section="home">
                 <div class="section-content">
@@ -595,9 +556,9 @@
             let isTransitioning = false;
             
             // Constants
-            const TRANSITION_DELAY = 300; // Match CSS transition time
+            const TRANSITION_DELAY = 300;
             
-            // Project descriptions map
+            // Build project descriptions map
             const projectDescriptions = {};
             projectButtons.forEach(button => {
                 const projectId = button.dataset.project;
@@ -607,7 +568,7 @@
                 }
             });
             
-            // Utility functions
+            // Utility function: Debounce
             function debounce(func, wait) {
                 let timeout;
                 return function(...args) {
@@ -616,16 +577,13 @@
                 };
             }
             
-            // Preload all images immediately
+            // Preload images
             function preloadImages() {
-                // Setting priority for section images
                 const mainImages = document.querySelectorAll('.image');
                 mainImages.forEach(img => {
                     if (!img.complete) {
-                        // Force immediate load for important images
                         img.setAttribute('importance', 'high');
                         
-                        // Create image object to preload
                         const preloadImg = new Image();
                         preloadImg.src = img.src;
                     }
@@ -645,7 +603,6 @@
             function showDescription(text) {
                 if (!text) return;
                 projectDescription.textContent = text;
-                // Small delay to ensure DOM update before animation
                 setTimeout(() => {
                     projectDescription.classList.add('visible');
                 }, 10);
@@ -659,16 +616,12 @@
                 
                 const activeImage = document.querySelector(`.image[data-section="${sectionId}"]`);
                 if (activeImage) {
-                    // Remove active class from all images
                     images.forEach(img => img.classList.remove('active'));
                     
-                    // Force reflow to ensure clean transition
                     void activeImage.offsetWidth;
                     
-                    // Add active class to make image visible
                     activeImage.classList.add('active');
                     
-                    // Reset transition state after delay
                     setTimeout(() => {
                         isTransitioning = false;
                     }, immediate ? 10 : TRANSITION_DELAY);
@@ -682,23 +635,18 @@
                 
                 isTransitioning = true;
                 
-                // Remove active class from all images
                 images.forEach(img => img.classList.remove('active'));
                 
                 const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
                 if (projectImage) {
-                    // Force reflow for clean transition
                     void projectImage.offsetWidth;
                     
-                    // Add active class to make image visible
                     projectImage.classList.add('active');
                     currentProject = projectId;
                     
-                    // Show project description
                     const description = projectDescriptions[projectId];
                     showDescription(description);
                     
-                    // Reset transition state after delay
                     setTimeout(() => {
                         isTransitioning = false;
                     }, TRANSITION_DELAY);
@@ -707,10 +655,8 @@
                 }
             }
             
-            // Section visibility tracking with optimized threshold
+            // Section visibility tracking
             const observer = new IntersectionObserver((entries) => {
-                // Critical fix: We now process even when currentProject is set,
-                // as long as userInitiatedScroll is true
                 if (!userInitiatedScroll || isTransitioning) return;
                 
                 let bestEntry = null;
@@ -727,12 +673,10 @@
                     const sectionId = bestEntry.target.dataset.section;
                     
                     if (currentSection !== sectionId) {
-                        // Reset project state when scrolling to new section
                         if (currentProject) {
                             hideDescription();
                             currentProject = null;
                             
-                            // Mark all project buttons as inactive
                             projectButtons.forEach(btn => btn.classList.remove('active'));
                         }
                         
@@ -742,11 +686,10 @@
                 }
             }, {
                 root: scrollableHalf,
-                threshold: [0.2, 0.5, 0.75], // Multiple thresholds for better accuracy
+                threshold: [0.2, 0.5, 0.75],
                 rootMargin: '0px'
             });
             
-            // Initialize observers
             sections.forEach(section => observer.observe(section));
             
             // Event handlers
@@ -755,17 +698,14 @@
                 if (!projectButton || isTransitioning) return;
                 
                 const projectId = projectButton.dataset.project;
-                userInitiatedScroll = false; // Mark as programmatic change
+                userInitiatedScroll = false;
                 
-                // Update button active state
                 projectButtons.forEach(btn => {
                     btn.classList.toggle('active', btn === projectButton);
                 });
                 
                 showProjectImage(projectId);
                 
-                // Critical fix: Reset userInitiatedScroll after a short delay
-                // This allows scrolling to work again after clicking a project
                 setTimeout(() => {
                     userInitiatedScroll = true;
                 }, 200);
@@ -820,15 +760,10 @@
                 }
             }
             
-            // Enhanced scroll handler that makes better decisions about
-            // whether to keep project view or reset to section view
+            // Enhanced scroll handler
             const handleScroll = debounce(() => {
                 // Mark scroll as user-initiated
                 userInitiatedScroll = true;
-                
-                // Fix: We no longer auto-hide descriptions on scroll
-                // Instead we let the intersection observer determine
-                // if we need to change section/image
             }, 50);
             
             // Set up event listeners
@@ -838,7 +773,7 @@
             navLinks.forEach(link => link.addEventListener('click', handleNavLinkClick));
             scrollableHalf.addEventListener('scroll', handleScroll);
             
-            // Add a manual touch/mouse event to reset project mode
+            // Touch and mouse detection
             scrollableHalf.addEventListener('touchstart', function() {
                 userInitiatedScroll = true;
             });
@@ -847,7 +782,7 @@
                 userInitiatedScroll = true;
             });
             
-            // Resize handler for orientation changes
+            // Resize handler
             window.addEventListener('resize', debounce(() => {
                 // Force update active image to fix any visual glitches
                 if (currentProject) {
