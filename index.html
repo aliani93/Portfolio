@@ -14,6 +14,10 @@
             --overlay-dark: rgba(0, 0, 0, 0.8);
             --fade-length: 40px;
             --transition-speed: 0.3s;
+            /* Mobile breakpoints */
+            --breakpoint-sm: 576px;
+            --breakpoint-md: 768px;
+            --breakpoint-lg: 992px;
         }
         
         * {
@@ -26,6 +30,7 @@
         body {
             overflow-x: hidden;
             height: 100vh;
+            width: 100%;
         }
         
         /* Typography */
@@ -79,6 +84,106 @@
             color: var(--text-light);
             text-decoration: none;
             font-size: clamp(14px, 2.5vw, 16px);
+            padding: 5px 0;
+            position: relative;
+        }
+        
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--text-light);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+        
+        /* Mobile navigation */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        
+        .mobile-menu-toggle span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: var(--text-light);
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+        
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                max-width: 300px;
+                background-color: var(--overlay-dark);
+                flex-direction: column;
+                justify-content: center;
+                transition: right 0.3s ease;
+                padding: 20px;
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .nav-links a, .dropdown > a {
+                font-size: 18px;
+                padding: 15px 0;
+                width: 100%;
+                text-align: center;
+            }
+            
+            .dropdown-content {
+                position: static;
+                width: 100%;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+                box-shadow: none;
+                margin-top: 0;
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+            
+            .dropdown-content.show {
+                max-height: 300px;
+            }
+            
+            .dropdown-content a {
+                padding: 10px 15px;
+                font-size: 16px;
+            }
         }
         
         /* Dropdown */
@@ -106,7 +211,7 @@
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--overlay-dark);
-            min-width: 150px;
+            min-width: 200px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             z-index: 1001;
             margin-top: 10px;
@@ -116,7 +221,7 @@
         }
         
         .dropdown-content a {
-            padding: 10px 15px;
+            padding: 12px 15px;
             display: block;
             transition: background-color var(--transition-speed);
         }
@@ -142,26 +247,22 @@
         /* Mobile dropdown adjustments */
         @media (max-width: 768px) {
             .dropdown-content {
-                position: absolute;
-                top: calc(100% + 5px);
-                left: auto;
-                right: 0;
+                position: static;
+                width: 100%;
                 transform: none;
-                width: 200px;
-                text-align: left;
+                text-align: center;
+                margin-top: 0;
+                box-shadow: none;
+                border-radius: 0;
             }
             
             @keyframes fadeIn {
                 from { opacity: 0; transform: translateY(-10px); }
                 to { opacity: 1; transform: translateY(0); }
             }
-        }
-        
-        /* Extra small screens */
-        @media (max-width: 480px) {
-            .dropdown-content {
-                width: 180px;
-                right: -10px;
+            
+            .dropdown > a:after {
+                width: 0 !important;
             }
         }
         
@@ -179,7 +280,7 @@
         /* Portrait layout */
         .image-half {
             width: 100%;
-            height: 30%;
+            height: 40%;
             position: relative;
             overflow: hidden;
             background-color: #000;
@@ -188,11 +289,26 @@
         
         .scrollable-half {
             width: 100%;
-            height: 70%;
+            height: 60%;
             overflow-y: auto;
             background-color: white;
             position: relative;
             scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-hover) #f1f1f1;
+        }
+        
+        /* Customize scrollbar */
+        .scrollable-half::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .scrollable-half::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .scrollable-half::-webkit-scrollbar-thumb {
+            background: var(--primary-hover);
         }
         
         /* Fade effects */
@@ -247,7 +363,7 @@
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 0.3s ease-in-out;
+            transition: opacity 0.5s ease-in-out;
             user-select: none;
             pointer-events: none;
         }
@@ -280,16 +396,18 @@
         
         /* Content sections */
         .section, .subsection {
-            min-height: 100vh;
-            padding: clamp(20px, 5vw, 40px);
+            min-height: 100%;
+            padding: clamp(30px, 5vw, 50px) clamp(20px, 5vw, 40px);
             display: flex;
             flex-direction: column;
             justify-content: center;
+            scroll-margin-top: var(--navbar-height);
         }
         
         .section-content {
             max-width: 800px;
             margin: 0 auto;
+            width: 100%;
         }
         
         /* Buttons */
@@ -309,6 +427,33 @@
             background-color: var(--primary-hover);
         }
         
+        /* Social Links */
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 20px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        
+        .social-link:hover {
+            transform: translateY(-3px);
+            background-color: var(--primary-hover);
+        }
+        
+        /* Project buttons */
         .project-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -349,13 +494,8 @@
         /* Small screens */
         @media (max-width: 768px) {
             .section, .subsection { 
-                padding: 30px 20px; 
-                min-height: 100%;
+                padding: 40px 20px; 
             }
-            
-            h2 { font-size: clamp(22px, 4.5vw, 28px); }
-            h3 { font-size: clamp(18px, 4vw, 22px); }
-            p { font-size: clamp(14px, 3.5vw, 16px); }
             
             .project-buttons {
                 justify-content: center;
@@ -366,12 +506,156 @@
                 font-size: clamp(13px, 3vw, 15px);
             }
         }
+        
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .image-half {
+                height: 35%;
+            }
+            
+            .scrollable-half {
+                height: 65%;
+            }
+            
+            .project-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .project-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+        
+        /* Loading indicator */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader-content {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Profile picture */
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 3px solid var(--primary-bg);
+        }
+        
+        /* Skills section */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .skill-item {
+            background-color: #f5f5f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .skill-progress {
+            width: 100%;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .skill-progress-bar {
+            height: 100%;
+            background-color: var(--primary-bg);
+            border-radius: 3px;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            margin: 30px 0;
+        }
+        
+        .testimonial {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .testimonial::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 60px;
+            color: rgba(0,0,0,0.1);
+            line-height: 1;
+        }
+        
+        .testimonial-content {
+            padding-left: 20px;
+            font-style: italic;
+        }
+        
+        .testimonial-author {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
+    <!-- Loading indicator -->
+    <div class="loader">
+        <div class="loader-content"></div>
+    </div>
+
     <!-- Fixed navbar -->
     <div class="navbar">
         <div class="logo">PORTFOLIO - <span style="color:hsla(0, 0%, 70%);">ALIA</span>NI</div>
+        
+        <!-- Mobile menu toggle -->
+        <div class="mobile-menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        
         <div class="nav-links">
             <a href="#home">Home</a>
             <div class="dropdown">
@@ -384,6 +668,7 @@
                     <a href="#gis">GIS</a>
                 </div>
             </div>
+            <a href="#about">About</a>
             <a href="#contact">Contact</a>
         </div>
     </div>
@@ -396,7 +681,8 @@
                 <!-- Main sections -->
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Home" class="image active" data-section="home" loading="lazy" draggable="false">
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="Work" class="image" data-section="work" loading="lazy" draggable="false">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(3).jpg" alt="Contact" class="image" data-section="contact" loading="lazy" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(3).jpg" alt="About" class="image" data-section="about" loading="lazy" draggable="false">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="Contact" class="image" data-section="contact" loading="lazy" draggable="false">
                 
                 <!-- Work subsections -->
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg" alt="Renders" class="image" data-section="renders" loading="lazy" draggable="false">
@@ -441,10 +727,26 @@
             <!-- Home Section -->
             <div id="home" class="section" data-section="home">
                 <div class="section-content">
+                    <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Profile" class="profile-pic">
                     <h2>Welcome</h2>
                     <p>Hey there, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting and GIS mapping.</p>
                     <p>With over 10 years of experience, I've worked with clients across multiple industries to bring their visions to life through compelling visual storytelling and technical precision.</p>
-                    <button>About Me</button>
+                    
+                    <div class="skills-container">
+                        <div class="skill-item">3D Modeling</div>
+                        <div class="skill-item">Architectural Rendering</div>
+                        <div class="skill-item">Technical Drafting</div>
+                        <div class="skill-item">Video Editing</div>
+                        <div class="skill-item">GIS Mapping</div>
+                    </div>
+                    
+                    <div class="social-links">
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">be</a>
+                        <a href="#" class="social-link">ig</a>
+                    </div>
+                    
+                    <button onclick="document.querySelector('#about').scrollIntoView({behavior: 'smooth'})">About Me</button>
                 </div>
             </div>
 
@@ -464,9 +766,9 @@
                     <p>Photorealistic architectural visualizations created using industry-leading rendering software. These projects showcase interior and exterior spaces with attention to lighting, materials, and environmental details.</p>
                     <p>Each render is meticulously crafted to convey the design intent while creating an emotional connection with the viewer.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="renders-1" data-description="Luxury waterfront villa with sustainable features and panoramic ocean views.">Project 1</button>
-                        <button class="project-button" data-project="renders-2" data-description="Contemporary urban apartment with minimalist design and innovative lighting solutions.">Project 2</button>
-                        <button class="project-button" data-project="renders-3" data-description="Mixed-use commercial space featuring adaptive reuse of a historic industrial building.">Project 3</button>
+                        <button class="project-button" data-project="renders-1" data-description="Luxury waterfront villa with sustainable features and panoramic ocean views.">Waterfront Villa</button>
+                        <button class="project-button" data-project="renders-2" data-description="Contemporary urban apartment with minimalist design and innovative lighting solutions.">Urban Apartment</button>
+                        <button class="project-button" data-project="renders-3" data-description="Mixed-use commercial space featuring adaptive reuse of a historic industrial building.">Commercial Space</button>
                     </div>
                 </div>
             </div>
@@ -477,9 +779,9 @@
                     <p>Detailed 3D models created for various applications including product design, architectural visualization, and digital assets. My modeling work emphasizes accuracy, optimized geometry, and attention to detail.</p>
                     <p>I work with multiple modeling platforms to create assets that meet both technical and aesthetic requirements.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="3d-1" data-description="High-poly architectural model for an eco-friendly housing development with complex geometry.">Project 1</button>
-                        <button class="project-button" data-project="3d-2" data-description="Detailed furniture modeling collection with physically accurate materials and connections.">Project 2</button>
-                        <button class="project-button" data-project="3d-3" data-description="Parametric facade system adaptable to various architectural configurations and environments.">Project 3</button>
+                        <button class="project-button" data-project="3d-1" data-description="High-poly architectural model for an eco-friendly housing development with complex geometry.">Eco Housing</button>
+                        <button class="project-button" data-project="3d-2" data-description="Detailed furniture modeling collection with physically accurate materials and connections.">Furniture Collection</button>
+                        <button class="project-button" data-project="3d-3" data-description="Parametric facade system adaptable to various architectural configurations and environments.">Parametric Facade</button>
                     </div>
                 </div>
             </div>
@@ -490,9 +792,9 @@
                     <p>Precise technical drawings and documentation for architectural and engineering applications. My drafting work follows industry standards and best practices to ensure accuracy and clarity.</p>
                     <p>From construction documents to detailed drawings, I provide comprehensive technical documentation for projects of all scales.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="drafting-1" data-description="Comprehensive construction documentation for a 12-story mixed-use development in Chicago.">Project 1</button>
-                        <button class="project-button" data-project="drafting-2" data-description="Detailed section drawings showcasing innovative building envelope systems for extreme climates.">Project 2</button>
-                        <button class="project-button" data-project="drafting-3" data-description="MEP coordination drawings for a complex healthcare facility with precise equipment placement.">Project 3</button>
+                        <button class="project-button" data-project="drafting-1" data-description="Comprehensive construction documentation for a 12-story mixed-use development in Chicago.">Mixed-Use Tower</button>
+                        <button class="project-button" data-project="drafting-2" data-description="Detailed section drawings showcasing innovative building envelope systems for extreme climates.">Building Envelope</button>
+                        <button class="project-button" data-project="drafting-3" data-description="MEP coordination drawings for a complex healthcare facility with precise equipment placement.">Healthcare Facility</button>
                     </div>
                 </div>
             </div>
@@ -503,9 +805,9 @@
                     <p>Professional video editing services for architectural walkthroughs, product presentations, and promotional content. My video work combines technical precision with narrative storytelling.</p>
                     <p>I specialize in creating compelling visual narratives that effectively communicate design concepts and project features.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="video-1" data-description="Dynamic architectural walkthrough of a museum showcasing lighting changes throughout the day.">Project 1</button>
-                        <button class="project-button" data-project="video-2" data-description="Fast-paced promotional video for a new residential development highlighting key amenities.">Project 2</button>
-                        <button class="project-button" data-project="video-3" data-description="Concept animation demonstrating transformable spaces in a multi-functional event venue.">Project 3</button>
+                        <button class="project-button" data-project="video-1" data-description="Dynamic architectural walkthrough of a museum showcasing lighting changes throughout the day.">Museum Walkthrough</button>
+                        <button class="project-button" data-project="video-2" data-description="Fast-paced promotional video for a new residential development highlighting key amenities.">Residential Promo</button>
+                        <button class="project-button" data-project="video-3" data-description="Concept animation demonstrating transformable spaces in a multi-functional event venue.">Transformable Venue</button>
                     </div>
                 </div>
             </div>
@@ -516,10 +818,73 @@
                     <p>Geographic Information System (GIS) mapping and analysis for urban planning, environmental studies, and spatial data visualization. My GIS work provides clear insights into complex spatial relationships.</p>
                     <p>I create custom maps and spatial analyses that support informed decision-making and effective communication of geographic data.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="gis-1" data-description="Urban heat island analysis for metropolitan planning with temperature gradient visualization.">Project 1</button>
-                        <button class="project-button" data-project="gis-2" data-description="Transportation accessibility study highlighting public transit coverage and gaps in service.">Project 2</button>
-                        <button class="project-button" data-project="gis-3" data-description="Environmental impact assessment mapping for a proposed coastal development project.">Project 3</button>
+                        <button class="project-button" data-project="gis-1" data-description="Urban heat island analysis for metropolitan planning with temperature gradient visualization.">Urban Heat Map</button>
+                        <button class="project-button" data-project="gis-2" data-description="Transportation accessibility study highlighting public transit coverage and gaps in service.">Transit Coverage</button>
+                        <button class="project-button" data-project="gis-3" data-description="Environmental impact assessment mapping for a proposed coastal development project.">Coastal Impact</button>
                     </div>
+                </div>
+            </div>
+            
+            <!-- About Section -->
+            <div id="about" class="section" data-section="about">
+                <div class="section-content">
+                    <h2>About Me</h2>
+                    <p>With a background in architecture and digital design, I've spent the last decade honing my skills across multiple visualization disciplines. My journey began with a passion for creating spaces and evolved into a comprehensive skill set that bridges technical precision with artistic expression.</p>
+                    
+                    <h3>My Approach</h3>
+                    <p>I believe that effective visualization is about more than just creating beautiful images—it's about telling stories, solving problems, and communicating ideas clearly. Whether I'm creating photorealistic renders or technical drawings, I focus on understanding the core purpose of each project and tailoring my approach to meet those specific needs.</p>
+                    
+                    <h3>Skills & Expertise</h3>
+                    <div class="skills-container">
+                        <div class="skill-item">
+                            <span>3D Modeling</span>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" style="width: 95%;"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span>Architectural Rendering</span>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" style="width: 90%;"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span>Technical Drafting</span>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" style="width: 85%;"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span>Video Editing</span>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span>GIS Mapping</span>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>Testimonials</h3>
+                    <div class="testimonials">
+                        <div class="testimonial">
+                            <div class="testimonial-content">
+                                The architectural renders created for our development project exceeded our expectations. The attention to detail and ability to capture the essence of our design vision was remarkable.
+                            </div>
+                            <div class="testimonial-author">— John Smith, Architect</div>
+                        </div>
+                        <div class="testimonial">
+                            <div class="testimonial-content">
+                                Working with Aliani on our technical documentation was a seamless experience. The precision and organization of the drawings made our construction process significantly more efficient.
+                            </div>
+                            <div class="testimonial-author">— Sarah Johnson, Project Manager</div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="window.open('resume.pdf', '_blank')">Download Resume</button>
                 </div>
             </div>
 
@@ -528,290 +893,34 @@
                 <div class="section-content">
                     <h2>Contact Me</h2>
                     <p>Interested in working together? I'm currently available for freelance projects and consulting opportunities. Get in touch to discuss how I can help bring your vision to life.</p>
-                    <p>Email: contact@example.com<br>Phone: (123) 456-7890</p>
-                    <button>Send Message</button>
+                    
+                    <form id="contact-form">
+                        <div style="margin-bottom: 15px;">
+                            <label for="name" style="display: block; margin-bottom: 5px;">Name</label>
+                            <input type="text" id="name" name="name" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label for="email" style="display: block; margin-bottom: 5px;">Email</label>
+                            <input type="email" id="email" name="email" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label for="message" style="display: block; margin-bottom: 5px;">Message</label>
+                            <textarea id="message" name="message" rows="5" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+                        </div>
+                        
+                        <button type="submit">Send Message</button>
+                    </form>
+                    
+                    <div style="margin-top: 30px;">
+                        <p>Email: contact@example.com<br>Phone: (123) 456-7890</p>
+                        
+                        <div class="social-links">
+                            <a href="#" class="social-link">in</a>
+                            <a href="#" class="social-link">be</a>
+                            <a href="#" class="social-link">ig</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM elements
-            const scrollableHalf = document.querySelector('.scrollable-half');
-            const dropdownTrigger = document.querySelector('.dropdown-trigger');
-            const dropdownContent = document.querySelector('.dropdown-content');
-            const dropdownArrow = document.querySelector('.dropdown-arrow');
-            const images = document.querySelectorAll('.image');
-            const sections = document.querySelectorAll('.section, .subsection');
-            const navLinks = document.querySelectorAll('.nav-links a');
-            const projectButtons = document.querySelectorAll('.project-button');
-            const projectDescription = document.querySelector('.project-description');
-            
-            // State management
-            let currentSection = 'home';
-            let currentProject = null;
-            let userInitiatedScroll = true;
-            let isTransitioning = false;
-            
-            // Constants
-            const TRANSITION_DELAY = 300;
-            
-            // Build project descriptions map
-            const projectDescriptions = {};
-            projectButtons.forEach(button => {
-                const projectId = button.dataset.project;
-                const description = button.dataset.description;
-                if (projectId && description) {
-                    projectDescriptions[projectId] = description;
-                }
-            });
-            
-            // Utility function: Debounce
-            function debounce(func, wait) {
-                let timeout;
-                return function(...args) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
-                };
-            }
-            
-            // Preload images
-            function preloadImages() {
-                const mainImages = document.querySelectorAll('.image');
-                mainImages.forEach(img => {
-                    if (!img.complete) {
-                        img.setAttribute('importance', 'high');
-                        
-                        const preloadImg = new Image();
-                        preloadImg.src = img.src;
-                    }
-                });
-            }
-            
-            // Description handlers
-            function hideDescription() {
-                projectDescription.classList.remove('visible');
-                setTimeout(() => {
-                    if (!projectDescription.classList.contains('visible')) {
-                        projectDescription.textContent = '';
-                    }
-                }, TRANSITION_DELAY);
-            }
-            
-            function showDescription(text) {
-                if (!text) return;
-                projectDescription.textContent = text;
-                setTimeout(() => {
-                    projectDescription.classList.add('visible');
-                }, 10);
-            }
-            
-            // Image management
-            function updateActiveImage(sectionId, immediate = false) {
-                if (isTransitioning) return;
-                
-                isTransitioning = true;
-                
-                const activeImage = document.querySelector(`.image[data-section="${sectionId}"]`);
-                if (activeImage) {
-                    images.forEach(img => img.classList.remove('active'));
-                    
-                    void activeImage.offsetWidth;
-                    
-                    activeImage.classList.add('active');
-                    
-                    setTimeout(() => {
-                        isTransitioning = false;
-                    }, immediate ? 10 : TRANSITION_DELAY);
-                } else {
-                    isTransitioning = false;
-                }
-            }
-            
-            function showProjectImage(projectId) {
-                if (isTransitioning) return;
-                
-                isTransitioning = true;
-                
-                images.forEach(img => img.classList.remove('active'));
-                
-                const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
-                if (projectImage) {
-                    void projectImage.offsetWidth;
-                    
-                    projectImage.classList.add('active');
-                    currentProject = projectId;
-                    
-                    const description = projectDescriptions[projectId];
-                    showDescription(description);
-                    
-                    setTimeout(() => {
-                        isTransitioning = false;
-                    }, TRANSITION_DELAY);
-                } else {
-                    isTransitioning = false;
-                }
-            }
-            
-            // Section visibility tracking
-            const observer = new IntersectionObserver((entries) => {
-                if (!userInitiatedScroll || isTransitioning) return;
-                
-                let bestEntry = null;
-                let maxRatio = 0;
-                
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
-                        maxRatio = entry.intersectionRatio;
-                        bestEntry = entry;
-                    }
-                });
-                
-                if (bestEntry && bestEntry.target.dataset.section) {
-                    const sectionId = bestEntry.target.dataset.section;
-                    
-                    if (currentSection !== sectionId) {
-                        if (currentProject) {
-                            hideDescription();
-                            currentProject = null;
-                            
-                            projectButtons.forEach(btn => btn.classList.remove('active'));
-                        }
-                        
-                        currentSection = sectionId;
-                        updateActiveImage(sectionId);
-                    }
-                }
-            }, {
-                root: scrollableHalf,
-                threshold: [0.2, 0.5, 0.75],
-                rootMargin: '0px'
-            });
-            
-            sections.forEach(section => observer.observe(section));
-            
-            // Event handlers
-            function handleProjectButtonClick(e) {
-                const projectButton = e.target.closest('.project-button');
-                if (!projectButton || isTransitioning) return;
-                
-                const projectId = projectButton.dataset.project;
-                userInitiatedScroll = false;
-                
-                projectButtons.forEach(btn => {
-                    btn.classList.toggle('active', btn === projectButton);
-                });
-                
-                showProjectImage(projectId);
-                
-                setTimeout(() => {
-                    userInitiatedScroll = true;
-                }, 200);
-            }
-            
-            function handleDropdownToggle(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                dropdownContent.classList.toggle('show');
-                dropdownArrow.classList.toggle('rotate');
-            }
-            
-            function handleDocumentClick(e) {
-                if (!e.target.closest('.dropdown') && dropdownContent.classList.contains('show')) {
-                    dropdownContent.classList.remove('show');
-                    dropdownArrow.classList.remove('rotate');
-                }
-            }
-            
-            function handleNavLinkClick(e) {
-                if (this.classList.contains('dropdown-trigger')) return;
-                
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                
-                if (targetElement) {
-                    // Close dropdown if open
-                    dropdownContent.classList.remove('show');
-                    dropdownArrow.classList.remove('rotate');
-                    
-                    // Reset project view
-                    currentProject = null;
-                    hideDescription();
-                    projectButtons.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Immediately update image 
-                    if (targetElement.dataset.section) {
-                        currentSection = targetElement.dataset.section;
-                        updateActiveImage(currentSection, true);
-                    }
-                    
-                    // Scroll to target (with small delay to let image update first)
-                    setTimeout(() => {
-                        scrollableHalf.scrollTo({
-                            top: targetElement.offsetTop,
-                            behavior: 'smooth'
-                        });
-                    }, 50);
-                }
-            }
-            
-            // Enhanced scroll handler
-            const handleScroll = debounce(() => {
-                // Mark scroll as user-initiated
-                userInitiatedScroll = true;
-            }, 50);
-            
-            // Set up event listeners
-            document.addEventListener('click', handleProjectButtonClick);
-            dropdownTrigger.addEventListener('click', handleDropdownToggle);
-            document.addEventListener('click', handleDocumentClick);
-            navLinks.forEach(link => link.addEventListener('click', handleNavLinkClick));
-            scrollableHalf.addEventListener('scroll', handleScroll);
-            
-            // Touch and mouse detection
-            scrollableHalf.addEventListener('touchstart', function() {
-                userInitiatedScroll = true;
-            });
-            
-            scrollableHalf.addEventListener('mousedown', function() {
-                userInitiatedScroll = true;
-            });
-            
-            // Resize handler
-            window.addEventListener('resize', debounce(() => {
-                // Force update active image to fix any visual glitches
-                if (currentProject) {
-                    showProjectImage(currentProject);
-                } else {
-                    updateActiveImage(currentSection, true);
-                }
-            }, 100));
-            
-            // Security - prevent right-click on images
-            document.addEventListener('contextmenu', e => {
-                if (e.target.closest('.image-half')) e.preventDefault();
-            });
-            
-            // Block specific keyboard shortcuts
-            document.addEventListener('keydown', e => {
-                if ((e.ctrlKey && ['s', 'S', 'u', 'U'].includes(e.key)) || 
-                    e.key === 'F12' || 
-                    (e.ctrlKey && e.shiftKey && ['i', 'I'].includes(e.key))) {
-                    e.preventDefault();
-                }
-            });
-            
-            // Initialize
-            preloadImages();
-            updateActiveImage(currentSection, true);
-            
-            // Clean up on unload
-            window.addEventListener('beforeunload', () => {
-                observer.disconnect();
-            });
-        });
-    </script>
