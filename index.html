@@ -12,7 +12,7 @@
             --primary-hover: #555;
             --text-light: white;
             --overlay-dark: rgba(0, 0, 0, 0.8);
-            --fade-length: 60px;
+            --fade-length: 40px;
             --transition-speed: 0.3s;
         }
         
@@ -242,26 +242,15 @@
             scroll-behavior: smooth;
         }
         
-        /* Dedicated fade elements - these guarantee the fade effect */
+        /* FADE EFFECT - Matches reference image */
         .bottom-fade {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: var(--fade-length);
-            background: linear-gradient(to bottom, transparent, white);
-            z-index: 10;
-            pointer-events: none;
-        }
-        
-        .top-fade {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--fade-length);
-            background: linear-gradient(to top, transparent, white);
-            z-index: 10;
+            height: 40px; /* Adjust to control fade height */
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+            z-index: 5;
             pointer-events: none;
         }
         
@@ -276,22 +265,14 @@
                 height: 100%;
             }
             
-            /* Adjust fades for landscape orientation */
+            /* Adjust fade for landscape orientation */
             .bottom-fade {
-                width: var(--fade-length);
+                width: 40px; /* Adjust to control fade width */
                 height: 100%;
                 bottom: 0;
                 right: 0;
                 left: auto;
-                background: linear-gradient(to right, transparent, white);
-            }
-            
-            .top-fade {
-                width: var(--fade-length);
-                height: 100%;
-                top: 0;
-                left: 0;
-                background: linear-gradient(to left, transparent, white);
+                background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1));
             }
         }
         
@@ -346,8 +327,6 @@
         .section, .subsection {
             min-height: 100%;
             padding: clamp(30px, 5vw, 50px) clamp(20px, 5vw, 40px);
-            /* Extra padding at the top to account for the fade */
-            padding-top: calc(var(--fade-length) + 20px);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -424,19 +403,18 @@
         
         /* Profile picture */
         .profile-pic {
-            width: 150px;
-            height: 150px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             object-fit: cover;
             margin-bottom: 20px;
-            border: 3px solid var(--primary-bg);
         }
         
         /* Skills section */
         .skills-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
             margin: 20px 0;
         }
         
@@ -465,7 +443,6 @@
         @media (max-width: 768px) {
             .section, .subsection { 
                 padding: 40px 20px; 
-                padding-top: calc(var(--fade-length) + 20px);
             }
             
             .project-buttons {
@@ -576,20 +553,19 @@
                 <!-- Project description overlay -->
                 <div class="project-description"></div>
                 
-                <!-- Bottom fade for image section - critical for the fade effect -->
+                <!-- The fade effect that matches the reference image -->
                 <div class="bottom-fade"></div>
             </div>
         </div>
 
         <!-- Scrollable content half -->
         <div class="scrollable-half">
-            <!-- Top fade for content section - critical for the fade effect -->
-            <div class="top-fade"></div>
-            
             <!-- Home Section -->
             <div id="home" class="section" data-section="home">
                 <div class="section-content">
-                    <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Profile" class="profile-pic">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Profile" class="profile-pic">
+                    </div>
                     <h2>Welcome</h2>
                     <p>Hey there, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting and GIS mapping.</p>
                     <p>With over 10 years of experience, I've worked with clients across multiple industries to bring their visions to life through compelling visual storytelling and technical precision.</p>
@@ -607,8 +583,6 @@
                         <a href="#" class="social-link">be</a>
                         <a href="#" class="social-link">ig</a>
                     </div>
-                    
-                    <button onclick="document.querySelector('#about').scrollIntoView({behavior: 'smooth'})">About Me</button>
                 </div>
             </div>
 
