@@ -12,7 +12,7 @@
             --primary-hover: #555;
             --text-light: white;
             --overlay-dark: rgba(0, 0, 0, 0.8);
-            --fade-length: 60px;
+            --fade-length: 40px;
             --transition-speed: 0.3s;
         }
         
@@ -242,26 +242,16 @@
             scroll-behavior: smooth;
         }
         
-        /* Dedicated fade elements - these guarantee the fade effect */
-        .bottom-fade {
+        /* Fade effects */
+        .image-half::after {
+            content: '';
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
             height: var(--fade-length);
-            background: linear-gradient(to bottom, transparent, white);
-            z-index: 10;
-            pointer-events: none;
-        }
-        
-        .top-fade {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--fade-length);
-            background: linear-gradient(to top, transparent, white);
-            z-index: 10;
+            background: linear-gradient(to bottom, rgba(0,0,0,0), white);
+            z-index: 5;
             pointer-events: none;
         }
         
@@ -276,22 +266,15 @@
                 height: 100%;
             }
             
-            /* Adjust fades for landscape orientation */
-            .bottom-fade {
-                width: var(--fade-length);
-                height: 100%;
-                bottom: 0;
-                right: 0;
-                left: auto;
-                background: linear-gradient(to right, transparent, white);
-            }
-            
-            .top-fade {
+            /* Reset portrait fade and add landscape fade */
+            .image-half::after {
                 width: var(--fade-length);
                 height: 100%;
                 top: 0;
-                left: 0;
-                background: linear-gradient(to left, transparent, white);
+                bottom: auto;
+                right: 0;
+                left: auto;
+                background: linear-gradient(to right, rgba(0,0,0,0), white);
             }
         }
         
@@ -332,7 +315,7 @@
             padding: 15px 20px;
             transform: translateY(100%);
             transition: transform 0.3s ease;
-            z-index: 11;
+            z-index: 6;
             font-size: clamp(14px, 3vw, 16px);
             line-height: 1.5;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
@@ -346,13 +329,10 @@
         .section, .subsection {
             min-height: 100%;
             padding: clamp(30px, 5vw, 50px) clamp(20px, 5vw, 40px);
-            /* Extra padding at the top to account for the fade */
-            padding-top: calc(var(--fade-length) + 20px);
             display: flex;
             flex-direction: column;
             justify-content: center;
             scroll-margin-top: var(--navbar-height);
-            position: relative;
         }
         
         .section-content {
@@ -465,7 +445,6 @@
         @media (max-width: 768px) {
             .section, .subsection { 
                 padding: 40px 20px; 
-                padding-top: calc(var(--fade-length) + 20px);
             }
             
             .project-buttons {
@@ -575,17 +554,11 @@
                 
                 <!-- Project description overlay -->
                 <div class="project-description"></div>
-                
-                <!-- Bottom fade for image section - critical for the fade effect -->
-                <div class="bottom-fade"></div>
             </div>
         </div>
 
         <!-- Scrollable content half -->
         <div class="scrollable-half">
-            <!-- Top fade for content section - critical for the fade effect -->
-            <div class="top-fade"></div>
-            
             <!-- Home Section -->
             <div id="home" class="section" data-section="home">
                 <div class="section-content">
