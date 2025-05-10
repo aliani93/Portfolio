@@ -635,7 +635,7 @@
             
             // Image management
             function updateActiveImage(sectionId, immediate = false) {
-                if (currentProject || isTransitioning) return;
+                if (isTransitioning) return;
                 
                 isTransitioning = true;
                 
@@ -691,7 +691,9 @@
             
             // Section visibility tracking with optimized threshold
             const observer = new IntersectionObserver((entries) => {
-                if (!userInitiatedScroll || currentProject || isTransitioning) return;
+                // Critical fix: We now process even when currentProject is set,
+                // as long as userInitiatedScroll is true
+                if (!userInitiatedScroll || isTransitioning) return;
                 
                 let bestEntry = null;
                 let maxRatio = 0;
@@ -707,11 +709,14 @@
                     const sectionId = bestEntry.target.dataset.section;
                     
                     if (currentSection !== sectionId) {
-                        hideDescription();
-                        currentProject = null;
-                        
-                        // Mark all project buttons as inactive
-                        projectButtons.forEach(btn => btn.classList.remove('active'));
+                        // Reset project state when scrolling to new section
+                        if (currentProject) {
+                            hideDescription();
+                            currentProject = null;
+                            
+                            // Mark all project buttons as inactive
+                            projectButtons.forEach(btn => btn.classList.remove('active'));
+                        }
                         
                         currentSection = sectionId;
                         updateActiveImage(sectionId);
@@ -732,7 +737,7 @@
                 if (!projectButton || isTransitioning) return;
                 
                 const projectId = projectButton.dataset.project;
-                userInitiatedScroll = false;
+                userInitiatedScroll = false; // Mark as programmatic change
                 
                 // Update button active state
                 projectButtons.forEach(btn => {
@@ -740,6 +745,12 @@
                 });
                 
                 showProjectImage(projectId);
+                
+                // Critical fix: Reset userInitiatedScroll after a short delay
+                // This allows scrolling to work again after clicking a project
+                setTimeout(() => {
+                    userInitiatedScroll = true;
+                }, 200);
             }
             
             function handleDropdownToggle(e) {
@@ -791,12 +802,15 @@
                 }
             }
             
+            // Enhanced scroll handler that makes better decisions about
+            // whether to keep project view or reset to section view
             const handleScroll = debounce(() => {
+                // Mark scroll as user-initiated
                 userInitiatedScroll = true;
                 
-                if (!currentProject) {
-                    hideDescription();
-                }
+                // Fix: We no longer auto-hide descriptions on scroll
+                // Instead we let the intersection observer determine
+                // if we need to change section/image
             }, 50);
             
             // Set up event listeners
@@ -805,6 +819,15 @@
             document.addEventListener('click', handleDocumentClick);
             navLinks.forEach(link => link.addEventListener('click', handleNavLinkClick));
             scrollableHalf.addEventListener('scroll', handleScroll);
+            
+            // Add a manual touch/mouse event to reset project mode
+            scrollableHalf.addEventListener('touchstart', function() {
+                userInitiatedScroll = true;
+            });
+            
+            scrollableHalf.addEventListener('mousedown', function() {
+                userInitiatedScroll = true;
+            });
             
             // Resize handler for orientation changes
             window.addEventListener('resize', debounce(() => {
