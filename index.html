@@ -258,24 +258,28 @@
                 background: linear-gradient(to right, rgba(0,0,0,0), white);
             }
             
-            .scrollable-half::before {
-                width: var(--fade-length);
+            /* Adjust fixed fades for landscape orientation */
+            .scrollable-half::before,
+            .scrollable-half::after {
+                width: 50%;
                 height: 100%;
-                top: 0;
-                left: 0;
-                background: linear-gradient(to left, rgba(255,255,255,0), white);
+                left: 50%;
+            }
+            
+            .scrollable-half::before {
+                top: var(--navbar-height);
+                height: 100%;
+                width: var(--fade-length);
+                left: 50%;
+                background: linear-gradient(to right, white 10%, rgba(255,255,255,0));
             }
             
             .scrollable-half::after {
-                content: '';
-                position: absolute;
-                right: 0;
                 bottom: 0;
-                width: var(--fade-length);
                 height: 100%;
-                background: linear-gradient(to right, rgba(255,255,255,0), white);
-                z-index: 5;
-                pointer-events: none;
+                width: var(--fade-length);
+                left: calc(100% - var(--fade-length));
+                background: linear-gradient(to left, white 10%, rgba(255,255,255,0));
             }
         }
         
