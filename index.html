@@ -258,28 +258,22 @@
                 background: linear-gradient(to right, rgba(0,0,0,0), white);
             }
             
-            /* Adjust fixed fades for landscape orientation */
-            .scrollable-half::before,
-            .scrollable-half::after {
-                width: 50%;
+            /* Adjust content fades for landscape */
+            .content-fade-top {
+                top: 0;
+                left: 0;
+                width: var(--fade-length);
                 height: 100%;
-                left: 50%;
+                background: linear-gradient(to right, white, rgba(255,255,255,0));
             }
             
-            .scrollable-half::before {
-                top: var(--navbar-height);
-                height: 100%;
+            .content-fade-bottom {
+                top: 0;
+                left: auto;
+                right: 0;
                 width: var(--fade-length);
-                left: 50%;
-                background: linear-gradient(to right, white 10%, rgba(255,255,255,0));
-            }
-            
-            .scrollable-half::after {
-                bottom: 0;
                 height: 100%;
-                width: var(--fade-length);
-                left: calc(100% - var(--fade-length));
-                background: linear-gradient(to left, white 10%, rgba(255,255,255,0));
+                background: linear-gradient(to left, white, rgba(255,255,255,0));
             }
         }
         
@@ -490,6 +484,10 @@
 
         <!-- Scrollable content half -->
         <div class="scrollable-half">
+            <!-- Content fade effects -->
+            <div class="content-fade-top"></div>
+            <div class="content-fade-bottom"></div>
+            
             <!-- Home Section -->
             <div id="home" class="section" data-section="home">
                 <div class="section-content">
