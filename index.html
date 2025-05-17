@@ -1,4 +1,410 @@
-<!DOCTYPE html>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cache DOM elements
+            const DOM = {
+                scrollableHalf: document.querySelector('.scrollable-half'),
+                dropdownTrigger: document.querySelector('.dropdown-trigger'),
+                dropdownContent: document.querySelector('.dropdown-content'),
+                dropdownArrow: document.querySelector('.dropdown-arrow'),
+                images: document.querySelectorAll('.image'),
+                sections: document.querySelectorAll('.section, .subsection'),
+                navLinks: document.querySelectorAll('.nav-links a'),
+                projectButtons: document.querySelectorAll('.project-button'),
+                projectDescription: document.querySelector('.project-description'),
+                descriptionText: document.querySelector('.description-text'),
+                mobileMenuToggle: document.querySelector('.mobile-menu-toggle'),
+                navLinksContainer: document.querySelector('.nav-links'),
+                prevButton: document.querySelector('.prev-button'),
+                nextButton: document.querySelector('.next-button'),
+                currentIndexEl: document.querySelector('.current-index'),
+                totalImagesEl: document.querySelector('.total-images'),
+                contactForm: document.getElementById('contact-form')
+            };
+            
+            // State management
+            const state = {
+                currentSection: 'home',
+                currentProject: null,
+                currentGallery: null,
+                currentGalleryIndex: 0,
+                totalGalleryImages: 0,
+                // Store project descriptions
+                projectDescriptions: {}
+            };
+            
+            // Initialize project descriptions
+            DOM.projectButtons.forEach(button => {
+                const projectId = button.dataset.project;
+                const description = button.dataset.description;
+                if (projectId && description) {
+                    state.projectDescriptions[projectId] = description;
+                }
+            });
+            
+            // Utility functions
+            const utils = {
+                // Debounce function to limit frequent calls
+                debounce: function(func, wait) {
+                    let timeout;
+                    return function() {
+                        const context = this;
+                        const args = arguments;
+                        clearTimeout(timeout);
+                        timeout = setTimeout(() => func.apply(context, args), wait);
+                    };
+                },
+                
+                // Add lazy loading to images
+                lazyLoadImages: function() {
+                    if ('loading' in HTMLImageElement.prototype) {
+                        DOM.images.forEach(img => {
+                            img.loading = 'lazy';
+                        });
+                    }
+                }
+            };
+            
+            // Initialize lazy loading
+            utils.lazyLoadImages();
+            
+            // Mobile menu functions
+            const mobileMenu = {
+                toggle: function() {
+                    DOM.mobileMenuToggle.classList.toggle('active');
+                    DOM.navLinksContainer.classList.toggle('active');
+                },
+                
+                close: function() {
+                    DOM.mobileMenuToggle.classList.remove('active');
+                    DOM.navLinksContainer.classList.remove('active');
+                }
+            };
+            
+            // Dropdown menu functions
+            const dropdown = {
+                toggle: function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    DOM.dropdownContent.classList.toggle('show');
+                    DOM.dropdownArrow.classList.toggle('rotate');
+                },
+                
+                close: function() {
+                    DOM.dropdownContent.classList.remove('show');
+                    DOM.dropdownArrow.classList.remove('rotate');
+                }
+            };
+            
+            // Image management functions
+            const imageManager = {
+                updateActiveImage: function(sectionId) {
+                    // First reset any active project
+                    state.currentProject = null;
+                    
+                    // Remove active class from all images
+                    DOM.images.forEach(img => img.classList.remove('active'));
+                    
+                    // Find and activate the image for this section
+                    const sectionImage = document.querySelector(`.image[data-section="${sectionId}"]`);
+                    if (sectionImage) {
+                        sectionImage.classList.add('active');
+                    }
+                },
+                
+                showProjectImage: function(projectId) {
+                    // Set current project
+                    state.currentProject = projectId;
+                    
+                    // Initialize the gallery
+                    galleryManager.initGallery(projectId);
+                }
+            };
+            
+            // Project description functions
+            const descriptionManager = {
+                show: function(text) {
+                    if (!text) return;
+                    
+                    DOM.descriptionText.textContent = text;
+                    DOM.projectDescription.classList.add('visible');
+                },
+                
+                hide: function() {
+                    DOM.projectDescription.classList.remove('visible');
+                }
+            };
+            
+            // Gallery functions
+            const galleryManager = {
+                updateControls: function() {
+                    // Update counter
+                    DOM.currentIndexEl.textContent = state.currentGalleryIndex + 1;
+                    DOM.totalImagesEl.textContent = state.totalGalleryImages;
+                    
+                    // Update buttons state
+                    DOM.prevButton.disabled = state.currentGalleryIndex === 0;
+                    DOM.nextButton.disabled = state.currentGalleryIndex === state.totalGalleryImages - 1;
+                },
+                
+                showImage: function(galleryName, index) {
+                    // Hide all images first
+                    DOM.images.forEach(img => img.classList.remove('active'));
+                    
+                    // Find and show the requested gallery image
+                    const galleryImage = document.querySelector(`.image[data-gallery="${galleryName}"][data-gallery-index="${index}"]`);
+                    if (galleryImage) {
+                        galleryImage.classList.add('active');
+                        
+                        // Update state
+                        state.currentGallery = galleryName;
+                        state.currentGalleryIndex = parseInt(index);
+                        
+                        // Update controls
+                        galleryManager.updateControls();
+                    }
+                },
+                
+                initGallery: function(projectId) {
+                    // Count total images in this gallery
+                    const galleryImages = document.querySelectorAll(`.image[data-gallery="${projectId}"]`);
+                    state.totalGalleryImages = galleryImages.length;
+                    
+                    // Reset index and show first image
+                    state.currentGalleryIndex = 0;
+                    galleryManager.showImage(projectId, state.currentGalleryIndex);
+                },
+                
+                prev: function() {
+                    if (state.currentGalleryIndex > 0) {
+                        galleryManager.showImage(state.currentGallery, state.currentGalleryIndex - 1);
+                    }
+                },
+                
+                next: function() {
+                    if (state.currentGalleryIndex < state.totalGalleryImages - 1) {
+                        galleryManager.showImage(state.currentGallery, state.currentGalleryIndex + 1);
+                    }
+                }
+            };
+            
+            // Project button functions
+            const projectManager = {
+                resetButtons: function() {
+                    DOM.projectButtons.forEach(btn => btn.classList.remove('active'));
+                },
+                
+                handleButtonClick: function(button) {
+                    const projectId = button.dataset.project;
+                    
+                    // Reset all buttons and set this one as active
+                    projectManager.resetButtons();
+                    button.classList.add('active');
+                    
+                    // Show the project image
+                    imageManager.showProjectImage(projectId);
+                    
+                    // Show description
+                    const description = state.projectDescriptions[projectId];
+                    descriptionManager.show(description);
+                }
+            };
+            
+            // Navigation functions
+            const navigation = {
+                handleNavClick: function(link, e) {
+                    if (link.classList.contains('dropdown-trigger')) return;
+                    
+                    e.preventDefault();
+                    
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Close dropdown if open
+                        dropdown.close();
+                        
+                        // Close mobile menu if open
+                        if (DOM.navLinksContainer.classList.contains('active')) {
+                            mobileMenu.close();
+                        }
+                        
+                        // Reset project view
+                        descriptionManager.hide();
+                        projectManager.resetButtons();
+                        
+                        // Update image if section has one
+                        if (targetElement.dataset.section) {
+                            imageManager.updateActiveImage(targetElement.dataset.section);
+                        }
+                        
+                        // Scroll to target
+                        DOM.scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                },
+                
+                handleScroll: function() {
+                    // Use requestAnimationFrame for better performance
+                    requestAnimationFrame(() => {
+                        // Find visible sections
+                        const visibleSections = [];
+                        
+                        DOM.sections.forEach(section => {
+                            const rect = section.getBoundingClientRect();
+                            const containerTop = DOM.scrollableHalf.getBoundingClientRect().top;
+                            const containerHeight = DOM.scrollableHalf.clientHeight;
+                            
+                            // Check if section is visible in the scrollable container
+                            if (rect.top < containerTop + containerHeight && rect.bottom > containerTop) {
+                                visibleSections.push({
+                                    section: section,
+                                    visibleHeight: Math.min(rect.bottom, containerTop + containerHeight) - 
+                                                 Math.max(rect.top, containerTop)
+                                });
+                            }
+                        });
+                        
+                        // Find the most visible section
+                        if (visibleSections.length > 0) {
+                            visibleSections.sort((a, b) => b.visibleHeight - a.visibleHeight);
+                            const mostVisibleSection = visibleSections[0].section;
+                            
+                            if (mostVisibleSection.dataset.section && mostVisibleSection.dataset.section !== state.currentSection) {
+                                // Update current section and image
+                                state.currentSection = mostVisibleSection.dataset.section;
+                                imageManager.updateActiveImage(state.currentSection);
+                                
+                                // Hide any project description
+                                descriptionManager.hide();
+                                projectManager.resetButtons();
+                                
+                                // If we're showing a main section, hide all subsections
+                                const isMainSection = ['home', 'work', 'about', 'contact'].includes(state.currentSection);
+                                if (isMainSection) {
+                                    state.currentProject = null;
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+            
+            // Form functions
+            const formManager = {
+                handleSubmit: function(e) {
+                    e.preventDefault();
+                    
+                    // Simple form validation
+                    const name = DOM.contactForm.querySelector('#name').value.trim();
+                    const email = DOM.contactForm.querySelector('#email').value.trim();
+                    const message = DOM.contactForm.querySelector('#message').value.trim();
+                    
+                    if (!name || !email || !message) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+                    
+                    // Simulate form submission
+                    alert('Thank you for your message! I will get back to you soon.');
+                    DOM.contactForm.reset();
+                }
+            };
+            
+            // Handle window resize
+            const handleResize = utils.debounce(() => {
+                if (state.currentProject) {
+                    imageManager.showProjectImage(state.currentProject);
+                } else {
+                    imageManager.updateActiveImage(state.currentSection);
+                }
+                
+                if (window.innerWidth > 768 && DOM.navLinksContainer.classList.contains('active')) {
+                    mobileMenu.close();
+                }
+            }, 100);
+            
+            // Event listeners
+            function setupEventListeners() {
+                // Mobile menu toggle
+                DOM.mobileMenuToggle.addEventListener('click', mobileMenu.toggle);
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.mobile-menu-toggle') && 
+                        !e.target.closest('.nav-links') && 
+                        DOM.navLinksContainer.classList.contains('active')) {
+                        mobileMenu.close();
+                    }
+                });
+                
+                // Handle dropdown menu
+                DOM.dropdownTrigger.addEventListener('click', dropdown.toggle);
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.dropdown') && DOM.dropdownContent.classList.contains('show')) {
+                        dropdown.close();
+                    }
+                });
+                
+                // Handle navigation clicks
+                DOM.navLinks.forEach(link => {
+                    link.addEventListener('click', navigation.handleNavClick.bind(null, link));
+                });
+                
+                // Handle project button clicks
+                DOM.projectButtons.forEach(button => {
+                    button.addEventListener('click', projectManager.handleButtonClick.bind(null, button));
+                });
+                
+                // Gallery navigation
+                DOM.prevButton.addEventListener('click', galleryManager.prev);
+                DOM.nextButton.addEventListener('click', galleryManager.next);
+                
+                // Handle form submission
+                if (DOM.contactForm) {
+                    DOM.contactForm.addEventListener('submit', formManager.handleSubmit);
+                }
+                
+                // Handle scrolling to detect current section
+                DOM.scrollableHalf.addEventListener('scroll', utils.debounce(navigation.handleScroll, 50), { passive: true });
+                
+                // Window resize event
+                window.addEventListener('resize', handleResize);
+            }
+            
+            // Handle initial hash in URL
+            function handleInitialHash() {
+                if (window.location.hash) {
+                    const hash = window.location.hash.substring(1);
+                    const targetElement = document.getElementById(hash);
+                    
+                    if (targetElement) {
+                        // Scroll to target after a small delay
+                        setTimeout(() => {
+                            DOM.scrollableHalf.scrollTo({
+                                top: targetElement.offsetTop,
+                                behavior: 'auto'
+                            });
+                            
+                            // Update image if section has one
+                            if (targetElement.dataset.section) {
+                                state.currentSection = targetElement.dataset.section;
+                                imageManager.updateActiveImage(state.currentSection);
+                            }
+                        }, 200);
+                    }
+                }
+            }
+            
+            // Initialize
+            setupEventListeners();
+            handleInitialHash();
+        });
+    </script><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,8 +418,17 @@
             --primary-hover: #555;
             --text-light: white;
             --overlay-dark: rgba(0, 0, 0, 0.8);
-            --fade-length: 40px;
+            --overlay-light: rgba(255, 255, 255, 0.1);
             --transition-speed: 0.3s;
+            --border-radius-sm: 4px;
+            --border-radius-lg: 20px;
+            --border-radius-round: 50%;
+            --spacing-sm: 8px;
+            --spacing-md: 15px;
+            --spacing-lg: 20px;
+            --font-size-sm: 14px;
+            --font-size-md: 16px;
+            --font-size-lg: 18px;
         }
         
         * {
@@ -30,23 +445,15 @@
         }
         
         /* Typography */
-        h2 {
-            font-size: clamp(24px, 5vw, 32px);
-            margin-bottom: 20px;
+        h2, h3, p {
             color: var(--primary-bg);
-        }
-        
-        h3 {
-            font-size: clamp(20px, 4vw, 24px);
-            margin-bottom: 15px;
-            color: var(--primary-bg);
-        }
-        
-        p {
-            font-size: clamp(16px, 3vw, 18px);
             line-height: 1.6;
-            margin-bottom: 20px;
+            margin-bottom: var(--spacing-lg);
         }
+        
+        h2 { font-size: clamp(24px, 5vw, 32px); }
+        h3 { font-size: clamp(20px, 4vw, 24px); }
+        p { font-size: clamp(16px, 3vw, 18px); }
         
         /* Navigation */
         .navbar {
@@ -80,12 +487,10 @@
             color: var(--text-light);
             text-decoration: none;
             font-size: clamp(14px, 2.5vw, 16px);
-            transition: opacity 0.3s;
+            transition: opacity var(--transition-speed);
         }
         
-        .nav-links a:hover {
-            opacity: 0.8;
-        }
+        .nav-links a:hover { opacity: 0.8; }
         
         /* Mobile navigation */
         .mobile-menu-toggle {
@@ -103,42 +508,10 @@
             height: 3px;
             width: 100%;
             background-color: var(--text-light);
-            transition: transform 0.3s, opacity 0.3s;
+            transition: transform var(--transition-speed), opacity var(--transition-speed);
         }
         
-        @media (max-width: 768px) {
-            .mobile-menu-toggle {
-                display: flex;
-            }
-            
-            .nav-links {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                height: 100vh;
-                width: 70%;
-                max-width: 300px;
-                background-color: var(--overlay-dark);
-                flex-direction: column;
-                justify-content: center;
-                transition: right 0.3s ease;
-                padding: 20px;
-                z-index: 999;
-            }
-            
-            .nav-links.active {
-                right: 0;
-            }
-            
-            .nav-links a {
-                font-size: 18px;
-                padding: 15px 0;
-                width: 100%;
-                text-align: center;
-            }
-        }
-        
-        /* Dropdown */
+        /* Dropdown styling */
         .dropdown {
             position: relative;
         }
@@ -167,7 +540,7 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             z-index: 1001;
             margin-top: 10px;
-            border-radius: 4px;
+            border-radius: var(--border-radius-sm);
             overflow: hidden;
             text-align: center;
         }
@@ -179,38 +552,11 @@
         }
         
         .dropdown-content a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--overlay-light);
         }
         
-        .dropdown-content.show {
-            display: block;
-        }
-        
-        .dropdown-arrow.rotate {
-            transform: rotate(180deg);
-        }
-        
-        /* Mobile dropdown adjustments */
-        @media (max-width: 768px) {
-            .dropdown-content {
-                position: static;
-                width: 100%;
-                transform: none;
-                text-align: center;
-                margin-top: 0;
-                box-shadow: none;
-                border-radius: 0;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.3s ease;
-                display: block;
-                background-color: rgba(255, 255, 255, 0.1);
-            }
-            
-            .dropdown-content.show {
-                max-height: 500px;
-            }
-        }
+        .dropdown-content.show { display: block; }
+        .dropdown-arrow.rotate { transform: rotate(180deg); }
         
         /* Layout structure */
         #app-container {
@@ -261,6 +607,7 @@
             transition: opacity 0.5s ease-in-out;
             user-select: none;
             pointer-events: none;
+            will-change: opacity;
         }
         
         .image.active {
@@ -278,7 +625,7 @@
             color: var(--text-light);
             padding: 15px 20px;
             transform: translateY(100%);
-            transition: transform 0.3s ease;
+            transition: transform var(--transition-speed) ease;
             z-index: 11;
             font-size: clamp(14px, 3vw, 16px);
             line-height: 1.5;
@@ -287,9 +634,7 @@
             flex-direction: column;
         }
         
-        .project-description.visible {
-            transform: translateY(0);
-        }
+        .project-description.visible { transform: translateY(0); }
         
         /* Project gallery navigation */
         .gallery-nav {
@@ -302,13 +647,13 @@
         }
         
         .gallery-counter {
-            font-size: 14px;
+            font-size: var(--font-size-sm);
             opacity: 0.8;
         }
         
         .gallery-buttons {
             display: flex;
-            gap: 15px;
+            gap: var(--spacing-md);
         }
         
         .gallery-button {
@@ -324,30 +669,12 @@
             align-items: center;
             justify-content: center;
             background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
+            border-radius: var(--border-radius-round);
             transition: background-color 0.2s;
         }
         
-        .gallery-button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-        
-        .gallery-button:disabled {
-            opacity: 0.4;
-            cursor: default;
-        }
-        
-        /* Landscape layout */
-        @media (orientation: landscape) {
-            #app-container {
-                flex-direction: row;
-            }
-            
-            .image-half, .scrollable-half {
-                width: 50%;
-                height: 100%;
-            }
-        }
+        .gallery-button:hover { background-color: rgba(255, 255, 255, 0.3); }
+        .gallery-button:disabled { opacity: 0.4; cursor: default; }
         
         /* Content sections */
         .section, .subsection {
@@ -372,28 +699,26 @@
             background-color: var(--primary-bg);
             color: var(--text-light);
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius-sm);
             cursor: pointer;
             font-size: clamp(14px, 2.5vw, 16px);
-            margin-top: 20px;
+            margin-top: var(--spacing-lg);
             transition: background-color var(--transition-speed);
         }
         
-        button:hover {
-            background-color: var(--primary-hover);
-        }
+        button:hover { background-color: var(--primary-hover); }
         
         /* Social Links */
         .social-links {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
         }
         
         .social-link {
             width: 40px;
             height: 40px;
-            border-radius: 50%;
+            border-radius: var(--border-radius-round);
             background-color: var(--primary-bg);
             display: flex;
             align-items: center;
@@ -401,7 +726,7 @@
             color: var(--text-light);
             text-decoration: none;
             font-size: 20px;
-            transition: transform 0.3s, background-color 0.3s;
+            transition: transform var(--transition-speed), background-color var(--transition-speed);
         }
         
         .social-link:hover {
@@ -414,26 +739,23 @@
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: var(--spacing-lg);
         }
         
         .project-button {
             padding: 10px 20px;
             margin-top: 0;
-            position: relative;
         }
         
-        .project-button.active {
-            background-color: var(--primary-hover);
-        }
+        .project-button.active { background-color: var(--primary-hover); }
         
         /* Profile picture */
         .profile-pic {
             width: 150px;
             height: 150px;
-            border-radius: 50%;
+            border-radius: var(--border-radius-round);
             object-fit: cover;
-            margin-bottom: 20px;
+            margin-bottom: var(--spacing-lg);
             border: 3px solid var(--primary-bg);
         }
         
@@ -441,15 +763,15 @@
         .skills-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin: 20px 0;
+            gap: var(--spacing-md);
+            margin: var(--spacing-lg) 0;
         }
         
         .skill-item {
             background-color: #f5f5f5;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--border-radius-lg);
+            font-size: var(--font-size-sm);
         }
         
         /* Form styles */
@@ -457,8 +779,8 @@
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 15px;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: var(--spacing-md);
         }
         
         label {
@@ -466,15 +788,54 @@
             margin-bottom: 5px;
         }
         
-        /* Small screens */
+        /* Media Queries */
         @media (max-width: 768px) {
-            .section, .subsection { 
-                padding: 40px 20px; 
+            .mobile-menu-toggle { display: flex; }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                max-width: 300px;
+                background-color: var(--overlay-dark);
+                flex-direction: column;
+                justify-content: center;
+                transition: right var(--transition-speed) ease;
+                padding: 20px;
+                z-index: 999;
             }
             
-            .project-buttons {
-                justify-content: center;
+            .nav-links.active { right: 0; }
+            
+            .nav-links a {
+                font-size: var(--font-size-lg);
+                padding: var(--spacing-md) 0;
+                width: 100%;
+                text-align: center;
             }
+            
+            .dropdown-content {
+                position: static;
+                width: 100%;
+                transform: none;
+                text-align: center;
+                margin-top: 0;
+                box-shadow: none;
+                border-radius: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height var(--transition-speed) ease;
+                display: block;
+                background-color: var(--overlay-light);
+            }
+            
+            .dropdown-content.show { max-height: 500px; }
+            
+            .section, .subsection { padding: 40px 20px; }
+            
+            .project-buttons { justify-content: center; }
             
             .project-description {
                 padding: 12px 15px;
@@ -482,25 +843,34 @@
             }
         }
         
-        /* Extra small screens */
         @media (max-width: 480px) {
-            .image-half {
-                height: 35%;
-            }
-            
-            .scrollable-half {
-                height: 65%;
-            }
+            .image-half { height: 35%; }
+            .scrollable-half { height: 65%; }
             
             .project-buttons {
                 flex-direction: column;
-                gap: 8px;
+                gap: var(--spacing-sm);
             }
             
             .project-button {
                 width: 100%;
                 text-align: center;
             }
+        }
+        
+        /* Landscape layout */
+        @media (orientation: landscape) {
+            #app-container { flex-direction: row; }
+            .image-half, .scrollable-half { width: 50%; height: 100%; }
+        }
+        
+        /* Print styles */
+        @media print {
+            .navbar, .mobile-menu-toggle { display: none; }
+            #app-container { position: static; height: auto; }
+            .image-half { display: none; }
+            .scrollable-half { width: 100%; height: auto; overflow: visible; }
+            .section, .subsection { break-inside: avoid; page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -522,7 +892,7 @@
                 <a href="#work" class="dropdown-trigger">Work <span class="dropdown-arrow">▼</span></a>
                 <div class="dropdown-content">
                     <a href="#renders">Renders</a>
-                    <a href="#drafting">Technical Drafting</a>
+                    <a href="#drafting">Drafting</a>
                     <a href="#3d">3D Modeling</a>
                 </div>
             </div>
@@ -537,67 +907,23 @@
         <div class="image-half">
             <div class="image-container">
                 <!-- Main sections -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Home" class="image active" data-section="home">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="Work" class="image" data-section="work">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(3).jpg" alt="About" class="image" data-section="about">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="Contact" class="image" data-section="contact">
+                <img src="/api/placeholder/400/320" alt="Home" class="image active" data-section="home" loading="lazy">
+                <img src="/api/placeholder/400/320" alt="Work" class="image" data-section="work">
+                <img src="/api/placeholder/400/320" alt="About" class="image" data-section="about">
+                <img src="/api/placeholder/400/320" alt="Contact" class="image" data-section="contact">
                 
                 <!-- Work subsections -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0000_Renders_0.0.jpg" alt="Renders" class="image" data-section="renders">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0012_Drafting_.jpg" alt="Drafting" class="image" data-section="drafting">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0012_Drafting_.jpg" alt="3D" class="image" data-section="3d">
+                <img src="/api/placeholder/400/320" alt="Renders" class="image" data-section="renders">
+                <img src="/api/placeholder/400/320" alt="3D" class="image" data-section="3d">
+                <img src="/api/placeholder/400/320" alt="Drafting" class="image" data-section="drafting">
                 
                 <!-- Project-specific images -->
                 <!-- Renders projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0001_Renders_1.1a.jpg" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="0">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0002_Renders_1.1b.jpg" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0004_Renders_1.2a.jpg" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0005_Renders_1.2b.jpg" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="3">
+                <img src="/api/placeholder/400/320" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="0">
+                <img src="/api/placeholder/400/320" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="1">
+                <img src="/api/placeholder/400/320" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="2">
+                <img src="/api/placeholder/400/320" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="3">
                 
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0006_Renders_2.1.jpg" alt="Renders Project 2" class="image" data-project="renders-2" data-gallery="renders-2" data-gallery-index="0">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0007_Renders_2.2.jpg" alt="Renders Project 2" class="image" data-project="renders-2" data-gallery="renders-2" data-gallery-index="1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0008_Renders_2.3.jpg" alt="Renders Project 2" class="image" data-project="renders-2" data-gallery="renders-2" data-gallery-index="2">
-                
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0009_Renders_3.1.jpg" alt="Renders Project 3" class="image" data-project="renders-3" data-gallery="renders-3" data-gallery-index="0">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0010_Renders_3.2.jpg" alt="Renders Project 3" class="image" data-project="renders-3" data-gallery="renders-3" data-gallery-index="1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0011_Renders_3.3.jpg" alt="Renders Project 3" class="image" data-project="renders-3" data-gallery="renders-3" data-gallery-index="2">
-                
-                <!-- Drafting projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0013_Drafting_1.1.jpg" alt="Drafting Project 1" class="image" data-project="drafting-1" data-gallery="drafting-1" data-gallery-index="0">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0014_Drafting_1.2.jpg" alt="Drafting Project 1" class="image" data-project="drafting-1" data-gallery="drafting-1" data-gallery-index="1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0015_Drafting_1.3.jpg" alt="Drafting Project 1" class="image" data-project="drafting-1" data-gallery="drafting-1" data-gallery-index="2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0016_Drafting_1.4.jpg" alt="Drafting Project 1" class="image" data-project="drafting-1" data-gallery="drafting-1" data-gallery-index="3">
-                
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0017_Drafting_2.1.jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" data-gallery="drafting-2" data-gallery-index="0">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0018_Drafting_2.2.jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" data-gallery="drafting-2" data-gallery-index="1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0019_Drafting_2.3.jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" data-gallery="drafting-2" data-gallery-index="2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0020_Drafting_2.4.jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" data-gallery="drafting-2" data-gallery-index="3">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0021_Drafting_2.5.jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" data-gallery="drafting-2" data-gallery-index="4">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/IMG_0022_Drafting_2.6.jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" data-gallery="drafting-2" data-gallery-index="5">
-                
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/Img_0023_Drafting_3.1.jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" data-gallery="drafting-3" data-gallery-index="0">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/Img_0024_Drafting_3.2.jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" data-gallery="drafting-3" data-gallery-index="1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/Img_0025_Drafting_3.3.jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" data-gallery="drafting-3" data-gallery-index="2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/Img_0026_Drafting_3.4.jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" data-gallery="drafting-3" data-gallery-index="3">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/Img_0027_Drafting_3.5.jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" data-gallery="drafting-3" data-gallery-index="4">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/Img_0028_Drafting_3.6.jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" data-gallery="drafting-3" data-gallery-index="5">
-                
-                <!-- 3D projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 1" class="image" data-project="3d-1" data-gallery="3d-1" data-gallery-index="0">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 1" class="image" data-project="3d-1" data-gallery="3d-1" data-gallery-index="1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 1" class="image" data-project="3d-1" data-gallery="3d-1" data-gallery-index="2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="3D Project 1" class="image" data-project="3d-1" data-gallery="3d-1" data-gallery-index="3">
-                
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 2" class="image" data-project="3d-2" data-gallery="3d-2" data-gallery-index="0">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 2" class="image" data-project="3d-2" data-gallery="3d-2" data-gallery-index="1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 2" class="image" data-project="3d-2" data-gallery="3d-2" data-gallery-index="2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(3).jpg" alt="3D Project 2" class="image" data-project="3d-2" data-gallery="3d-2" data-gallery-index="3">
-                
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 3" class="image" data-project="3d-3" data-gallery="3d-3" data-gallery-index="0">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 3" class="image" data-project="3d-3" data-gallery="3d-3" data-gallery-index="1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 3" class="image" data-project="3d-3" data-gallery="3d-3" data-gallery-index="2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="3D Project 3" class="image" data-project="3d-3" data-gallery="3d-3" data-gallery-index="3">
-
                 <!-- Project description overlay -->
                 <div class="project-description">
                     <div class="description-text"></div>
@@ -617,7 +943,7 @@
             <!-- Home Section -->
             <div id="home" class="section" data-section="home">
                 <div class="section-content">
-                    <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Profile" class="profile-pic">
+                    <img src="/api/placeholder/150/150" alt="Profile" class="profile-pic">
                     <h2>Welcome</h2>
                     <p>Hey there, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting.</p>
                     <p>With over 10 years of experience, I've worked with clients across multiple industries to bring their visions to life through compelling visual storytelling and technical precision.</p>
@@ -744,3 +1070,306 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const scrollableHalf = document.querySelector('.scrollable-half');
+            const dropdownTrigger = document.querySelector('.dropdown-trigger');
+            const dropdownContent = document.querySelector('.dropdown-content');
+            const dropdownArrow = document.querySelector('.dropdown-arrow');
+            const images = document.querySelectorAll('.image');
+            const sections = document.querySelectorAll('.section, .subsection');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const projectButtons = document.querySelectorAll('.project-button');
+            const projectDescription = document.querySelector('.project-description');
+            const descriptionText = document.querySelector('.description-text');
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinksContainer = document.querySelector('.nav-links');
+            const prevButton = document.querySelector('.prev-button');
+            const nextButton = document.querySelector('.next-button');
+            const currentIndexEl = document.querySelector('.current-index');
+            const totalImagesEl = document.querySelector('.total-images');
+            
+            // State management
+            let currentSection = 'home';
+            let currentProject = null;
+            let currentGallery = null;
+            let currentGalleryIndex = 0;
+            let totalGalleryImages = 0;
+            
+            // Store project descriptions
+            const projectDescriptions = {};
+            projectButtons.forEach(button => {
+                const projectId = button.dataset.project;
+                const description = button.dataset.description;
+                if (projectId && description) {
+                    projectDescriptions[projectId] = description;
+                }
+            });
+            
+            // Simple mobile menu toggle
+            mobileMenuToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                navLinksContainer.classList.toggle('active');
+            });
+            
+            // Handle dropdown menu
+            dropdownTrigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                dropdownContent.classList.toggle('show');
+                dropdownArrow.classList.toggle('rotate');
+            });
+            
+            // Handle navigation clicks
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.classList.contains('dropdown-trigger')) return;
+                    
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Close dropdown if open
+                        dropdownContent.classList.remove('show');
+                        dropdownArrow.classList.remove('rotate');
+                        
+                        // Close mobile menu if open
+                        if (navLinksContainer.classList.contains('active')) {
+                            mobileMenuToggle.classList.remove('active');
+                            navLinksContainer.classList.remove('active');
+                        }
+                        
+                        // Reset project view
+                        hideDescription();
+                        resetProjectButtons();
+                        
+                        // Update image if section has one
+                        if (targetElement.dataset.section) {
+                            updateActiveImage(targetElement.dataset.section);
+                        }
+                        
+                        // Scroll to target
+                        scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Handle project button clicks
+            projectButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const projectId = this.dataset.project;
+                    
+                    // Reset all buttons and set this one as active
+                    resetProjectButtons();
+                    this.classList.add('active');
+                    
+                    // Show the project image
+                    showProjectImage(projectId);
+                    
+                    // Show description
+                    const description = projectDescriptions[projectId];
+                    showDescription(description);
+                });
+            });
+            
+            // Image management functions
+            function updateActiveImage(sectionId) {
+                // First reset any active project
+                currentProject = null;
+                
+                // Remove active class from all images
+                images.forEach(img => img.classList.remove('active'));
+                
+                // Find and activate the image for this section
+                const sectionImage = document.querySelector(`.image[data-section="${sectionId}"]`);
+                if (sectionImage) {
+                    sectionImage.classList.add('active');
+                }
+            }
+            
+            function showProjectImage(projectId) {
+                // Set current project
+                currentProject = projectId;
+                
+                // Initialize the gallery
+                initGallery(projectId);
+            }
+            
+            // Description functions
+            function showDescription(text) {
+                if (!text) return;
+                
+                descriptionText.textContent = text;
+                projectDescription.classList.add('visible');
+            }
+            
+            function hideDescription() {
+                projectDescription.classList.remove('visible');
+            }
+            
+            // Gallery functions
+            function updateGalleryControls() {
+                // Update counter
+                currentIndexEl.textContent = currentGalleryIndex + 1;
+                totalImagesEl.textContent = totalGalleryImages;
+                
+                // Update buttons state
+                prevButton.disabled = currentGalleryIndex === 0;
+                nextButton.disabled = currentGalleryIndex === totalGalleryImages - 1;
+            }
+            
+            function showGalleryImage(galleryName, index) {
+                // Hide all images first
+                images.forEach(img => img.classList.remove('active'));
+                
+                // Find and show the requested gallery image
+                const galleryImage = document.querySelector(`.image[data-gallery="${galleryName}"][data-gallery-index="${index}"]`);
+                if (galleryImage) {
+                    galleryImage.classList.add('active');
+                    
+                    // Update state
+                    currentGallery = galleryName;
+                    currentGalleryIndex = parseInt(index);
+                    
+                    // Update controls
+                    updateGalleryControls();
+                }
+            }
+            
+            function initGallery(projectId) {
+                // Count total images in this gallery
+                const galleryImages = document.querySelectorAll(`.image[data-gallery="${projectId}"]`);
+                totalGalleryImages = galleryImages.length;
+                
+                // Reset index and show first image
+                currentGalleryIndex = 0;
+                showGalleryImage(projectId, currentGalleryIndex);
+            }
+            
+            // Gallery navigation
+            prevButton.addEventListener('click', function() {
+                if (currentGalleryIndex > 0) {
+                    showGalleryImage(currentGallery, currentGalleryIndex - 1);
+                }
+            });
+            
+            nextButton.addEventListener('click', function() {
+                if (currentGalleryIndex < totalGalleryImages - 1) {
+                    showGalleryImage(currentGallery, currentGalleryIndex + 1);
+                }
+            });
+            
+            // Reset project buttons
+            function resetProjectButtons() {
+                projectButtons.forEach(btn => btn.classList.remove('active'));
+            }
+            
+            // Handle form submission
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Simple form validation
+                    const name = this.querySelector('#name').value.trim();
+                    const email = this.querySelector('#email').value.trim();
+                    const message = this.querySelector('#message').value.trim();
+                    
+                    if (!name || !email || !message) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+                    
+                    // Simulate form submission
+                    alert('Thank you for your message! I will get back to you soon.');
+                    this.reset();
+                });
+            }
+            
+            // Window resize and scroll events
+            window.addEventListener('resize', function() {
+                if (currentProject) {
+                    showProjectImage(currentProject);
+                } else {
+                    updateActiveImage(currentSection);
+                }
+                
+                if (window.innerWidth > 768 && navLinksContainer.classList.contains('active')) {
+                    mobileMenuToggle.classList.remove('active');
+                    navLinksContainer.classList.remove('active');
+                }
+            });
+            
+            // Handle scrolling to detect current section
+            scrollableHalf.addEventListener('scroll', function() {
+                // Find visible sections
+                const visibleSections = [];
+                
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    const containerTop = scrollableHalf.getBoundingClientRect().top;
+                    const containerHeight = scrollableHalf.clientHeight;
+                    
+                    // Check if section is visible in the scrollable container
+                    if (rect.top < containerTop + containerHeight && rect.bottom > containerTop) {
+                        visibleSections.push({
+                            section: section,
+                            visibleHeight: Math.min(rect.bottom, containerTop + containerHeight) - 
+                                         Math.max(rect.top, containerTop)
+                        });
+                    }
+                });
+                
+                // Find the most visible section
+                if (visibleSections.length > 0) {
+                    visibleSections.sort((a, b) => b.visibleHeight - a.visibleHeight);
+                    const mostVisibleSection = visibleSections[0].section;
+                    
+                    if (mostVisibleSection.dataset.section && mostVisibleSection.dataset.section !== currentSection) {
+                        // Update current section and image
+                        currentSection = mostVisibleSection.dataset.section;
+                        updateActiveImage(currentSection);
+                        
+                        // Hide any project description
+                        hideDescription();
+                        resetProjectButtons();
+                        
+                        // If we're showing a main section, hide all subsections
+                        const isMainSection = ['home', 'work', 'about', 'contact'].includes(currentSection);
+                        if (isMainSection) {
+                            currentProject = null;
+                        }
+                    }
+                }
+            });
+            
+            // Handle initial hash in URL
+            if (window.location.hash) {
+                const hash = window.location.hash.substring(1);
+                const targetElement = document.getElementById(hash);
+                
+                if (targetElement) {
+                    // Scroll to target after a small delay
+                    setTimeout(() => {
+                        scrollableHalf.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'auto'
+                        });
+                        
+                        // Update image if section has one
+                        if (targetElement.dataset.section) {
+                            currentSection = targetElement.dataset.section;
+                            updateActiveImage(currentSection);
+                        }
+                    }, 200);
+                }
+            }
+        });
