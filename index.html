@@ -268,31 +268,25 @@
             z-index: 2;
         }
         
-        /* Project image carousel */
-        .carousel-container {
+        /* Project description overlay */
+        .project-description {
             position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            z-index: 2;
-            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: var(--text-light);
+            padding: 15px 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 11;
+            font-size: clamp(14px, 3vw, 16px);
+            line-height: 1.5;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
         }
         
-        .carousel-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-            pointer-events: none;
-        }
-        
-        .carousel-image.active {
-            opacity: 1;
+        .project-description.visible {
+            transform: translateY(0);
         }
         
         /* Landscape layout */
@@ -480,6 +474,8 @@
                 <a href="#work" class="dropdown-trigger">Work <span class="dropdown-arrow">▼</span></a>
                 <div class="dropdown-content">
                     <a href="#renders">Renders</a>
+                    <a href="#3d">3D Modeling</a>
+                    <a href="#drafting">Drafting</a>
                 </div>
             </div>
             <a href="#about">About</a>
@@ -502,8 +498,6 @@
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg" alt="Renders" class="image" data-section="renders">
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D" class="image" data-section="3d">
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(1).jpg" alt="Drafting" class="image" data-section="drafting">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(1).jpg" alt="Video Editing" class="image" data-section="video">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS.jpg" alt="GIS" class="image" data-section="gis">
                 
                 <!-- Project-specific images -->
                 <!-- Renders projects -->
@@ -521,16 +515,6 @@
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(3).jpg" alt="Drafting Project 2" class="image" data-project="drafting-2">
                 <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(4).jpg" alt="Drafting Project 3" class="image" data-project="drafting-3">
                 
-                <!-- Video projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(2).jpg" alt="Video Project 1" class="image" data-project="video-1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(3).jpg" alt="Video Project 2" class="image" data-project="video-2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Videos%20(4).jpg" alt="Video Project 3" class="image" data-project="video-3">
-                
-                <!-- GIS projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_1.jpg" alt="GIS Project 1" class="image" data-project="gis-1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_2.jpg" alt="GIS Project 2" class="image" data-project="gis-2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/GIS_3.png" alt="GIS Project 3" class="image" data-project="gis-3">
-                
                 <!-- Project description overlay -->
                 <div class="project-description"></div>
             </div>
@@ -543,15 +527,13 @@
                 <div class="section-content">
                     <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="Profile" class="profile-pic">
                     <h2>Welcome</h2>
-                    <p>Hey there, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting and GIS mapping.</p>
+                    <p>Hey there, I'm a professional designer specializing in various digital and architectural visualization techniques. My portfolio showcases a range of work from 3D modeling to technical drafting.</p>
                     <p>With over 10 years of experience, I've worked with clients across multiple industries to bring their visions to life through compelling visual storytelling and technical precision.</p>
                     
                     <div class="skills-container">
                         <div class="skill-item">3D Modeling</div>
                         <div class="skill-item">Architectural Rendering</div>
                         <div class="skill-item">Technical Drafting</div>
-                        <div class="skill-item">Video Editing</div>
-                        <div class="skill-item">GIS Mapping</div>
                     </div>
                     
                     <div class="social-links">
@@ -568,11 +550,12 @@
             <div id="work" class="section" data-section="work">
                 <div class="section-content">
                     <h2>My Work</h2>
-                    <p>Below you'll find samples of my professional work in architectural visualization. I create compelling visual narratives that effectively communicate design concepts.</p>
+                    <p>Below you'll find samples of my professional work across different disciplines. Each category demonstrates my expertise in specific areas of visual and technical design.</p>
+                    <p>Scroll down to explore each category and see examples of my projects.</p>
                 </div>
             </div>
 
-            <!-- Renders Subsection (keeping only this one) -->
+            <!-- Work Subsections -->
             <div id="renders" class="subsection" data-section="renders">
                 <div class="section-content">
                     <h3>Architectural Renders</h3>
@@ -581,6 +564,30 @@
                         <button class="project-button" data-project="renders-1" data-description="Luxury waterfront villa with sustainable features and panoramic ocean views.">Waterfront Villa</button>
                         <button class="project-button" data-project="renders-2" data-description="Contemporary urban apartment with minimalist design and innovative lighting solutions.">Urban Apartment</button>
                         <button class="project-button" data-project="renders-3" data-description="Mixed-use commercial space featuring adaptive reuse of a historic industrial building.">Commercial Space</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="3d" class="subsection" data-section="3d">
+                <div class="section-content">
+                    <h3>3D Modeling</h3>
+                    <p>Detailed 3D models created for various applications including product design, architectural visualization, and digital assets. My modeling work emphasizes accuracy, optimized geometry, and attention to detail.</p>
+                    <div class="project-buttons">
+                        <button class="project-button" data-project="3d-1" data-description="High-poly architectural model for an eco-friendly housing development with complex geometry.">Eco Housing</button>
+                        <button class="project-button" data-project="3d-2" data-description="Detailed furniture modeling collection with physically accurate materials and connections.">Furniture Collection</button>
+                        <button class="project-button" data-project="3d-3" data-description="Parametric facade system adaptable to various architectural configurations and environments.">Parametric Facade</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="drafting" class="subsection" data-section="drafting">
+                <div class="section-content">
+                    <h3>Technical Drafting</h3>
+                    <p>Precise technical drawings and documentation for architectural and engineering applications. My drafting work follows industry standards and best practices to ensure accuracy and clarity.</p>
+                    <div class="project-buttons">
+                        <button class="project-button" data-project="drafting-1" data-description="Comprehensive construction documentation for a 12-story mixed-use development in Chicago.">Mixed-Use Tower</button>
+                        <button class="project-button" data-project="drafting-2" data-description="Detailed section drawings showcasing innovative building envelope systems for extreme climates.">Building Envelope</button>
+                        <button class="project-button" data-project="drafting-3" data-description="MEP coordination drawings for a complex healthcare facility with precise equipment placement.">Healthcare Facility</button>
                     </div>
                 </div>
             </div>
@@ -599,8 +606,6 @@
                         <div class="skill-item">3D Modeling</div>
                         <div class="skill-item">Architectural Rendering</div>
                         <div class="skill-item">Technical Drafting</div>
-                        <div class="skill-item">Video Editing</div>
-                        <div class="skill-item">GIS Mapping</div>
                         <div class="skill-item">Digital Photography</div>
                         <div class="skill-item">VR/AR Visualization</div>
                     </div>
@@ -666,29 +671,6 @@
             // State management
             let currentSection = 'home';
             let currentProject = null;
-            let carousels = {};
-            let carouselIntervals = {};
-            
-            // Project image data - Add your image URLs for each project
-            const projectImages = {
-                // Renders projects only
-                'renders-1': [
-                    'https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg',
-                    'https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(2).jpg',
-                    'https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(3).jpg',
-                    'https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg'
-                ],
-                'renders-2': [
-                    'https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(3).jpg',
-                    'https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg',
-                    'https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg'
-                ],
-                'renders-3': [
-                    'https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg',
-                    'https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(2).jpg',
-                    'https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg'
-                ]
-            };
             
             // Store project descriptions
             const projectDescriptions = {};
@@ -699,75 +681,6 @@
                     projectDescriptions[projectId] = description;
                 }
             });
-            
-            // Create carousel containers for each project
-            function createCarousels() {
-                const imageContainer = document.querySelector('.image-container');
-                
-                for (const projectId in projectImages) {
-                    // Create carousel container
-                    const carouselContainer = document.createElement('div');
-                    carouselContainer.className = 'carousel-container';
-                    carouselContainer.dataset.project = projectId;
-                    carouselContainer.style.display = 'none';
-                    
-                    // Create carousel images
-                    projectImages[projectId].forEach((imageSrc, index) => {
-                        const img = document.createElement('img');
-                        img.src = imageSrc;
-                        img.className = 'carousel-image';
-                        if (index === 0) img.classList.add('active');
-                        carouselContainer.appendChild(img);
-                    });
-                    
-                    // Add carousel to DOM
-                    imageContainer.appendChild(carouselContainer);
-                    
-                    // Store reference to carousel
-                    carousels[projectId] = {
-                        container: carouselContainer,
-                        images: carouselContainer.querySelectorAll('.carousel-image'),
-                        currentIndex: 0
-                    };
-                }
-            }
-            
-            // Start carousel for a project
-            function startCarousel(projectId) {
-                if (!carousels[projectId]) return;
-                
-                // Show the carousel
-                carousels[projectId].container.style.display = 'block';
-                
-                // Set first image as active
-                carousels[projectId].images.forEach((img, index) => {
-                    img.classList.toggle('active', index === 0);
-                });
-                carousels[projectId].currentIndex = 0;
-                
-                // Start the interval
-                carouselIntervals[projectId] = setInterval(() => {
-                    const carousel = carousels[projectId];
-                    const nextIndex = (carousel.currentIndex + 1) % carousel.images.length;
-                    
-                    // Hide current image
-                    carousel.images[carousel.currentIndex].classList.remove('active');
-                    
-                    // Show next image
-                    carousel.images[nextIndex].classList.add('active');
-                    
-                    // Update current index
-                    carousel.currentIndex = nextIndex;
-                }, 4000); // Change image every 4 seconds
-            }
-            
-            // Stop all carousels
-            function stopAllCarousels() {
-                for (const projectId in carouselIntervals) {
-                    clearInterval(carouselIntervals[projectId]);
-                    carousels[projectId].container.style.display = 'none';
-                }
-            }
             
             // Simple mobile menu toggle
             mobileMenuToggle.addEventListener('click', function() {
@@ -826,7 +739,6 @@
                         // Reset project view
                         hideDescription();
                         resetProjectButtons();
-                        stopAllCarousels();
                         
                         // Update image if section has one
                         if (targetElement.dataset.section) {
@@ -875,7 +787,6 @@
                         // Hide any project description
                         hideDescription();
                         resetProjectButtons();
-                        stopAllCarousels();
                         
                         // If we're showing a main section, hide all subsections
                         const isMainSection = ['home', 'work', 'about', 'contact'].includes(currentSection);
@@ -895,17 +806,12 @@
                     resetProjectButtons();
                     this.classList.add('active');
                     
-                    // Show the project carousel
-                    stopAllCarousels();
-                    startCarousel(projectId);
-                    currentProject = projectId;
+                    // Show the project image
+                    showProjectImage(projectId);
                     
                     // Show description
                     const description = projectDescriptions[projectId];
                     showDescription(description);
-                    
-                    // Hide the regular images
-                    images.forEach(img => img.classList.remove('active'));
                 });
             });
             
@@ -914,9 +820,6 @@
                 // First reset any active project
                 currentProject = null;
                 
-                // Stop any running carousels
-                stopAllCarousels();
-                
                 // Remove active class from all images
                 images.forEach(img => img.classList.remove('active'));
                 
@@ -924,6 +827,20 @@
                 const sectionImage = document.querySelector(`.image[data-section="${sectionId}"]`);
                 if (sectionImage) {
                     sectionImage.classList.add('active');
+                }
+            }
+            
+            function showProjectImage(projectId) {
+                // Set current project
+                currentProject = projectId;
+                
+                // Remove active class from all images
+                images.forEach(img => img.classList.remove('active'));
+                
+                // Find and activate the project image
+                const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
+                if (projectImage) {
+                    projectImage.classList.add('active');
                 }
             }
             
@@ -970,77 +887,13 @@
             window.addEventListener('resize', function() {
                 // When resizing, make sure the right image is showing
                 if (currentProject) {
-                    // If we have an active project, make sure its carousel is showing
-                    stopAllCarousels();
-                    startCarousel(currentProject);
+                    showProjectImage(currentProject);
                 } else {
                     updateActiveImage(currentSection);
                 }
                 
                 // Close mobile menu on window resize to desktop
                 if (window.innerWidth > 768 && navLinksContainer.classList.contains('active')) {
-                    mobileMenuToggle.classList.remove('active');
-                    navLinksContainer.classList.remove('active');
-                }
-            });
-            
-            // Handle initial hash in URL
-            if (window.location.hash) {
-                const hash = window.location.hash.substring(1);
-                const targetElement = document.getElementById(hash);
-                
-                if (targetElement) {
-                    // Scroll to target after a small delay
-                    setTimeout(() => {
-                        scrollableHalf.scrollTo({
-                            top: targetElement.offsetTop,
-                            behavior: 'auto'
-                        });
-                        
-                        // Update image if section has one
-                        if (targetElement.dataset.section) {
-                            currentSection = targetElement.dataset.section;
-                            updateActiveImage(currentSection);
-                        }
-                    }, 200);
-                }
-            }
-            
-            // Initialize
-            createCarousels();
-        });
-    </script>Width > 768 && navLinksContainer.classList.contains('active')) {
-                    mobileMenuToggle.classList.remove('active');
-                    navLinksContainer.classList.remove('active');
-                }
-            });
-            
-            // Handle initial hash in URL
-            if (window.location.hash) {
-                const hash = window.location.hash.substring(1);
-                const targetElement = document.getElementById(hash);
-                
-                if (targetElement) {
-                    // Scroll to target after a small delay
-                    setTimeout(() => {
-                        scrollableHalf.scrollTo({
-                            top: targetElement.offsetTop,
-                            behavior: 'auto'
-                        });
-                        
-                        // Update image if section has one
-                        if (targetElement.dataset.section) {
-                            currentSection = targetElement.dataset.section;
-                            updateActiveImage(currentSection);
-                        }
-                    }, 200);
-                }
-            }
-            
-            // Initialize
-            createCarousels();
-        });
-    </script>Width > 768 && navLinksContainer.classList.contains('active')) {
                     mobileMenuToggle.classList.remove('active');
                     navLinksContainer.classList.remove('active');
                 }
