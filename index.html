@@ -283,10 +283,58 @@
             font-size: clamp(14px, 3vw, 16px);
             line-height: 1.5;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
         }
         
         .project-description.visible {
             transform: translateY(0);
+        }
+        
+        /* Project gallery navigation */
+        .gallery-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gallery-counter {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .gallery-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .gallery-button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        
+        .gallery-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .gallery-button:disabled {
+            opacity: 0.4;
+            cursor: default;
         }
         
         /* Landscape layout */
@@ -501,22 +549,64 @@
                 
                 <!-- Project-specific images -->
                 <!-- Renders projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(2).jpg" alt="Renders Project 1" class="image" data-project="renders-1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(3).jpg" alt="Renders Project 2" class="image" data-project="renders-2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg" alt="Renders Project 3" class="image" data-project="renders-3">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(2).jpg" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="0">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(3).jpg" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg" alt="Renders Project 1" class="image" data-project="renders-1" data-gallery="renders-1" data-gallery-index="3">
+                
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(3).jpg" alt="Renders Project 2" class="image" data-project="renders-2" data-gallery="renders-2" data-gallery-index="0">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg" alt="Renders Project 2" class="image" data-project="renders-2" data-gallery="renders-2" data-gallery-index="1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg" alt="Renders Project 2" class="image" data-project="renders-2" data-gallery="renders-2" data-gallery-index="2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(2).jpg" alt="Renders Project 2" class="image" data-project="renders-2" data-gallery="renders-2" data-gallery-index="3">
+                
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(4).jpg" alt="Renders Project 3" class="image" data-project="renders-3" data-gallery="renders-3" data-gallery-index="0">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(1).jpg" alt="Renders Project 3" class="image" data-project="renders-3" data-gallery="renders-3" data-gallery-index="1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(2).jpg" alt="Renders Project 3" class="image" data-project="renders-3" data-gallery="renders-3" data-gallery-index="2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Renders%20(3).jpg" alt="Renders Project 3" class="image" data-project="renders-3" data-gallery="renders-3" data-gallery-index="3">
                 
                 <!-- 3D projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 1" class="image" data-project="3d-1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 2" class="image" data-project="3d-2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 3" class="image" data-project="3d-3">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 1" class="image" data-project="3d-1" data-gallery="3d-1" data-gallery-index="0">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 1" class="image" data-project="3d-1" data-gallery="3d-1" data-gallery-index="1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 1" class="image" data-project="3d-1" data-gallery="3d-1" data-gallery-index="2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(2).jpg" alt="3D Project 1" class="image" data-project="3d-1" data-gallery="3d-1" data-gallery-index="3">
+                
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 2" class="image" data-project="3d-2" data-gallery="3d-2" data-gallery-index="0">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 2" class="image" data-project="3d-2" data-gallery="3d-2" data-gallery-index="1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 2" class="image" data-project="3d-2" data-gallery="3d-2" data-gallery-index="2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(3).jpg" alt="3D Project 2" class="image" data-project="3d-2" data-gallery="3d-2" data-gallery-index="3">
+                
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3d.jpg" alt="3D Project 3" class="image" data-project="3d-3" data-gallery="3d-3" data-gallery-index="0">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(2).JPG" alt="3D Project 3" class="image" data-project="3d-3" data-gallery="3d-3" data-gallery-index="1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/3D%20(3).jpg" alt="3D Project 3" class="image" data-project="3d-3" data-gallery="3d-3" data-gallery-index="2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/abt%20(1).jpg" alt="3D Project 3" class="image" data-project="3d-3" data-gallery="3d-3" data-gallery-index="3">
                 
                 <!-- Drafting projects -->
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(2).jpg" alt="Drafting Project 1" class="image" data-project="drafting-1">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(3).jpg" alt="Drafting Project 2" class="image" data-project="drafting-2">
-                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(4).jpg" alt="Drafting Project 3" class="image" data-project="drafting-3">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(2).jpg" alt="Drafting Project 1" class="image" data-project="drafting-1" data-gallery="drafting-1" data-gallery-index="0">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(3).jpg" alt="Drafting Project 1" class="image" data-project="drafting-1" data-gallery="drafting-1" data-gallery-index="1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(4).jpg" alt="Drafting Project 1" class="image" data-project="drafting-1" data-gallery="drafting-1" data-gallery-index="2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(1).jpg" alt="Drafting Project 1" class="image" data-project="drafting-1" data-gallery="drafting-1" data-gallery-index="3">
+                
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(3).jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" data-gallery="drafting-2" data-gallery-index="0">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(4).jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" data-gallery="drafting-2" data-gallery-index="1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(1).jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" data-gallery="drafting-2" data-gallery-index="2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(2).jpg" alt="Drafting Project 2" class="image" data-project="drafting-2" data-gallery="drafting-2" data-gallery-index="3">
+                
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(4).jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" data-gallery="drafting-3" data-gallery-index="0">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(1).jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" data-gallery="drafting-3" data-gallery-index="1">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(2).jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" data-gallery="drafting-3" data-gallery-index="2">
+                <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/Images/Technical%20(3).jpg" alt="Drafting Project 3" class="image" data-project="drafting-3" data-gallery="drafting-3" data-gallery-index="3">
                 
                 <!-- Project description overlay -->
-                <div class="project-description"></div>
+                <div class="project-description">
+                    <div class="description-text"></div>
+                    <div class="gallery-nav">
+                        <div class="gallery-counter">Image <span class="current-index">1</span> of <span class="total-images">4</span></div>
+                        <div class="gallery-buttons">
+                            <button class="gallery-button prev-button">&#10094;</button>
+                            <button class="gallery-button next-button">&#10095;</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -665,12 +755,20 @@
             const navLinks = document.querySelectorAll('.nav-links a');
             const projectButtons = document.querySelectorAll('.project-button');
             const projectDescription = document.querySelector('.project-description');
+            const descriptionText = document.querySelector('.description-text');
             const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
             const navLinksContainer = document.querySelector('.nav-links');
+            const prevButton = document.querySelector('.prev-button');
+            const nextButton = document.querySelector('.next-button');
+            const currentIndexEl = document.querySelector('.current-index');
+            const totalImagesEl = document.querySelector('.total-images');
             
             // State management
             let currentSection = 'home';
             let currentProject = null;
+            let currentGallery = null;
+            let currentGalleryIndex = 0;
+            let totalGalleryImages = 0;
             
             // Store project descriptions
             const projectDescriptions = {};
@@ -834,27 +932,73 @@
                 // Set current project
                 currentProject = projectId;
                 
-                // Remove active class from all images
-                images.forEach(img => img.classList.remove('active'));
-                
-                // Find and activate the project image
-                const projectImage = document.querySelector(`.image[data-project="${projectId}"]`);
-                if (projectImage) {
-                    projectImage.classList.add('active');
-                }
+                // Initialize the gallery
+                initGallery(projectId);
             }
             
             // Description functions
             function showDescription(text) {
                 if (!text) return;
                 
-                projectDescription.textContent = text;
+                descriptionText.textContent = text;
                 projectDescription.classList.add('visible');
             }
             
             function hideDescription() {
                 projectDescription.classList.remove('visible');
             }
+            
+            // Gallery functions
+            function updateGalleryControls() {
+                // Update counter
+                currentIndexEl.textContent = currentGalleryIndex + 1;
+                totalImagesEl.textContent = totalGalleryImages;
+                
+                // Update buttons state
+                prevButton.disabled = currentGalleryIndex === 0;
+                nextButton.disabled = currentGalleryIndex === totalGalleryImages - 1;
+            }
+            
+            function showGalleryImage(galleryName, index) {
+                // Hide all images first
+                images.forEach(img => img.classList.remove('active'));
+                
+                // Find and show the requested gallery image
+                const galleryImage = document.querySelector(`.image[data-gallery="${galleryName}"][data-gallery-index="${index}"]`);
+                if (galleryImage) {
+                    galleryImage.classList.add('active');
+                    
+                    // Update state
+                    currentGallery = galleryName;
+                    currentGalleryIndex = parseInt(index);
+                    
+                    // Update controls
+                    updateGalleryControls();
+                }
+            }
+            
+            function initGallery(projectId) {
+                // Count total images in this gallery
+                const galleryImages = document.querySelectorAll(`.image[data-gallery="${projectId}"]`);
+                totalGalleryImages = galleryImages.length;
+                
+                // Reset index and show first image
+                currentGalleryIndex = 0;
+                showGalleryImage(projectId, currentGalleryIndex);
+            }
+            
+            // Gallery navigation
+            prevButton.addEventListener('click', function() {
+                if (currentGalleryIndex > 0) {
+                    showGalleryImage(currentGallery, currentGalleryIndex - 1);
+                }
+            });
+            
+            nextButton.addEventListener('click', function() {
+                if (currentGalleryIndex < totalGalleryImages - 1) {
+                    showGalleryImage(currentGallery, currentGalleryIndex + 1);
+                }
+            });
             
             // Reset project buttons
             function resetProjectButtons() {
