@@ -710,7 +710,7 @@
                         <div class="skill-item">GIS</div>
                     </div>
                     
-                    <button onclick="document.querySelector('#about').scrollIntoView({behavior: 'smooth'})">About Me</button>   <button onclick="document.querySelector('#work').scrollIntoView({behavior: 'smooth'})">My Work</button>
+                    <button onclick="document.querySelector('#about').scrollIntoView({behavior: 'smooth'})">About Me</button>
                 </div>
             </div>
 
@@ -765,9 +765,9 @@
                     <h3>Video Editing</h3>
                     <p>Professional video production and editing for architectural walkthroughs, promotional content, and digital storytelling. My video work focuses on dynamic visual narratives that effectively communicate design concepts.</p>
                     <div class="project-buttons">
-                        <button class="project-button" data-project="video-1" data-description="Cinematic flythroughs of various projects to showcase to clients of the site.<a href="https://drive.google.com/file/d/1en4xzP60Izjo6ZOh-m83USlM_gdDJEwN/view?usp=drive_link">Video Link</a>">Flythroughs</button>
-                        <button class="project-button" data-project="video-2" data-description="An analytical assignment utilizing GIS and design software to  visualize the issues facing the lowermainland of Vancouver.<a href="https://drive.google.com/file/d/1_5IWX8ELD8O5QtkNfwizZYfobSwe9Bhr/view?usp=drive_link">Video Link</a>">Site analysis</button>
-                        <button class="project-button" data-project="video-3" data-description="A fun assignment, exploring the different commands and functions, as well as incorporating the use of different design programs.<a href="https://drive.google.com/file/d/1SIxIH7Dcdxo-h3XMopRi0vLNtJ2CSSy8/view?usp=drive_link">Video Link</a>">Forms and functions</button>
+                        <button class="project-button" data-project="video-1" data-description="Cinematic flythroughs of various projects to showcase to clients of the site.">Flythroughs</button>
+                        <button class="project-button" data-project="video-2" data-description="An analytical assignment utilizing GIS and design software to visualize the issues facing the lowermainland of Vancouver.">Site analysis</button>
+                        <button class="project-button" data-project="video-3" data-description="A fun assignment, exploring the different commands and functions, as well as incorporating the use of different design programs.">Forms and functions</button>
                     </div>
                 </div>
             </div>
@@ -788,47 +788,39 @@
             <div id="about" class="section" data-section="about">
                 <div class="section-content">
                     <h2>About Me</h2>
-                    <p>With a background in architecture and digital design, I've spent the last decade honing my skills across multiple visualization disciplines. My journey began with a passion for creating spaces and evolved into a comprehensive skill set that bridges technical precision with artistic expression. I believe that effective visualization is about more than just creating beautiful images—it's about telling stories, solving problems, and communicating ideas clearly.</p>
+                    <p>With a background in architecture and digital design, I've spent the last decade honing my skills across multiple visualization disciplines. My journey began with a passion for creating spaces and evolved into a comprehensive skill set that bridges technical precision with artistic expression.<br> I believe that effective visualization is about more than just creating beautiful images—it's about telling stories, solving problems, and communicating ideas clearly. Whether I'm creating photorealistic renders or technical drawings, I focus on understanding the core purpose of each project.</p>
                     
                     <div class="software-container">
                         <div class="software-icon">
-                            <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/_Logos_0008_Photoshop.jpg" alt="Photoshop">
-                            <span>Photoshop</span>
+                            <img src="/api/placeholder/50/50" alt="Adobe Photoshop">
+                            <span>Adobe Photoshop</span>
                         </div>
                         <div class="software-icon">
-                            <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/_Logos_0006_Indesign.jpg" alt="InDesign">
-                            <span>InDesign</span>
+                            <img src="/api/placeholder/50/50" alt="Adobe InDesign">
+                            <span>Adobe InDesign</span>
                         </div>
                         <div class="software-icon">
-                            <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/_Logos_0009_Illustrator.jpg" alt="Illustrator">
-                            <span>Illustrator</span>
+                            <img src="/api/placeholder/50/50" alt="Adobe Illustrator">
+                            <span>Adobe Illustrator</span>
                         </div>
                         <div class="software-icon">
-                            <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/_Logos_0007_Aftereffects.jpg" alt="After Effects">
-                            <span>After Effects</span>
-                        </div>
-                        <div class="software-icon">
-                            <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/_Logos_0005_Sketchup.jpg" alt="SketchUp">
+                            <img src="/api/placeholder/50/50" alt="SketchUp">
                             <span>SketchUp</span>
                         </div>
                         <div class="software-icon">
-                            <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/_Logos_0000_Lumion.jpg" alt="Lumion">
-                            <span>Lumion</span>
-                        </div>
-                        <div class="software-icon">
-                            <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/_Logos_0004_Rhino.jpg" alt="Rhino">
+                            <img src="/api/placeholder/50/50" alt="Rhino">
                             <span>Rhino</span>
                         </div>
                         <div class="software-icon">
-                            <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/_Logos_0003_Blender.jpg" alt="Blender">
+                            <img src="/api/placeholder/50/50" alt="Blender">
                             <span>Blender</span>
                         </div>
                         <div class="software-icon">
-                            <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/_Logos_0002_Unreal.jpg" alt="Unreal">
+                            <img src="/api/placeholder/50/50" alt="Unreal">
                             <span>Unreal</span>
                         </div>
                         <div class="software-icon">
-                            <img src="https://raw.githubusercontent.com/aliani93/Portfolio/refs/heads/main/image/_Logos_0001_GIS.jpg" alt="GIS">
+                            <img src="/api/placeholder/50/50" alt="GIS">
                             <span>GIS</span>
                         </div>
                     </div>
@@ -1071,7 +1063,28 @@
             function showDescription(text) {
                 if (!text) return;
                 
-                descriptionText.textContent = text;
+                descriptionText.innerHTML = text;
+                if (currentProject && currentProject.startsWith('video')) {
+                    const videoLink = document.createElement('a');
+                    
+                    // Set unique video URL for each project
+                    if (currentProject === 'video-1') {
+                        videoLink.href = 'https://drive.google.com/file/d/1en4xzP60Izjo6ZOh-m83USlM_gdDJEwN/view?usp=drive_link';
+                    } else if (currentProject === 'video-2') {
+                        videoLink.href = 'https://drive.google.com/file/d/1_5IWX8ELD8O5QtkNfwizZYfobSwe9Bhr/view?usp=drive_link';
+                    } else if (currentProject === 'video-3') {
+                        videoLink.href = 'https://drive.google.com/file/d/1SIxIH7Dcdxo-h3XMopRi0vLNtJ2CSSy8/view?usp=drive_link';
+                    }
+                    
+                    videoLink.target = '_blank';
+                    videoLink.style.color = '#fff';
+                    videoLink.style.textDecoration = 'underline';
+                    videoLink.style.display = 'inline-block';
+                    videoLink.style.marginTop = '10px';
+                    videoLink.textContent = 'Video link';
+                    descriptionText.appendChild(document.createElement('br'));
+                    descriptionText.appendChild(videoLink);
+                }
                 projectDescription.classList.add('visible');
             }
             
