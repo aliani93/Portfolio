@@ -47,7 +47,34 @@
             line-height: 1.6;
             margin-bottom: 20px;
         }
-        
+/* Disable text selection and right-click protection */
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Disable drag for images */
+img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+}
+
+/* Re-enable pointer events for clickable elements */
+button, a, .project-button, .gallery-button, .nav-links a, .dropdown-trigger, input, textarea {
+    pointer-events: auto;
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+}        
         /* Navigation */
         .navbar {
             position: fixed;
@@ -876,6 +903,34 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+// Disable right-click context menu
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+// Disable common keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
+    if (e.keyCode === 123 || 
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+        (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83))) {
+        e.preventDefault();
+        return false;
+    }
+});
+
+// Disable text selection on drag
+document.addEventListener('selectstart', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+// Disable drag and drop
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+    return false;
+});
             // DOM elements
             const scrollableHalf = document.querySelector('.scrollable-half');
             const dropdownTrigger = document.querySelector('.dropdown-trigger');
