@@ -993,7 +993,42 @@ button, a, .project-button, .gallery-button, .nav-links a, .dropdown-trigger, in
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+// Password protection system - MUST be outside DOMContentLoaded for onclick to work
+const CORRECT_PASSWORD = "portfolio2025"; // Change this to your desired password
+
+function checkPassword() {
+    const inputPassword = document.getElementById('passwordInput').value;
+    const errorDiv = document.getElementById('passwordError');
+    const overlay = document.getElementById('passwordOverlay');
+    
+    if (inputPassword === CORRECT_PASSWORD) {
+        overlay.classList.add('hidden');
+        errorDiv.textContent = '';
+        // Store password in session to avoid re-prompting
+        sessionStorage.setItem('portfolioAccess', 'granted');
+    } else {
+        errorDiv.textContent = 'Incorrect password. Please try again.';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+    }
+}
+
+// Check if user already entered password in this session
+window.addEventListener('load', function() {
+    if (sessionStorage.getItem('portfolioAccess') === 'granted') {
+        document.getElementById('passwordOverlay').classList.add('hidden');
+    } else {
+        document.getElementById('passwordInput').focus();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Allow Enter key to submit password
+document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        checkPassword();
+    }
+});
 // Disable right-click context menu
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
