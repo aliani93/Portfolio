@@ -64,6 +64,9 @@ img {
     -moz-user-drag: none;
     -o-user-drag: none;
     user-drag: none;
+    pointer-events: none;
+}
+
 /* Password protection overlay */
 .password-overlay {
     position: fixed;
@@ -1053,6 +1056,7 @@ window.addEventListener('load', function() {
         document.getElementById('passwordInput').focus();
     }
 });
+
 document.addEventListener('dragstart', function(e) {
     e.preventDefault();
     return false;
@@ -1398,6 +1402,8 @@ document.addEventListener('dragstart', function(e) {
                 }
             }
         });
+// Make checkPassword available globally for the onclick handler
+window.checkPassword = checkPassword;
     </script>
 </body>
 </html>
