@@ -354,73 +354,7 @@ button, a, .project-button, .gallery-button, .nav-links a, .dropdown-trigger, in
             position: relative;
             scroll-behavior: smooth;
         }
-        /* Fix portrait layout ratios for small mobile phones */
-
-        /* Base portrait layout - applies to all portrait orientations */
-        @media (orientation: portrait) {
-        .image-half {
-            width: 100%;
-            height: 40vh; /* Use viewport height instead of percentage */
-            min-height: 200px; /* Ensure minimum height */
-            max-height: 350px; /* Prevent too large on big screens */
-        }
-    
-        .scrollable-half {
-            width: 100%;
-            height: 60vh; /* Use viewport height instead of percentage */
-            min-height: 300px; /* Ensure minimum scrollable area */
-        }
-    }
-
-        /* Small mobile phones (iPhone SE, etc.) */
-        @media (max-width: 414px) and (orientation: portrait) {
-        .image-half {
-            height: 35vh; /* Smaller image area on very small screens */
-            min-height: 180px;
-            max-height: 280px;
-        }
-    
-        .scrollable-half {
-            height: 65vh; /* More space for content */
-            min-height: 350px;
-        }
-    }
-
-        /* Very small mobile phones */
-        @media (max-width: 375px) and (orientation: portrait) {
-        .image-half {
-            height: 32vh; /* Even smaller image area */
-            min-height: 160px;
-            max-height: 250px;
-        }
-    
-        .scrollable-half {
-            height: 68vh; /* More scrollable content */
-            min-height: 400px;
-        }
-    }
-
-        /* Extra small phones (iPhone 5/SE first gen) */
-        @media (max-width: 320px) and (orientation: portrait) {
-        .image-half {
-            height: 30vh;
-            min-height: 140px;
-            max-height: 200px;
-        }
-    
-        .scrollable-half {
-            height: 70vh;
-            min-height: 300px;
-        }
-    }
-
-        /* Ensure the app container uses full viewport height */
-        #app-container {
-            height: calc(100vh - var(--navbar-height));
-            max-height: calc(100vh - var(--navbar-height));
-            overflow: hidden; /* Prevent container from growing */
-        }
-    }
+        
         /* Image styling */
         .image-container {
             position: relative;
